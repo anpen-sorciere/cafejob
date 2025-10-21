@@ -372,6 +372,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     
+                    // 都道府県のバリデーション状態を更新
+                    prefectureSelect.classList.remove('is-invalid');
+                    prefectureSelect.classList.add('is-valid');
+                    
                     // 市区町村を設定
                     cityInput.value = result.address2;
                     
@@ -466,6 +470,30 @@ document.addEventListener('DOMContentLoaded', function() {
             event.stopPropagation();
         }
         form.classList.add('was-validated');
+    });
+    
+    // ブラウザの候補選択時のバリデーション状態更新
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
     });
 });
 </script>
