@@ -61,7 +61,7 @@
                     <?php if (is_logged_in() && isset($_SESSION['username'])): ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i><?php echo htmlspecialchars($_SESSION['username']); ?>
+                                <i class="fas fa-user me-1"></i><?php echo htmlspecialchars(isset($_SESSION['user_name']) ? $_SESSION['user_name'] : $_SESSION['username']); ?>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="?page=profile"><i class="fas fa-user-circle me-2"></i>プロフィール</a></li>

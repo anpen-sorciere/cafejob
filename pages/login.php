@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_name'] = $user['last_name'] . ' ' . $user['first_name'];
             
             $redirect_url = isset($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
             header('Location: ' . $redirect_url);

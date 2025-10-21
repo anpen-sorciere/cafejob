@@ -189,18 +189,6 @@ ob_start();
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="first_name" class="form-label">
-                                    <i class="fas fa-user me-1"></i>名前 *
-                                </label>
-                                <input type="text" class="form-control" id="first_name" name="first_name" 
-                                       value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>" 
-                                       required>
-                                <div class="invalid-feedback">
-                                    名前を入力してください。
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
                                 <label for="last_name" class="form-label">
                                     <i class="fas fa-user me-1"></i>姓 *
                                 </label>
@@ -209,6 +197,18 @@ ob_start();
                                        required>
                                 <div class="invalid-feedback">
                                     姓を入力してください。
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">
+                                    <i class="fas fa-user me-1"></i>名前 *
+                                </label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    名前を入力してください。
                                 </div>
                             </div>
                         </div>
