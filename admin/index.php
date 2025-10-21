@@ -25,35 +25,47 @@ $stats = [
 ];
 
 // 最新の応募情報
-$recent_applications = $db->fetchAll(
-    "SELECT a.*, j.title as job_title, s.name as shop_name, u.username, u.email
-     FROM applications a
-     JOIN jobs j ON a.job_id = j.id
-     JOIN shops s ON j.shop_id = s.id
-     JOIN users u ON a.user_id = u.id
-     ORDER BY a.applied_at DESC
-     LIMIT 10"
-);
+try {
+    $recent_applications = $db->fetchAll(
+        "SELECT a.*, j.title as job_title, s.name as shop_name, u.username, u.email
+         FROM applications a
+         JOIN jobs j ON a.job_id = j.id
+         JOIN shops s ON j.shop_id = s.id
+         JOIN users u ON a.user_id = u.id
+         ORDER BY a.applied_at DESC
+         LIMIT 10"
+    );
+} catch (Exception $e) {
+    $recent_applications = [];
+}
 
 // 最新の店舗登録
-$recent_shops = $db->fetchAll(
-    "SELECT s.*, p.name as prefecture_name, c.name as city_name
-     FROM shops s
-     LEFT JOIN prefectures p ON s.prefecture_id = p.id
-     LEFT JOIN cities c ON s.city_id = c.id
-     ORDER BY s.created_at DESC
-     LIMIT 10"
-);
+try {
+    $recent_shops = $db->fetchAll(
+        "SELECT s.*, p.name as prefecture_name, c.name as city_name
+         FROM shops s
+         LEFT JOIN prefectures p ON s.prefecture_id = p.id
+         LEFT JOIN cities c ON s.city_id = c.id
+         ORDER BY s.created_at DESC
+         LIMIT 10"
+    );
+} catch (Exception $e) {
+    $recent_shops = [];
+}
 
 // 最新の口コミ
-$recent_reviews = $db->fetchAll(
-    "SELECT r.*, s.name as shop_name, u.username
-     FROM reviews r
-     JOIN shops s ON r.shop_id = s.id
-     LEFT JOIN users u ON r.user_id = u.id
-     ORDER BY r.created_at DESC
-     LIMIT 10"
-);
+try {
+    $recent_reviews = $db->fetchAll(
+        "SELECT r.*, s.name as shop_name, u.username
+         FROM reviews r
+         JOIN shops s ON r.shop_id = s.id
+         LEFT JOIN users u ON r.user_id = u.id
+         ORDER BY r.created_at DESC
+         LIMIT 10"
+    );
+} catch (Exception $e) {
+    $recent_reviews = [];
+}
 
 // time_ago関数を定義
 function time_ago($datetime) {
