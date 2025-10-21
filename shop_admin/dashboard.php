@@ -96,7 +96,7 @@ ob_start();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="shop_edit.php">
+                        <a class="nav-link" href="shop_info.php">
                             <i class="fas fa-store me-1"></i>店舗情報
                         </a>
                     </li>
@@ -275,24 +275,19 @@ ob_start();
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-4 mb-2">
                                 <a href="job_create.php" class="btn btn-primary w-100">
                                     <i class="fas fa-plus me-1"></i>新規求人投稿
                                 </a>
                             </div>
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-4 mb-2">
                                 <a href="jobs.php" class="btn btn-outline-primary w-100">
                                     <i class="fas fa-briefcase me-1"></i>求人管理
                                 </a>
                             </div>
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-4 mb-2">
                                 <a href="applications.php" class="btn btn-outline-success w-100">
                                     <i class="fas fa-file-alt me-1"></i>応募管理
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <a href="shop_info.php" class="btn btn-outline-info w-100">
-                                    <i class="fas fa-store me-1"></i>店舗情報編集
                                 </a>
                             </div>
                         </div>
