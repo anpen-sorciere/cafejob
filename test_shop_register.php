@@ -125,13 +125,14 @@ try {
                     $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address;
                     echo "<p>住所組み立て: " . htmlspecialchars($full_address) . "</p>";
                     
-                    $shop_id = $db->query(
+                    $stmt = $db->query(
                         "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, 
                                            opening_hours, concept_type, uniform_type, status, verification_code, verification_sent_at, created_at) 
                          VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'verification_pending', ?, NOW(), NOW())",
                         [$name, $description, $full_address, $prefecture_id, $phone, $email, $website, 
                          $opening_hours, $concept_type, $uniform_type, $verification_code]
-                    )->lastInsertId();
+                    );
+                    $shop_id = $db->getConnection()->lastInsertId();
                     
                     echo "<p>✅ Shop inserted. ID: " . $shop_id . "</p>";
                     
