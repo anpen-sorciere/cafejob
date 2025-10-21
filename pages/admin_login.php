@@ -1,19 +1,16 @@
 <?php
-// システム管理者専用アクセス制限
-$allowed_hosts = ['localhost', '127.0.0.1', 'purplelion51.sakura.ne.jp'];
-$current_host = $_SERVER['HTTP_HOST'] ?? '';
+// 一時的にアクセス制限を無効化（デバッグ用）
+// $allowed_hosts = ['localhost', '127.0.0.1', 'purplelion51.sakura.ne.jp'];
+// $current_host = $_SERVER['HTTP_HOST'] ?? '';
+// $allowed_ips = ['127.0.0.1', '::1'];
+// $client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+// if (!in_array($current_host, $allowed_hosts) && !in_array($client_ip, $allowed_ips)) {
+//     http_response_code(403);
+//     die('アクセスが拒否されました。');
+// }
 
-// 特定のIPアドレスまたはホストからのみアクセス許可
-$allowed_ips = ['127.0.0.1', '::1']; // 開発環境用
-$client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
-
-if (!in_array($current_host, $allowed_hosts) && !in_array($client_ip, $allowed_ips)) {
-    http_response_code(403);
-    die('アクセスが拒否されました。');
-}
-
-$page_title = 'システム管理者ログイン';
-$page_description = 'カフェJobシステム管理者パネルにログインしてください。';
+$page_title = '管理者ログイン';
+$page_description = 'カフェJob管理者パネルにログインしてください。';
 
 // 管理者ログイン処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -51,9 +48,9 @@ ob_start();
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <h2 class="fw-bold">
-                            <i class="fas fa-shield-alt me-2 text-primary"></i>システム管理者ログイン
+                            <i class="fas fa-shield-alt me-2 text-primary"></i>管理者ログイン
                         </h2>
-                        <p class="text-muted">システム管理者パネルにアクセスしてください</p>
+                        <p class="text-muted">管理者パネルにアクセスしてください</p>
                     </div>
                     
                     <?php if (isset($error_message)): ?>
