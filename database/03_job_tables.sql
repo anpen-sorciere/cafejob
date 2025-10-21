@@ -35,3 +35,5 @@ CREATE TABLE applications (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+
+

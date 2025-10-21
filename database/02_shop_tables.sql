@@ -53,3 +53,5 @@ CREATE TABLE casts (
     FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE CASCADE
 );
 
+
+

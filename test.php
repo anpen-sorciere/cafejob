@@ -37,3 +37,5 @@ session_start();
 echo "Session: " . (session_status() === PHP_SESSION_ACTIVE ? 'ACTIVE' : 'INACTIVE') . "<br>";
 ?>
 
+
+

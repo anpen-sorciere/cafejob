@@ -34,6 +34,9 @@ if ($_POST && isset($_POST['action'])) {
 function insertSampleData() {
     global $db;
     
+    // まず都道府県と市区町村データを挿入
+    insertPrefectureAndCityData();
+    
     // サンプル店舗データ
     $sample_shops = [
         [
@@ -247,6 +250,154 @@ function insertSampleData() {
             );
         }
     }
+    
+    // サンプルユーザーデータ
+    $sample_users = [
+        [
+            'username' => 'user1',
+            'email' => 'user1@example.com',
+            'password' => password_hash('password123', PASSWORD_DEFAULT),
+            'first_name' => '花子',
+            'last_name' => '田中',
+            'phone' => '090-1234-5678',
+            'birth_date' => '1995-05-15',
+            'gender' => 'female',
+            'prefecture_id' => 13,
+            'city_id' => 1,
+            'status' => 'active'
+        ],
+        [
+            'username' => 'user2',
+            'email' => 'user2@example.com',
+            'password' => password_hash('password123', PASSWORD_DEFAULT),
+            'first_name' => '太郎',
+            'last_name' => '佐藤',
+            'phone' => '090-2345-6789',
+            'birth_date' => '1998-08-20',
+            'gender' => 'male',
+            'prefecture_id' => 13,
+            'city_id' => 2,
+            'status' => 'active'
+        ],
+        [
+            'username' => 'user3',
+            'email' => 'user3@example.com',
+            'password' => password_hash('password123', PASSWORD_DEFAULT),
+            'first_name' => '美咲',
+            'last_name' => '鈴木',
+            'phone' => '090-3456-7890',
+            'birth_date' => '1996-12-10',
+            'gender' => 'female',
+            'prefecture_id' => 27,
+            'city_id' => 4,
+            'status' => 'active'
+        ]
+    ];
+    
+    // ユーザーデータを挿入
+    foreach ($sample_users as $user_data) {
+        $db->query(
+            "INSERT INTO users (username, email, password, first_name, last_name, phone, birth_date, gender, prefecture_id, city_id, status, created_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+            array_values($user_data)
+        );
+    }
+    
+    // サンプル応募データ
+    $user_ids = $db->fetchAll("SELECT id FROM users ORDER BY id DESC LIMIT 3");
+    $job_ids = $db->fetchAll("SELECT id FROM jobs ORDER BY id DESC LIMIT 5");
+    
+    $sample_applications = [
+        [
+            'user_id' => $user_ids[0]['id'],
+            'job_id' => $job_ids[0]['id'],
+            'status' => 'pending',
+            'message' => 'よろしくお願いします！'
+        ],
+        [
+            'user_id' => $user_ids[1]['id'],
+            'job_id' => $job_ids[1]['id'],
+            'status' => 'pending',
+            'message' => '未経験ですが、頑張ります！'
+        ],
+        [
+            'user_id' => $user_ids[2]['id'],
+            'job_id' => $job_ids[2]['id'],
+            'status' => 'approved',
+            'message' => '面接の機会をいただき、ありがとうございます。'
+        ]
+    ];
+    
+    // 応募データを挿入
+    foreach ($sample_applications as $app_data) {
+        $db->query(
+            "INSERT INTO applications (user_id, job_id, status, message, created_at) 
+             VALUES (?, ?, ?, ?, NOW())",
+            array_values($app_data)
+        );
+    }
+    
+    // サンプル口コミデータ
+    $sample_reviews = [
+        [
+            'user_id' => $user_ids[0]['id'],
+            'shop_id' => $shop_ids[0]['id'],
+            'rating' => 5,
+            'comment' => 'とても楽しい時間を過ごせました！スタッフの方が親切で、また来たいです。',
+            'status' => 'approved'
+        ],
+        [
+            'user_id' => $user_ids[1]['id'],
+            'shop_id' => $shop_ids[1]['id'],
+            'rating' => 4,
+            'comment' => '雰囲気が良くて、料理も美味しかったです。',
+            'status' => 'approved'
+        ]
+    ];
+    
+    // 口コミデータを挿入
+    foreach ($sample_reviews as $review_data) {
+        $db->query(
+            "INSERT INTO reviews (user_id, shop_id, rating, comment, status, created_at) 
+             VALUES (?, ?, ?, ?, ?, NOW())",
+            array_values($review_data)
+        );
+    }
+}
+
+function insertPrefectureAndCityData() {
+    global $db;
+    
+    // 都道府県データ（既存チェック）
+    $prefectures = [
+        ['id' => 13, 'name' => '東京都'],
+        ['id' => 27, 'name' => '大阪府'],
+        ['id' => 23, 'name' => '愛知県']
+    ];
+    
+    foreach ($prefectures as $pref) {
+        $exists = $db->fetch("SELECT id FROM prefectures WHERE id = ?", [$pref['id']]);
+        if (!$exists) {
+            $db->query("INSERT INTO prefectures (id, name) VALUES (?, ?)", [$pref['id'], $pref['name']]);
+        }
+    }
+    
+    // 市区町村データ（既存チェック）
+    $cities = [
+        ['id' => 1, 'prefecture_id' => 13, 'name' => '千代田区'],
+        ['id' => 2, 'prefecture_id' => 13, 'name' => '渋谷区'],
+        ['id' => 3, 'prefecture_id' => 13, 'name' => '新宿区'],
+        ['id' => 4, 'prefecture_id' => 27, 'name' => '大阪市北区'],
+        ['id' => 5, 'prefecture_id' => 23, 'name' => '名古屋市中区']
+    ];
+    
+    foreach ($cities as $city) {
+        $exists = $db->fetch("SELECT id FROM cities WHERE id = ?", [$city['id']]);
+        if (!$exists) {
+            $db->query("INSERT INTO cities (id, prefecture_id, name) VALUES (?, ?, ?)", 
+                      [$city['id'], $city['prefecture_id'], $city['name']]);
+        }
+    }
 }
 
 function clearAllData() {
@@ -370,9 +521,13 @@ ob_start();
                     <div class="card-body">
                         <p>以下のサンプルデータを投入します：</p>
                         <ul>
+                            <li>都道府県・市区町村データ</li>
                             <li>店舗データ（5件）</li>
                             <li>求人データ（5件）</li>
                             <li>キャストデータ（5件）</li>
+                            <li>ユーザーデータ（3件）</li>
+                            <li>応募データ（3件）</li>
+                            <li>口コミデータ（2件）</li>
                         </ul>
                         <form method="POST" onsubmit="return confirm('サンプルデータを投入しますか？')">
                             <input type="hidden" name="action" value="insert_sample_data">

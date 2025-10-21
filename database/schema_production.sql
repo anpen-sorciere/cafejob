@@ -191,3 +191,5 @@ INSERT INTO admins (username, email, password_hash, role) VALUES
 INSERT INTO users (username, email, password_hash, first_name, last_name, status) VALUES 
 ('demo_user', 'demo@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'デモ', 'ユーザー', 'active');
 
+
+

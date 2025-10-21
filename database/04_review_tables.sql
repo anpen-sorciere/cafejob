@@ -28,3 +28,5 @@ CREATE TABLE favorites (
     CHECK ((shop_id IS NOT NULL AND job_id IS NULL) OR (shop_id IS NULL AND job_id IS NOT NULL))
 );
 
+
+

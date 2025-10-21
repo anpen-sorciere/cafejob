@@ -165,3 +165,5 @@ tar -czf cafejob_backup_$(date +%Y%m%d).tar.gz /path/to/cafejob/
 このプロジェクトはMITライセンスの下で公開されています。
 詳細はLICENSEファイルを参照してください。
 
+
+

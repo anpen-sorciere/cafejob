@@ -125,3 +125,5 @@ cp config/config.php.example config/config.php
 
 このプロジェクトは、カフェるんの機能を参考に、PHP+MySQLで実装したコンカフェ専門の求人・集客サイトです。
 
+
+
