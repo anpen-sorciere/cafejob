@@ -1,9 +1,9 @@
-open purplelion51.sakura.ne.jp 
-purplelion51 
-UB5UY-hnMMY= 
+open purplelion51.sakura.ne.jp 21 
+user purplelion51 UB5UY-hnMMY= 
 binary 
 cd cafejob 
 lcd "C:\develop\cafejob" 
+prompt off 
 mput *.php 
 mput *.html 
 mput *.css 
