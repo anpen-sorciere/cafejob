@@ -85,6 +85,9 @@ if ($_POST && isset($_POST['register'])) {
         } catch (Exception $e) {
             $db->getConnection()->rollBack();
             $errors[] = '登録中にエラーが発生しました: ' . $e->getMessage();
+            // デバッグ用：詳細なエラー情報をログに記録
+            error_log('Shop registration error: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
         }
     }
 }
@@ -112,6 +115,13 @@ ob_start();
                                     <li><?php echo htmlspecialchars($error); ?></li>
                                 <?php endforeach; ?>
                             </ul>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (DEBUG_MODE && !empty($errors)): ?>
+                        <div class="alert alert-warning">
+                            <h6>デバッグ情報</h6>
+                            <pre><?php echo htmlspecialchars(print_r($errors, true)); ?></pre>
                         </div>
                     <?php endif; ?>
                     
