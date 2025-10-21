@@ -16,6 +16,12 @@ $page_title = '住所確認';
 $shop_id = get_shop_admin_shop_id();
 $shop_name = get_shop_admin_shop_name();
 
+// セッション情報が不足している場合はログインページにリダイレクト
+if (!$shop_id || !$shop_name) {
+    header('Location: ../?page=shop_login');
+    exit;
+}
+
 // 確認コードの処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
     $input_code = sanitize_input($_POST['verification_code']);
