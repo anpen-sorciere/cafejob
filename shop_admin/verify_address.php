@@ -68,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
     }
 }
 
-// 店舗情報を取得（都道府県名も含む）
+// 店舗情報を取得（都道府県名と郵便番号も含む）
 $shop_info = $db->fetch(
-    "SELECT s.address, s.verification_code, p.name as prefecture_name, c.name as city_name
+    "SELECT s.address, s.verification_code, s.postal_code, p.name as prefecture_name, c.name as city_name
      FROM shops s
      LEFT JOIN prefectures p ON s.prefecture_id = p.id
      LEFT JOIN cities c ON s.city_id = c.id
@@ -80,6 +80,11 @@ $shop_info = $db->fetch(
 
 // 完全な住所を構築
 $full_address = '';
+if (!empty($shop_info['postal_code'])) {
+    $postal_code = str_pad($shop_info['postal_code'], 7, '0', STR_PAD_LEFT);
+    $formatted_postal_code = substr($postal_code, 0, 3) . '-' . substr($postal_code, 3);
+    $full_address .= '〒' . $formatted_postal_code . ' ';
+}
 if (!empty($shop_info['prefecture_name'])) {
     $full_address .= $shop_info['prefecture_name'];
 }
