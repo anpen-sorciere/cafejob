@@ -20,6 +20,7 @@ if ($_POST && isset($_POST['register'])) {
     $admin_last_name = sanitize_input($_POST['admin_last_name']);
     $admin_first_name = sanitize_input($_POST['admin_first_name']);
     $admin_email = sanitize_input($_POST['admin_email']);
+    $admin_email_confirm = sanitize_input($_POST['admin_email_confirm']);
     $admin_password = $_POST['admin_password'];
     $admin_password_confirm = $_POST['admin_password_confirm'];
     
@@ -32,9 +33,11 @@ if ($_POST && isset($_POST['register'])) {
     if (!$prefecture_id) $errors[] = '都道府県を選択してください';
     if (empty($phone)) $errors[] = '電話番号を入力してください';
     if (empty($email) || !validate_email($email)) $errors[] = '有効なメールアドレスを入力してください';
-    if (empty($admin_last_name)) $errors[] = '管理者の姓を入力してください';
-    if (empty($admin_first_name)) $errors[] = '管理者の名前を入力してください';
-    if (empty($admin_email) || !validate_email($admin_email)) $errors[] = '有効な管理者メールアドレスを入力してください';
+    if (empty($admin_last_name)) $errors[] = '姓を入力してください';
+    if (empty($admin_first_name)) $errors[] = '名前を入力してください';
+    if (empty($admin_email) || !validate_email($admin_email)) $errors[] = '有効なメールアドレスを入力してください';
+    if (empty($admin_email_confirm) || !validate_email($admin_email_confirm)) $errors[] = '有効なメールアドレス確認を入力してください';
+    if ($admin_email !== $admin_email_confirm) $errors[] = 'メールアドレスが一致しません';
     if (empty($admin_password)) $errors[] = 'パスワードを入力してください';
     if ($admin_password !== $admin_password_confirm) $errors[] = 'パスワードが一致しません';
     
@@ -229,44 +232,44 @@ ob_start();
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="admin_last_name" class="form-label">管理者の姓 <span class="text-danger">*</span></label>
+                                <label for="admin_last_name" class="form-label">姓 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="admin_last_name" name="admin_last_name" 
                                        value="<?php echo htmlspecialchars($_POST['admin_last_name'] ?? ''); ?>" required>
-                                <div class="invalid-feedback">管理者の姓を入力してください</div>
+                                <div class="invalid-feedback">姓を入力してください</div>
                             </div>
                             <div class="col-md-6">
-                                <label for="admin_first_name" class="form-label">管理者の名前 <span class="text-danger">*</span></label>
+                                <label for="admin_first_name" class="form-label">名前 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="admin_first_name" name="admin_first_name" 
                                        value="<?php echo htmlspecialchars($_POST['admin_first_name'] ?? ''); ?>" required>
-                                <div class="invalid-feedback">管理者の名前を入力してください</div>
+                                <div class="invalid-feedback">名前を入力してください</div>
                             </div>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="admin_email" class="form-label">管理者メールアドレス <span class="text-danger">*</span></label>
+                                <label for="admin_email" class="form-label">メールアドレス <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="admin_email" name="admin_email" 
                                        value="<?php echo htmlspecialchars($_POST['admin_email'] ?? ''); ?>" required>
-                                <div class="invalid-feedback">有効な管理者メールアドレスを入力してください</div>
+                                <div class="invalid-feedback">有効なメールアドレスを入力してください</div>
                             </div>
+                            <div class="col-md-6">
+                                <label for="admin_email_confirm" class="form-label">メールアドレス確認 <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="admin_email_confirm" name="admin_email_confirm" 
+                                       value="<?php echo htmlspecialchars($_POST['admin_email_confirm'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">メールアドレス確認を入力してください</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="admin_password" class="form-label">パスワード <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="admin_password" name="admin_password" required>
                                 <div class="invalid-feedback">パスワードを入力してください</div>
                             </div>
-                        </div>
-                        
-                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="admin_password_confirm" class="form-label">パスワード確認 <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="admin_password_confirm" name="admin_password_confirm" required>
                                 <div class="invalid-feedback">パスワード確認を入力してください</div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-text">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    ログイン時はメールアドレスとパスワードを使用します
-                                </div>
                             </div>
                         </div>
                         
@@ -401,6 +404,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('admin_password');
     const passwordConfirmInput = document.getElementById('admin_password_confirm');
     
+    // メールアドレス確認のリアルタイムチェック
+    const emailInput = document.getElementById('admin_email');
+    const emailConfirmInput = document.getElementById('admin_email_confirm');
+    
     function checkPasswordMatch() {
         if (passwordConfirmInput.value && passwordInput.value !== passwordConfirmInput.value) {
             passwordConfirmInput.setCustomValidity('パスワードが一致しません');
@@ -409,8 +416,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    function checkEmailMatch() {
+        if (emailConfirmInput.value && emailInput.value !== emailConfirmInput.value) {
+            emailConfirmInput.setCustomValidity('メールアドレスが一致しません');
+        } else {
+            emailConfirmInput.setCustomValidity('');
+        }
+    }
+    
     passwordInput.addEventListener('input', checkPasswordMatch);
     passwordConfirmInput.addEventListener('input', checkPasswordMatch);
+    emailInput.addEventListener('input', checkEmailMatch);
+    emailConfirmInput.addEventListener('input', checkEmailMatch);
     
     // Bootstrapバリデーション
     const form = document.querySelector('.needs-validation');
