@@ -34,22 +34,21 @@ $casts = $db->fetchAll(
 if ($_POST && isset($_POST['add_cast'])) {
     $name = sanitize_input($_POST['name']);
     $age = !empty($_POST['age']) ? (int)$_POST['age'] : null;
-    $description = sanitize_input($_POST['description']);
-    $specialty = sanitize_input($_POST['specialty']);
+    $hobby = sanitize_input($_POST['hobby']);
+    $special_skill = sanitize_input($_POST['special_skill']);
     $status = sanitize_input($_POST['status']);
     
     $errors = [];
     
     // バリデーション
     if (empty($name)) $errors[] = 'キャスト名を入力してください';
-    if (empty($description)) $errors[] = 'キャスト説明を入力してください';
     
     if (empty($errors)) {
         try {
             $db->query(
-                "INSERT INTO casts (shop_id, name, age, description, specialty, status, created_at, updated_at) 
+                "INSERT INTO casts (shop_id, name, age, hobby, special_skill, status, created_at, updated_at) 
                  VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())",
-                [$shop_id, $name, $age, $description, $specialty, $status]
+                [$shop_id, $name, $age, $hobby, $special_skill, $status]
             );
             
             $_SESSION['success_message'] = 'キャストを追加しました。';
@@ -67,8 +66,8 @@ if ($_POST && isset($_POST['update_cast'])) {
     $cast_id = (int)$_POST['cast_id'];
     $name = sanitize_input($_POST['name']);
     $age = !empty($_POST['age']) ? (int)$_POST['age'] : null;
-    $description = sanitize_input($_POST['description']);
-    $specialty = sanitize_input($_POST['specialty']);
+    $hobby = sanitize_input($_POST['hobby']);
+    $special_skill = sanitize_input($_POST['special_skill']);
     $status = sanitize_input($_POST['status']);
     
     // 自分の店舗のキャストかチェック
@@ -77,9 +76,9 @@ if ($_POST && isset($_POST['update_cast'])) {
     if ($cast) {
         try {
             $db->query(
-                "UPDATE casts SET name = ?, age = ?, description = ?, specialty = ?, status = ?, updated_at = NOW() 
+                "UPDATE casts SET name = ?, age = ?, hobby = ?, special_skill = ?, status = ?, updated_at = NOW() 
                  WHERE id = ? AND shop_id = ?",
-                [$name, $age, $description, $specialty, $status, $cast_id, $shop_id]
+                [$name, $age, $hobby, $special_skill, $status, $cast_id, $shop_id]
             );
             
             $_SESSION['success_message'] = 'キャスト情報を更新しました。';
@@ -220,8 +219,8 @@ ob_start();
                                 <div class="card h-100">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0"><?php echo htmlspecialchars($cast['name']); ?></h6>
-                                        <span class="badge bg-<?php echo $cast['status'] === 'active' ? 'success' : ($cast['status'] === 'inactive' ? 'warning' : 'secondary'); ?>">
-                                            <?php echo $cast['status'] === 'active' ? '在籍中' : ($cast['status'] === 'inactive' ? '休職中' : '退職'); ?>
+                                        <span class="badge bg-<?php echo $cast['status'] === 'active' ? 'success' : 'warning'; ?>">
+                                            <?php echo $cast['status'] === 'active' ? '在籍中' : '非アクティブ'; ?>
                                         </span>
                                     </div>
                                     <div class="card-body">
@@ -235,15 +234,17 @@ ob_start();
                                                 <div class="fw-bold"><?php echo $cast['job_count']; ?>件</div>
                                             </div>
                                         </div>
-                                        <?php if (!empty($cast['specialty'])): ?>
+                                        <?php if (!empty($cast['special_skill'])): ?>
                                             <div class="mb-3">
                                                 <small class="text-muted">特技・専門</small>
-                                                <div class="small"><?php echo htmlspecialchars($cast['specialty']); ?></div>
+                                                <div class="small"><?php echo htmlspecialchars($cast['special_skill']); ?></div>
                                             </div>
                                         <?php endif; ?>
-                                        <p class="card-text text-muted small">
-                                            <?php echo htmlspecialchars(mb_substr($cast['description'], 0, 80)) . (mb_strlen($cast['description']) > 80 ? '...' : ''); ?>
-                                        </p>
+                                        <?php if (!empty($cast['hobby'])): ?>
+                                            <p class="card-text text-muted small">
+                                                <?php echo htmlspecialchars(mb_substr($cast['hobby'], 0, 80)) . (mb_strlen($cast['hobby']) > 80 ? '...' : ''); ?>
+                                            </p>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="card-footer">
                                         <div class="d-flex gap-2">
@@ -296,23 +297,22 @@ ob_start();
                                                 </div>
                                                 
                                                 <div class="mb-3">
-                                                    <label for="description<?php echo $cast['id']; ?>" class="form-label">キャスト説明 <span class="text-danger">*</span></label>
-                                                    <textarea class="form-control" id="description<?php echo $cast['id']; ?>" name="description" 
-                                                              rows="3" required><?php echo htmlspecialchars($cast['description']); ?></textarea>
+                                                    <label for="hobby<?php echo $cast['id']; ?>" class="form-label">趣味・特技</label>
+                                                    <textarea class="form-control" id="hobby<?php echo $cast['id']; ?>" name="hobby" 
+                                                              rows="3"><?php echo htmlspecialchars($cast['hobby']); ?></textarea>
                                                 </div>
                                                 
                                                 <div class="mb-3">
-                                                    <label for="specialty<?php echo $cast['id']; ?>" class="form-label">特技・専門</label>
-                                                    <input type="text" class="form-control" id="specialty<?php echo $cast['id']; ?>" name="specialty" 
-                                                           value="<?php echo htmlspecialchars($cast['specialty']); ?>">
+                                                    <label for="special_skill<?php echo $cast['id']; ?>" class="form-label">特技・専門</label>
+                                                    <input type="text" class="form-control" id="special_skill<?php echo $cast['id']; ?>" name="special_skill" 
+                                                           value="<?php echo htmlspecialchars($cast['special_skill']); ?>">
                                                 </div>
                                                 
                                                 <div class="mb-3">
                                                     <label for="status<?php echo $cast['id']; ?>" class="form-label">ステータス</label>
                                                     <select class="form-select" id="status<?php echo $cast['id']; ?>" name="status">
                                                         <option value="active" <?php echo $cast['status'] === 'active' ? 'selected' : ''; ?>>在籍中</option>
-                                                        <option value="inactive" <?php echo $cast['status'] === 'inactive' ? 'selected' : ''; ?>>休職中</option>
-                                                        <option value="retired" <?php echo $cast['status'] === 'retired' ? 'selected' : ''; ?>>退職</option>
+                                                        <option value="inactive" <?php echo $cast['status'] === 'inactive' ? 'selected' : ''; ?>>非アクティブ</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -354,14 +354,14 @@ ob_start();
                         </div>
                         
                         <div class="mb-3">
-                            <label for="description" class="form-label">キャスト説明 <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="description" name="description" rows="3" 
-                                      placeholder="キャストの特徴や魅力を記載してください" required></textarea>
+                            <label for="hobby" class="form-label">趣味・特技</label>
+                            <textarea class="form-control" id="hobby" name="hobby" rows="3" 
+                                      placeholder="キャストの趣味や特技を記載してください"></textarea>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="specialty" class="form-label">特技・専門</label>
-                            <input type="text" class="form-control" id="specialty" name="specialty" 
+                            <label for="special_skill" class="form-label">特技・専門</label>
+                            <input type="text" class="form-control" id="special_skill" name="special_skill" 
                                    placeholder="例: 歌、ダンス、接客、料理など">
                         </div>
                         
@@ -369,8 +369,7 @@ ob_start();
                             <label for="status" class="form-label">ステータス</label>
                             <select class="form-select" id="status" name="status">
                                 <option value="active">在籍中</option>
-                                <option value="inactive">休職中</option>
-                                <option value="retired">退職</option>
+                                <option value="inactive">非アクティブ</option>
                             </select>
                         </div>
                     </div>
