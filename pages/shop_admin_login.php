@@ -1,42 +1,33 @@
 <?php
-// システム管理者専用アクセス制限
-$allowed_hosts = ['localhost', '127.0.0.1', 'purplelion51.sakura.ne.jp'];
-$current_host = $_SERVER['HTTP_HOST'] ?? '';
+$page_title = '店舗管理者ログイン';
+$page_description = 'カフェJob店舗管理者パネルにログインしてください。';
 
-// 特定のIPアドレスまたはホストからのみアクセス許可
-$allowed_ips = ['127.0.0.1', '::1']; // 開発環境用
-$client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
-
-if (!in_array($current_host, $allowed_hosts) && !in_array($client_ip, $allowed_ips)) {
-    http_response_code(403);
-    die('アクセスが拒否されました。');
-}
-
-$page_title = 'システム管理者ログイン';
-$page_description = 'カフェJobシステム管理者パネルにログインしてください。';
-
-// 管理者ログイン処理
+// 店舗管理者ログイン処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = sanitize_input($_POST['username']);
+    $email = sanitize_input($_POST['email']);
     $password = $_POST['password'];
     
-    if (empty($username) || empty($password)) {
-        $error_message = 'ユーザー名とパスワードを入力してください。';
+    if (empty($email) || empty($password)) {
+        $error_message = 'メールアドレスとパスワードを入力してください。';
     } else {
-        $admin = $db->fetch(
-            "SELECT * FROM admins WHERE username = ? AND status = 'active'",
-            [$username]
+        $shop_admin = $db->fetch(
+            "SELECT sa.*, s.name as shop_name, s.id as shop_id
+             FROM shop_admins sa
+             JOIN shops s ON sa.shop_id = s.id
+             WHERE sa.email = ? AND sa.status = 'active'",
+            [$email]
         );
         
-        if ($admin && verify_password($password, $admin['password_hash'])) {
-            $_SESSION['admin_id'] = $admin['id'];
-            $_SESSION['admin_username'] = $admin['username'];
-            $_SESSION['admin_role'] = $admin['role'];
+        if ($shop_admin && verify_password($password, $shop_admin['password_hash'])) {
+            $_SESSION['shop_admin_id'] = $shop_admin['id'];
+            $_SESSION['shop_admin_email'] = $shop_admin['email'];
+            $_SESSION['shop_id'] = $shop_admin['shop_id'];
+            $_SESSION['shop_name'] = $shop_admin['shop_name'];
             
-            header('Location: admin/index.php');
+            header('Location: shop_admin/dashboard.php');
             exit;
         } else {
-            $error_message = 'ユーザー名またはパスワードが正しくありません。';
+            $error_message = 'メールアドレスまたはパスワードが正しくありません。';
         }
     }
 }
@@ -51,9 +42,9 @@ ob_start();
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <h2 class="fw-bold">
-                            <i class="fas fa-shield-alt me-2 text-primary"></i>システム管理者ログイン
+                            <i class="fas fa-store me-2 text-primary"></i>店舗管理者ログイン
                         </h2>
-                        <p class="text-muted">システム管理者パネルにアクセスしてください</p>
+                        <p class="text-muted">店舗管理パネルにアクセスしてください</p>
                     </div>
                     
                     <?php if (isset($error_message)): ?>
@@ -65,14 +56,14 @@ ob_start();
                     
                     <form method="POST" class="needs-validation" novalidate>
                         <div class="mb-3">
-                            <label for="username" class="form-label">
-                                <i class="fas fa-user me-1"></i>ユーザー名
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>メールアドレス
                             </label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" 
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
                                    required>
                             <div class="invalid-feedback">
-                                ユーザー名を入力してください。
+                                メールアドレスを入力してください。
                             </div>
                         </div>
                         
@@ -89,6 +80,12 @@ ob_start();
                             <div class="invalid-feedback">
                                 パスワードを入力してください。
                             </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <a href="?page=shop_forgot_password" class="text-decoration-none">
+                                パスワードを忘れた方はこちら
+                            </a>
                         </div>
                         
                         <div class="d-grid mb-3">
@@ -108,24 +105,19 @@ ob_start();
                 </div>
             </div>
             
-            <!-- デモ管理者アカウント情報 -->
+            <!-- 店舗登録案内 -->
             <div class="card mt-4">
                 <div class="card-body">
                     <h6 class="card-title">
-                        <i class="fas fa-info-circle me-2 text-info"></i>デモ管理者アカウント
+                        <i class="fas fa-info-circle me-2 text-info"></i>店舗登録について
                     </h6>
                     <p class="card-text small text-muted mb-2">
-                        テスト用の管理者アカウントでログインできます
+                        まだ店舗登録をされていない場合は、まず店舗登録を行ってください。
                     </p>
-                    <div class="row">
-                        <div class="col-6">
-                            <strong>ユーザー名:</strong><br>
-                            <code>admin</code>
-                        </div>
-                        <div class="col-6">
-                            <strong>パスワード:</strong><br>
-                            <code>admin123</code>
-                        </div>
+                    <div class="d-grid">
+                        <a href="?page=shop_register" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-store me-1"></i>店舗登録
+                        </a>
                     </div>
                 </div>
             </div>
@@ -154,6 +146,3 @@ function togglePassword() {
 $content = ob_get_clean();
 include 'includes/layout.php';
 ?>
-
-
-

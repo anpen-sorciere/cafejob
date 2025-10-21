@@ -222,4 +222,24 @@ function display_error($message) {
 function display_success($message) {
     return '<div class="alert alert-success">' . htmlspecialchars($message) . '</div>';
 }
+
+// 店舗管理者認証関数
+function is_shop_admin() {
+    return isset($_SESSION['shop_admin_id']) && !empty($_SESSION['shop_admin_id']);
+}
+
+function require_shop_admin() {
+    if (!is_shop_admin()) {
+        header('Location: ../?page=shop_admin_login');
+        exit;
+    }
+}
+
+function get_shop_admin_shop_id() {
+    return $_SESSION['shop_id'] ?? null;
+}
+
+function get_shop_admin_shop_name() {
+    return $_SESSION['shop_name'] ?? null;
+}
 ?>
