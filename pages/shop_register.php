@@ -60,13 +60,14 @@ if ($_POST && isset($_POST['register'])) {
             
             // 店舗データを挿入（city_idはNULLにして、市区町村名をaddressに含める）
             $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address; // 市区町村名 + 住所
-            $shop_id = $db->query(
+            $stmt = $db->query(
                 "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, 
                                    opening_hours, concept_type, uniform_type, status, verification_code, verification_sent_at, created_at) 
                  VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'verification_pending', ?, NOW(), NOW())",
                 [$name, $description, $full_address, $prefecture_id, $phone, $email, $website, 
                  $opening_hours, $concept_type, $uniform_type, $verification_code]
-            )->lastInsertId();
+            );
+            $shop_id = $db->getConnection()->lastInsertId();
             
             // 店舗管理者データを挿入
             $password_hash = hash_password($admin_password);
