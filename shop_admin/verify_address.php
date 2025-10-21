@@ -68,8 +68,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
     }
 }
 
-// 店舗情報を取得
-$shop_info = $db->fetch("SELECT address, verification_code FROM shops WHERE id = ?", [$shop_id]);
+// 店舗情報を取得（都道府県名も含む）
+$shop_info = $db->fetch(
+    "SELECT s.address, s.verification_code, p.name as prefecture_name, c.name as city_name
+     FROM shops s
+     LEFT JOIN prefectures p ON s.prefecture_id = p.id
+     LEFT JOIN cities c ON s.city_id = c.id
+     WHERE s.id = ?", 
+    [$shop_id]
+);
+
+// 完全な住所を構築
+$full_address = '';
+if (!empty($shop_info['prefecture_name'])) {
+    $full_address .= $shop_info['prefecture_name'];
+}
+if (!empty($shop_info['city_name'])) {
+    $full_address .= $shop_info['city_name'];
+}
+if (!empty($shop_info['address'])) {
+    $full_address .= $shop_info['address'];
+}
 
 ob_start();
 ?>
@@ -116,7 +135,7 @@ ob_start();
 
                         <div class="mb-4">
                             <h6 class="text-muted">送信先住所</h6>
-                            <p class="fw-bold"><?php echo htmlspecialchars($shop_info['address']); ?></p>
+                            <p class="fw-bold"><?php echo htmlspecialchars($full_address); ?></p>
                         </div>
 
                         <?php if (isset($error_message)): ?>
