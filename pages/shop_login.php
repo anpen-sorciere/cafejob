@@ -4,12 +4,12 @@ $page_description = '店舗管理者のログインを行います。';
 
 // ログイン処理
 if ($_POST && isset($_POST['login'])) {
-    $username = sanitize_input($_POST['username']);
+    $email = sanitize_input($_POST['email']);
     $password = $_POST['password'];
     
     $errors = [];
     
-    if (empty($username)) $errors[] = 'ユーザー名を入力してください';
+    if (empty($email)) $errors[] = 'メールアドレスを入力してください';
     if (empty($password)) $errors[] = 'パスワードを入力してください';
     
     if (empty($errors)) {
@@ -17,21 +17,30 @@ if ($_POST && isset($_POST['login'])) {
             "SELECT sa.*, s.name as shop_name, s.status as shop_status
              FROM shop_admins sa
              JOIN shops s ON sa.shop_id = s.id
-             WHERE sa.username = ? AND sa.status = 'active'",
-            [$username]
+             WHERE sa.email = ? AND sa.status = 'active'",
+            [$email]
         );
         
         if ($shop_admin && verify_password($password, $shop_admin['password_hash'])) {
             $_SESSION['shop_admin_id'] = $shop_admin['id'];
+            $_SESSION['shop_admin_email'] = $shop_admin['email'];
             $_SESSION['shop_admin_username'] = $shop_admin['username'];
             $_SESSION['shop_id'] = $shop_admin['shop_id'];
             $_SESSION['shop_name'] = $shop_admin['shop_name'];
+            $_SESSION['shop_status'] = $shop_admin['shop_status'];
             
             $_SESSION['success_message'] = 'ログインしました。';
+            
+            // 住所確認が必要な場合は確認ページにリダイレクト
+            if ($shop_admin['shop_status'] === 'verification_pending') {
+                header('Location: ?page=shop_admin_login');
+                exit;
+            }
+            
             header('Location: ?page=shop_dashboard');
             exit;
         } else {
-            $errors[] = 'ユーザー名またはパスワードが正しくありません';
+            $errors[] = 'メールアドレスまたはパスワードが正しくありません';
         }
     }
 }
@@ -61,9 +70,9 @@ ob_start();
                     
                     <form method="POST">
                         <div class="mb-3">
-                            <label for="username" class="form-label">ユーザー名</label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>" required>
+                            <label for="email" class="form-label">メールアドレス</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
                         </div>
                         
                         <div class="mb-3">
