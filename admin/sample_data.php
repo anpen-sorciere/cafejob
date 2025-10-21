@@ -119,8 +119,8 @@ function insertSampleData() {
     // 店舗データを挿入
     foreach ($sample_shops as $shop_data) {
         $db->query(
-            "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, opening_hours, concept_type, uniform_type, image_url, status, created_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+            "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, opening_hours, concept_type, uniform_type, image_url, status) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             array_values($shop_data)
         );
     }
@@ -214,8 +214,8 @@ function insertSampleData() {
     // 求人データを挿入
     foreach ($sample_jobs as $job_data) {
         $db->query(
-            "INSERT INTO jobs (shop_id, title, description, job_type, salary_min, salary_max, work_hours, requirements, benefits, gender_requirement, age_min, age_max, status, application_deadline, created_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+            "INSERT INTO jobs (shop_id, title, description, job_type, salary_min, salary_max, work_hours, requirements, benefits, gender_requirement, age_min, age_max, status, application_deadline) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             array_values($job_data)
         );
     }
@@ -234,8 +234,8 @@ function insertSampleData() {
         if (isset($cast_names[$index])) {
             $cast = $cast_names[$index];
             $db->query(
-                "INSERT INTO casts (shop_id, name, nickname, age, height, blood_type, hobby, special_skill, profile_image, status, created_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())",
+                "INSERT INTO casts (shop_id, name, nickname, age, height, blood_type, hobby, special_skill, profile_image, status) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')",
                 [
                     $shop['id'],
                     $cast['name'],
@@ -291,8 +291,8 @@ function insertSampleData() {
     // ユーザーデータを挿入
     foreach ($sample_users as $user_data) {
         $db->query(
-            "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, birth_date, gender, status, created_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+            "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, birth_date, gender, status) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             array_values($user_data)
         );
     }
@@ -325,8 +325,8 @@ function insertSampleData() {
     // 応募データを挿入
     foreach ($sample_applications as $app_data) {
         $db->query(
-            "INSERT INTO applications (user_id, job_id, status, message, created_at) 
-             VALUES (?, ?, ?, ?, NOW())",
+            "INSERT INTO applications (user_id, job_id, status, message) 
+             VALUES (?, ?, ?, ?)",
             array_values($app_data)
         );
     }
@@ -352,8 +352,8 @@ function insertSampleData() {
     // 口コミデータを挿入
     foreach ($sample_reviews as $review_data) {
         $db->query(
-            "INSERT INTO reviews (user_id, shop_id, rating, comment, status, created_at) 
-             VALUES (?, ?, ?, ?, ?, NOW())",
+            "INSERT INTO reviews (user_id, shop_id, rating, comment, status) 
+             VALUES (?, ?, ?, ?, ?)",
             array_values($review_data)
         );
     }
