@@ -116,7 +116,7 @@ ob_start();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="casts.php">
+                        <a class="nav-link" href="cast_management.php">
                             <i class="fas fa-users me-1"></i>キャスト管理
                         </a>
                     </li>
