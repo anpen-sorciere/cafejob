@@ -1,6 +1,6 @@
 <?php
 // 管理者パネルからのアクセスかどうかを判定してパスを調整
-if (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) {
+if (strpos($_SERVER['PHP_SELF'], '/admin/') !== false || strpos($_SERVER['PHP_SELF'], '/shop_admin/') !== false) {
     require_once '../config/config.php';
     require_once '../config/database.php';
 } else {
