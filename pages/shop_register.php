@@ -9,7 +9,7 @@ if ($_POST && isset($_POST['register'])) {
     $postal_code = sanitize_input($_POST['postal_code']);
     $address = sanitize_input($_POST['address']);
     $prefecture_id = (int)$_POST['prefecture_id'];
-    $city_id = (int)$_POST['city_id'];
+    $city_name = sanitize_input($_POST['city_id']); // 市区町村名をテキストとして取得
     $phone = sanitize_input($_POST['phone']);
     $email = sanitize_input($_POST['email']);
     $website = sanitize_input($_POST['website']);
@@ -31,6 +31,7 @@ if ($_POST && isset($_POST['register'])) {
     if (empty($name)) $errors[] = '店舗名を入力してください';
     if (empty($description)) $errors[] = '店舗説明を入力してください';
     if (empty($postal_code)) $errors[] = '郵便番号を入力してください';
+    if (empty($city_name)) $errors[] = '市区町村名を入力してください';
     if (empty($address)) $errors[] = '住所を入力してください';
     if (!$prefecture_id) $errors[] = '都道府県を選択してください';
     if (empty($phone)) $errors[] = '電話番号を入力してください';
@@ -63,13 +64,6 @@ if ($_POST && isset($_POST['register'])) {
             // 郵便番号を7桁の文字列として保存（先頭の0を保持）
             $postal_code_clean = str_replace('-', '', $postal_code);
             $postal_code_padded = str_pad($postal_code_clean, 7, '0', STR_PAD_LEFT);
-            
-            // 市区町村名を取得
-            $city_name = '';
-            if ($city_id) {
-                $city_data = $db->fetch("SELECT name FROM cities WHERE id = ?", [$city_id]);
-                $city_name = $city_data ? $city_data['name'] : '';
-            }
             
             // 完全な住所を構築（市区町村名 + 詳細住所）
             $full_address = $city_name . $address;
@@ -203,10 +197,11 @@ ob_start();
                                 <div class="invalid-feedback">都道府県を選択してください</div>
                             </div>
                             <div class="col-md-6">
-                                <label for="city_id" class="form-label">市区町村</label>
+                                <label for="city_id" class="form-label">市区町村 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="city_id" name="city_id" 
-                                       value="<?php echo htmlspecialchars($_POST['city_id'] ?? ''); ?>">
-                                <div class="form-text">市区町村名を入力してください（任意）</div>
+                                       placeholder="例: 大阪市浪速区"
+                                       value="<?php echo htmlspecialchars($_POST['city_id'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">市区町村名を入力してください</div>
                             </div>
                         </div>
                         
