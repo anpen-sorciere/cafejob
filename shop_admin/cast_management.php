@@ -2,7 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once 'includes.php';
+
+// ファイル読み込み
+require_once '../config/config.php';
+require_once '../config/database.php';
+require_once '../includes/functions.php';
 
 // 店舗管理者認証チェック
 if (!is_shop_admin()) {
