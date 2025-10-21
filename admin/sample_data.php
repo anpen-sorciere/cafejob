@@ -235,7 +235,7 @@ function insertSampleData() {
             $cast = $cast_names[$index];
             $db->query(
                 "INSERT INTO casts (shop_id, name, nickname, age, height, blood_type, hobby, special_skill, profile_image, status) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')",
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     $shop['id'],
                     $cast['name'],
@@ -245,7 +245,8 @@ function insertSampleData() {
                     $cast['blood_type'],
                     $cast['hobby'],
                     $cast['special_skill'],
-                    'https://via.placeholder.com/200x200/FF69B4/FFFFFF?text=' . $cast['name']
+                    'https://via.placeholder.com/200x200/FF69B4/FFFFFF?text=' . $cast['name'],
+                    'active'
                 ]
             );
         }
@@ -317,7 +318,7 @@ function insertSampleData() {
         [
             'user_id' => $user_ids[2]['id'],
             'job_id' => $job_ids[2]['id'],
-            'status' => 'approved',
+            'status' => 'accepted',
             'message' => '面接の機会をいただき、ありがとうございます。'
         ]
     ];
