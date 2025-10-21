@@ -1,0 +1,39 @@
+# シンプルな.htaccess設定
+# 基本的な設定のみ
+
+# ディレクトリインデックス
+DirectoryIndex index.php index.html
+
+# セキュリティヘッダー（基本的なもののみ）
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# ディレクトリリスティング無効
+Options -Indexes
+
+# 設定ファイルへの直接アクセス禁止
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "database.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# ログファイルへの直接アクセス禁止
+<Files "*.log">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# SQLファイルへの直接アクセス禁止
+<Files "*.sql">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
