@@ -81,8 +81,8 @@ $shop_info = $db->fetch(
 // 完全な住所を構築
 $full_address = '';
 if (!empty($shop_info['postal_code'])) {
-    $postal_code = str_pad($shop_info['postal_code'], 7, '0', STR_PAD_LEFT);
-    $formatted_postal_code = substr($postal_code, 0, 3) . '-' . substr($postal_code, 3);
+    $postal_code_str = str_pad($shop_info['postal_code'], 7, '0', STR_PAD_LEFT);
+    $formatted_postal_code = substr($postal_code_str, 0, 3) . '-' . substr($postal_code_str, 3);
     $full_address .= '〒' . $formatted_postal_code . ' ';
 }
 if (!empty($shop_info['prefecture_name'])) {

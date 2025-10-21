@@ -60,8 +60,9 @@ if ($_POST && isset($_POST['register'])) {
             // 6桁の確認コードを生成
             $verification_code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             
-            // 郵便番号を数値に変換（ハイフンを除去）
-            $postal_code_numeric = (int)str_replace('-', '', $postal_code);
+            // 郵便番号を7桁の文字列として保存（先頭の0を保持）
+            $postal_code_clean = str_replace('-', '', $postal_code);
+            $postal_code_padded = str_pad($postal_code_clean, 7, '0', STR_PAD_LEFT);
             
             // 店舗データを挿入（city_idはNULLにして、市区町村名をaddressに含める）
             $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address; // 市区町村名 + 住所
@@ -69,7 +70,7 @@ if ($_POST && isset($_POST['register'])) {
                 "INSERT INTO shops (name, description, postal_code, address, prefecture_id, city_id, phone, email, website, 
                                    opening_hours, concept_type, uniform_type, status, verification_code, verification_sent_at, created_at) 
                  VALUES (?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'verification_pending', ?, NOW(), NOW())",
-                [$name, $description, $postal_code_numeric, $full_address, $prefecture_id, $phone, $email, $website, 
+                [$name, $description, $postal_code_padded, $full_address, $prefecture_id, $phone, $email, $website, 
                  $opening_hours, $concept_type, $uniform_type, $verification_code]
             );
             $shop_id = $db->getConnection()->lastInsertId();
