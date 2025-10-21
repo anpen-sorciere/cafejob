@@ -163,6 +163,58 @@ ob_start();
             </div>
         </div>
         
+        <!-- URL情報カード -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-info">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-link me-2"></i>サイトURL情報
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-users fa-2x text-primary me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">ユーザートップページ</h6>
+                                        <p class="mb-0 text-muted">一般ユーザー向けメインページ</p>
+                                        <a href="<?php echo SITE_URL; ?>" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>サイトを表示
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-store fa-2x text-success me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">店舗ログインページ</h6>
+                                        <p class="mb-0 text-muted">店舗管理者向けログインページ</p>
+                                        <a href="<?php echo SITE_URL; ?>?page=shop_login" target="_blank" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>店舗ログイン
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-light mb-0">
+                                    <small class="text-muted">
+                                        <strong>ユーザートップページ:</strong> <?php echo SITE_URL; ?><br>
+                                        <strong>店舗ログインページ:</strong> <?php echo SITE_URL; ?>?page=shop_login<br>
+                                        <strong>システム管理者ログイン:</strong> <?php echo SITE_URL; ?>?page=admin_login
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- 統計カード -->
         <div class="row mb-4">
             <div class="col-xl-3 col-md-6 mb-4">
