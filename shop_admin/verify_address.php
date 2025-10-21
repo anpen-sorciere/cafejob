@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
             
             $_SESSION['shop_status'] = 'active';
             $_SESSION['success_message'] = '住所確認が完了しました。店舗がアクティブになりました。';
-            header('Location: dashboard.php');
+            header('Location: ../?page=shop_dashboard');
             exit;
         } else {
             $error_message = '確認コードが正しくありません。郵便に記載された6桁の数字を正確に入力してください。';
