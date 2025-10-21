@@ -376,6 +376,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     prefectureSelect.classList.remove('is-invalid');
                     prefectureSelect.classList.add('is-valid');
                     
+                    // フォームのバリデーション状態を強制更新
+                    setTimeout(() => {
+                        prefectureSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    }, 100);
+                    
                     // 市区町村を設定
                     cityInput.value = result.address2;
                     
@@ -389,6 +394,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     cityInput.classList.add('is-valid');
                     addressInput.classList.remove('is-invalid');
                     addressInput.classList.add('is-valid');
+                    
+                    // フォームのバリデーション状態を強制更新
+                    setTimeout(() => {
+                        cityInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }, 100);
                     
                     // 成功メッセージ
                     showMessage('住所を自動補完しました。番地・建物名を追加してください。', 'success');
@@ -465,34 +476,48 @@ document.addEventListener('DOMContentLoaded', function() {
     // Bootstrapバリデーション
     const form = document.querySelector('.needs-validation');
     form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
+        console.log('フォーム送信開始');
+        
+        // すべての入力要素のバリデーション状態を強制更新
+        const allInputs = form.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            updateValidationState(input);
+        });
+        
+        // バリデーション結果を確認
+        const isValid = form.checkValidity();
+        console.log('フォームバリデーション結果:', isValid);
+        
+        if (!isValid) {
+            console.log('バリデーションエラー: 送信を停止');
             event.preventDefault();
             event.stopPropagation();
+        } else {
+            console.log('バリデーション成功: 送信を継続');
         }
+        
         form.classList.add('was-validated');
     });
     
-    // ブラウザの候補選択時のバリデーション状態更新
-    const inputs = form.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('change', function() {
-            if (this.checkValidity()) {
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
-            } else {
-                this.classList.remove('is-valid');
-                this.classList.add('is-invalid');
-            }
-        });
-        
-        input.addEventListener('input', function() {
-            if (this.checkValidity()) {
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
-            } else {
-                this.classList.remove('is-valid');
-                this.classList.add('is-invalid');
-            }
+    // より強力なバリデーション状態更新関数
+    function updateValidationState(element) {
+        if (element.checkValidity()) {
+            element.classList.remove('is-invalid');
+            element.classList.add('is-valid');
+        } else {
+            element.classList.remove('is-valid');
+            element.classList.add('is-invalid');
+        }
+    }
+    
+    // すべての入力要素にイベントリスナーを追加
+    const allInputs = form.querySelectorAll('input, select, textarea');
+    allInputs.forEach(input => {
+        // 複数のイベントでバリデーション状態を更新
+        ['change', 'input', 'blur', 'focus'].forEach(eventType => {
+            input.addEventListener(eventType, function() {
+                updateValidationState(this);
+            });
         });
     });
 });
