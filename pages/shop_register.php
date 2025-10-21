@@ -238,10 +238,10 @@ ob_start();
                                 <div class="invalid-feedback">姓を入力してください</div>
                             </div>
                             <div class="col-md-6">
-                                <label for="admin_first_name" class="form-label">名前 <span class="text-danger">*</span></label>
+                                <label for="admin_first_name" class="form-label">名 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="admin_first_name" name="admin_first_name" 
                                        value="<?php echo htmlspecialchars($_POST['admin_first_name'] ?? ''); ?>" required>
-                                <div class="invalid-feedback">名前を入力してください</div>
+                                <div class="invalid-feedback">名を入力してください</div>
                             </div>
                         </div>
                         
