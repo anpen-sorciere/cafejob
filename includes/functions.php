@@ -45,17 +45,6 @@ function require_login() {
     }
 }
 
-function is_shop_admin() {
-    return isset($_SESSION['shop_admin_id']) && isset($_SESSION['shop_admin_username']);
-}
-
-function require_shop_admin() {
-    if (!is_shop_admin()) {
-        header('Location: ?page=shop_login');
-        exit;
-    }
-}
-
 // データベース操作関数
 function get_shop($id) {
     global $db;
