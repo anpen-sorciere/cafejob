@@ -64,8 +64,15 @@ if ($_POST && isset($_POST['register'])) {
             $postal_code_clean = str_replace('-', '', $postal_code);
             $postal_code_padded = str_pad($postal_code_clean, 7, '0', STR_PAD_LEFT);
             
-            // 店舗データを挿入（city_idはNULLにして、市区町村名をaddressに含める）
-            $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address; // 市区町村名 + 住所
+            // 市区町村名を取得
+            $city_name = '';
+            if ($city_id) {
+                $city_data = $db->fetch("SELECT name FROM cities WHERE id = ?", [$city_id]);
+                $city_name = $city_data ? $city_data['name'] : '';
+            }
+            
+            // 完全な住所を構築（市区町村名 + 詳細住所）
+            $full_address = $city_name . $address;
             $stmt = $db->query(
                 "INSERT INTO shops (name, description, postal_code, address, prefecture_id, city_id, phone, email, website, 
                                    opening_hours, concept_type, uniform_type, status, verification_code, verification_sent_at, created_at) 
