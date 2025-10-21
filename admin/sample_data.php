@@ -338,14 +338,14 @@ function insertSampleData() {
             'user_id' => $user_ids[0]['id'],
             'shop_id' => $shop_ids[0]['id'],
             'rating' => 5,
-            'comment' => 'とても楽しい時間を過ごせました！スタッフの方が親切で、また来たいです。',
+            'content' => 'とても楽しい時間を過ごせました！スタッフの方が親切で、また来たいです。',
             'status' => 'approved'
         ],
         [
             'user_id' => $user_ids[1]['id'],
             'shop_id' => $shop_ids[1]['id'],
             'rating' => 4,
-            'comment' => '雰囲気が良くて、料理も美味しかったです。',
+            'content' => '雰囲気が良くて、料理も美味しかったです。',
             'status' => 'approved'
         ]
     ];
@@ -353,7 +353,7 @@ function insertSampleData() {
     // 口コミデータを挿入
     foreach ($sample_reviews as $review_data) {
         $db->query(
-            "INSERT INTO reviews (user_id, shop_id, rating, comment, status) 
+            "INSERT INTO reviews (user_id, shop_id, rating, content, status) 
              VALUES (?, ?, ?, ?, ?)",
             array_values($review_data)
         );
