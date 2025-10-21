@@ -174,27 +174,54 @@ ob_start();
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-users fa-2x text-primary me-3"></i>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">ユーザートップページ</h6>
                                         <p class="mb-0 text-muted">一般ユーザー向けメインページ</p>
-                                        <a href="<?php echo SITE_URL; ?>" target="_blank" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-external-link-alt me-1"></i>サイトを表示
-                                        </a>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a href="<?php echo SITE_URL; ?>" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i>サイトを表示
+                                            </a>
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard('<?php echo SITE_URL; ?>', 'user')">
+                                                <i class="fas fa-copy me-1"></i>コピー
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-store fa-2x text-success me-3"></i>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">店舗ログインページ</h6>
                                         <p class="mb-0 text-muted">店舗管理者向けログインページ</p>
-                                        <a href="<?php echo SITE_URL; ?>?page=shop_login" target="_blank" class="btn btn-outline-success btn-sm">
-                                            <i class="fas fa-external-link-alt me-1"></i>店舗ログイン
-                                        </a>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a href="<?php echo SITE_URL; ?>?page=shop_login" target="_blank" class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i>店舗ログイン
+                                            </a>
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard('<?php echo SITE_URL; ?>?page=shop_login', 'shop')">
+                                                <i class="fas fa-copy me-1"></i>コピー
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-shield-alt fa-2x text-warning me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">システム管理者ログイン</h6>
+                                        <p class="mb-0 text-muted">システム管理者向けログインページ</p>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a href="<?php echo SITE_URL; ?>?page=admin_login" target="_blank" class="btn btn-outline-warning btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i>管理者ログイン
+                                            </a>
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard('<?php echo SITE_URL; ?>?page=admin_login', 'admin')">
+                                                <i class="fas fa-copy me-1"></i>コピー
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -202,11 +229,44 @@ ob_start();
                         <div class="row">
                             <div class="col-12">
                                 <div class="alert alert-light mb-0">
-                                    <small class="text-muted">
-                                        <strong>ユーザートップページ:</strong> <?php echo SITE_URL; ?><br>
-                                        <strong>店舗ログインページ:</strong> <?php echo SITE_URL; ?>?page=shop_login<br>
-                                        <strong>システム管理者ログイン:</strong> <?php echo SITE_URL; ?>?page=admin_login
-                                    </small>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-globe text-primary me-2"></i>
+                                                <strong>ユーザートップページ:</strong>
+                                            </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control" value="<?php echo SITE_URL; ?>" readonly id="user-url">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('<?php echo SITE_URL; ?>', 'user')">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-store text-success me-2"></i>
+                                                <strong>店舗ログインページ:</strong>
+                                            </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control" value="<?php echo SITE_URL; ?>?page=shop_login" readonly id="shop-url">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('<?php echo SITE_URL; ?>?page=shop_login', 'shop')">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-shield-alt text-warning me-2"></i>
+                                                <strong>システム管理者ログイン:</strong>
+                                            </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control" value="<?php echo SITE_URL; ?>?page=admin_login" readonly id="admin-url">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('<?php echo SITE_URL; ?>?page=admin_login', 'admin')">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -503,6 +563,78 @@ ob_start();
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- クリップボード機能 -->
+    <script>
+        function copyToClipboard(text, type) {
+            navigator.clipboard.writeText(text).then(function() {
+                // 成功時のフィードバック
+                showToast('URLをクリップボードにコピーしました', 'success');
+                
+                // ボタンの一時的な変更
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check me-1"></i>コピー済み';
+                button.classList.remove('btn-outline-secondary');
+                button.classList.add('btn-success');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-outline-secondary');
+                }, 2000);
+                
+            }).catch(function(err) {
+                // フォールバック: 古いブラウザ対応
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('URLをクリップボードにコピーしました', 'success');
+                } catch (err) {
+                    showToast('クリップボードへのコピーに失敗しました', 'error');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+        
+        function showToast(message, type) {
+            // トースト通知の表示
+            const toastContainer = document.getElementById('toast-container') || createToastContainer();
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // トーストが終了したら削除
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
+        
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
 </body>
 </html>
 <?php
