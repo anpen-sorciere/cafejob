@@ -1,13 +1,25 @@
 <?php
 session_start();
-require_once '../config/config.php';
-require_once '../includes/functions.php';
 
-// デバッグ用：セッション情報を確認
-error_log('verify_address.php - Session data: ' . print_r($_SESSION, true));
+// 独自エラーログシステムを読み込み
+require_once '../includes/error_logger.php';
 
-// 店舗管理者認証チェック
-require_shop_admin();
+custom_error_log('verify_address.php - Starting execution');
+
+try {
+    require_once '../config/config.php';
+    custom_error_log('verify_address.php - config.php loaded');
+    
+    require_once '../includes/functions.php';
+    custom_error_log('verify_address.php - functions.php loaded');
+    
+    // デバッグ用：セッション情報を確認
+    custom_error_log('verify_address.php - Session data', $_SESSION);
+    
+    // 店舗管理者認証チェック
+    custom_error_log('verify_address.php - Calling require_shop_admin()');
+    require_shop_admin();
+    custom_error_log('verify_address.php - require_shop_admin() completed');
 
 // 住所確認が必要でない場合はダッシュボードにリダイレクト
 if ($_SESSION['shop_status'] !== 'verification_pending') {

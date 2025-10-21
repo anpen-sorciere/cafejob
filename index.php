@@ -12,7 +12,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 
 // メインページの表示
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
-$allowed_pages = ['home', 'search', 'jobs', 'shops', 'cast', 'login', 'register', 'admin_login', 'job_detail', 'applications', 'shop_register', 'shop_login', 'shop_dashboard', 'shop_logout', 'cast_detail', 'updates', 'shop_admin_login'];
+$allowed_pages = ['home', 'search', 'jobs', 'shops', 'cast', 'login', 'register', 'admin_login', 'job_detail', 'applications', 'shop_register', 'shop_login', 'shop_dashboard', 'shop_logout', 'cast_detail', 'updates', 'shop_admin_login', 'error_log'];
 
 if (!in_array($page, $allowed_pages)) {
     $page = 'home';
