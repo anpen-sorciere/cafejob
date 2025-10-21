@@ -219,7 +219,7 @@ function is_shop_admin() {
 
 function require_shop_admin() {
     if (!is_shop_admin()) {
-        header('Location: ../?page=shop_admin_login');
+        header('Location: ../?page=shop_login');
         exit;
     }
 }

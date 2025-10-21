@@ -8,7 +8,7 @@ require_shop_admin();
 
 // 住所確認が必要でない場合はダッシュボードにリダイレクト
 if ($_SESSION['shop_status'] !== 'verification_pending') {
-    header('Location: dashboard.php');
+    header('Location: ../?page=shop_dashboard');
     exit;
 }
 
