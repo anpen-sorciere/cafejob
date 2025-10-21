@@ -3,6 +3,9 @@ session_start();
 require_once '../config/config.php';
 require_once '../includes/functions.php';
 
+// デバッグ用：セッション情報を確認
+error_log('verify_address.php - Session data: ' . print_r($_SESSION, true));
+
 // 店舗管理者認証チェック
 require_shop_admin();
 

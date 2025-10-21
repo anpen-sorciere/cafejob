@@ -218,10 +218,16 @@ function is_shop_admin() {
 }
 
 function require_shop_admin() {
+    error_log('require_shop_admin() called');
+    error_log('is_shop_admin() result: ' . (is_shop_admin() ? 'true' : 'false'));
+    error_log('Session shop_admin_id: ' . ($_SESSION['shop_admin_id'] ?? 'NOT SET'));
+    
     if (!is_shop_admin()) {
+        error_log('Shop admin not authenticated, redirecting to shop_login');
         header('Location: ../?page=shop_login');
         exit;
     }
+    error_log('Shop admin authenticated successfully');
 }
 
 function get_shop_admin_shop_id() {
