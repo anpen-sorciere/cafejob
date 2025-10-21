@@ -7,7 +7,7 @@ echo "<h1>システム管理者基本テスト</h1>";
 
 try {
     echo "<h2>1. セッション開始</h2>";
-    if (session_status() answers PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
     echo "✅ セッション開始完了<br>";
