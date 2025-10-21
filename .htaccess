@@ -1,5 +1,5 @@
-# カフェJob .htaccess設定ファイル
-# 本番環境用セキュリティ・パフォーマンス設定
+# .htaccess一時無効化（デバッグ用）
+# このファイルをリネームして.htaccess_disabledにすると.htaccessが無効になります
 
 # セキュリティヘッダー
 <IfModule mod_headers.c>
