@@ -55,12 +55,13 @@ if ($_POST && isset($_POST['register'])) {
         try {
             $db->getConnection()->beginTransaction();
             
-            // 店舗データを挿入
+            // 店舗データを挿入（city_idはNULLにして、市区町村名をaddressに含める）
+            $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address; // 市区町村名 + 住所
             $shop_id = $db->query(
                 "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, 
                                    opening_hours, concept_type, uniform_type, status, created_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())",
-                [$name, $description, $address, $prefecture_id, $city_id, $phone, $email, $website, 
+                 VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'pending', NOW())",
+                [$name, $description, $full_address, $prefecture_id, $phone, $email, $website, 
                  $opening_hours, $concept_type, $uniform_type]
             )->lastInsertId();
             
@@ -175,10 +176,10 @@ ob_start();
                                 <div class="invalid-feedback">都道府県を選択してください</div>
                             </div>
                             <div class="col-md-6">
-                                <label for="city_id" class="form-label">市区町村 <span class="text-danger">*</span></label>
+                                <label for="city_id" class="form-label">市区町村</label>
                                 <input type="text" class="form-control" id="city_id" name="city_id" 
-                                       value="<?php echo htmlspecialchars($_POST['city_id'] ?? ''); ?>" required>
-                                <div class="invalid-feedback">市区町村を入力してください</div>
+                                       value="<?php echo htmlspecialchars($_POST['city_id'] ?? ''); ?>">
+                                <div class="form-text">市区町村名を入力してください（任意）</div>
                             </div>
                         </div>
                         
