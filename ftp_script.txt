@@ -1,0 +1,14 @@
+open purplelion51.sakura.ne.jp 
+user purplelion51 -6r_am73 
+binary 
+cd cafejob 
+lcd "C:\develop\cafejob" 
+mput *.php 
+mput *.html 
+mput *.css 
+mput *.js 
+mput *.sql 
+mput *.md 
+mput *.txt 
+mput *.json 
+quit 
