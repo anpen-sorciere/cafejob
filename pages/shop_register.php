@@ -107,7 +107,7 @@ ob_start();
                         </div>
                     <?php endif; ?>
                     
-                    <form method="POST">
+                    <form method="POST" class="needs-validation" novalidate>
                         <!-- 店舗基本情報 -->
                         <h5 class="mb-3">
                             <i class="fas fa-store me-2"></i>店舗基本情報
@@ -118,6 +118,7 @@ ob_start();
                                 <label for="name" class="form-label">店舗名 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name" 
                                        value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">店舗名を入力してください</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="concept_type" class="form-label">コンセプト <span class="text-danger">*</span></label>
@@ -129,12 +130,30 @@ ob_start();
                                     <option value="cosplay" <?php echo ($_POST['concept_type'] ?? '') == 'cosplay' ? 'selected' : ''; ?>>コスプレカフェ</option>
                                     <option value="other" <?php echo ($_POST['concept_type'] ?? '') == 'other' ? 'selected' : ''; ?>>その他</option>
                                 </select>
+                                <div class="invalid-feedback">コンセプトを選択してください</div>
                             </div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="description" class="form-label">店舗説明 <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="description" name="description" rows="4" required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
+                            <div class="invalid-feedback">店舗説明を入力してください</div>
+                        </div>
+                        
+                        <!-- 郵便番号入力 -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="postal_code" class="form-label">郵便番号</label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code" 
+                                       placeholder="例: 100-0001" maxlength="8"
+                                       value="<?php echo htmlspecialchars($_POST['postal_code'] ?? ''); ?>">
+                                <div class="form-text">郵便番号を入力すると住所が自動で補完されます</div>
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-primary" id="search_address">
+                                    <i class="fas fa-search me-1"></i>住所を検索
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="row mb-3">
@@ -149,18 +168,22 @@ ob_start();
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">都道府県を選択してください</div>
                             </div>
                             <div class="col-md-6">
-                                <label for="city_id" class="form-label">市区町村</label>
+                                <label for="city_id" class="form-label">市区町村 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="city_id" name="city_id" 
-                                       value="<?php echo htmlspecialchars($_POST['city_id'] ?? ''); ?>">
+                                       value="<?php echo htmlspecialchars($_POST['city_id'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">市区町村を入力してください</div>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="address" class="form-label">住所 <span class="text-danger">*</span></label>
+                            <label for="address" class="form-label">住所（番地・建物名） <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="address" name="address" 
+                                   placeholder="例: 1-2-3 サンプルビル 4F"
                                    value="<?php echo htmlspecialchars($_POST['address'] ?? ''); ?>" required>
+                            <div class="invalid-feedback">住所を入力してください</div>
                         </div>
                         
                         <div class="row mb-3">
@@ -168,11 +191,13 @@ ob_start();
                                 <label for="phone" class="form-label">電話番号 <span class="text-danger">*</span></label>
                                 <input type="tel" class="form-control" id="phone" name="phone" 
                                        value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">電話番号を入力してください</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">メールアドレス <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="email" name="email" 
                                        value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">有効なメールアドレスを入力してください</div>
                             </div>
                         </div>
                         
@@ -206,11 +231,13 @@ ob_start();
                                 <label for="admin_username" class="form-label">管理者ユーザー名 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="admin_username" name="admin_username" 
                                        value="<?php echo htmlspecialchars($_POST['admin_username'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">管理者ユーザー名を入力してください</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="admin_email" class="form-label">管理者メールアドレス <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="admin_email" name="admin_email" 
                                        value="<?php echo htmlspecialchars($_POST['admin_email'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">有効な管理者メールアドレスを入力してください</div>
                             </div>
                         </div>
                         
@@ -218,10 +245,12 @@ ob_start();
                             <div class="col-md-6">
                                 <label for="admin_password" class="form-label">パスワード <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="admin_password" name="admin_password" required>
+                                <div class="invalid-feedback">パスワードを入力してください</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="admin_password_confirm" class="form-label">パスワード確認 <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="admin_password_confirm" name="admin_password_confirm" required>
+                                <div class="invalid-feedback">パスワード確認を入力してください</div>
                             </div>
                         </div>
                         
@@ -249,6 +278,135 @@ ob_start();
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const postalCodeInput = document.getElementById('postal_code');
+    const prefectureSelect = document.getElementById('prefecture_id');
+    const cityInput = document.getElementById('city_id');
+    const searchButton = document.getElementById('search_address');
+    
+    // 郵便番号の自動フォーマット
+    postalCodeInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/[^0-9]/g, '');
+        if (value.length >= 3) {
+            value = value.substring(0, 3) + '-' + value.substring(3, 7);
+        }
+        e.target.value = value;
+        
+        // 7桁入力されたら自動検索
+        if (value.length === 8) {
+            searchAddress();
+        }
+    });
+    
+    // 住所検索ボタン
+    searchButton.addEventListener('click', searchAddress);
+    
+    function searchAddress() {
+        const postalCode = postalCodeInput.value.replace(/[^0-9]/g, '');
+        
+        if (postalCode.length !== 7) {
+            alert('郵便番号は7桁で入力してください');
+            return;
+        }
+        
+        searchButton.disabled = true;
+        searchButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>検索中...';
+        
+        // 郵便番号APIを使用して住所を取得
+        fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200 && data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    
+                    // 都道府県を設定
+                    const prefectureName = result.address1;
+                    for (let option of prefectureSelect.options) {
+                        if (option.text.includes(prefectureName)) {
+                            option.selected = true;
+                            break;
+                        }
+                    }
+                    
+                    // 市区町村を設定
+                    cityInput.value = result.address2;
+                    
+                    // 住所フィールドに町域を設定（番地は手動入力）
+                    const addressInput = document.getElementById('address');
+                    addressInput.value = result.address3;
+                    addressInput.focus();
+                    
+                    // 成功メッセージ
+                    showMessage('住所を自動補完しました。番地・建物名を追加してください。', 'success');
+                } else {
+                    showMessage('郵便番号が見つかりませんでした。', 'warning');
+                }
+            })
+            .catch(error => {
+                console.error('住所検索エラー:', error);
+                showMessage('住所検索中にエラーが発生しました。', 'danger');
+            })
+            .finally(() => {
+                searchButton.disabled = false;
+                searchButton.innerHTML = '<i class="fas fa-search me-1"></i>住所を検索';
+            });
+    }
+    
+    function showMessage(message, type) {
+        // 既存のメッセージを削除
+        const existingAlert = document.querySelector('.alert-address');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        // 新しいメッセージを表示
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-address`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // フォームの上部に挿入
+        const form = document.querySelector('form');
+        form.insertBefore(alertDiv, form.firstChild);
+        
+        // 3秒後に自動で消す
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 3000);
+    }
+    
+    // パスワード確認のリアルタイムチェック
+    const passwordInput = document.getElementById('admin_password');
+    const passwordConfirmInput = document.getElementById('admin_password_confirm');
+    
+    function checkPasswordMatch() {
+        if (passwordConfirmInput.value && passwordInput.value !== passwordConfirmInput.value) {
+            passwordConfirmInput.setCustomValidity('パスワードが一致しません');
+        } else {
+            passwordConfirmInput.setCustomValidity('');
+        }
+    }
+    
+    passwordInput.addEventListener('input', checkPasswordMatch);
+    passwordConfirmInput.addEventListener('input', checkPasswordMatch);
+    
+    // Bootstrapバリデーション
+    const form = document.querySelector('.needs-validation');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>
 
 <?php
 $content = ob_get_clean();
