@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // 独自エラーログシステムを読み込み
 require_once '../includes/error_logger.php';
