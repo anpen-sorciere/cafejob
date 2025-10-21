@@ -26,12 +26,9 @@ $shop_name = $_SESSION['shop_name'];
 
 // キャスト一覧の取得
 $casts = $db->fetchAll(
-    "SELECT c.*, 
-            COUNT(j.id) as job_count
+    "SELECT c.*
      FROM casts c
-     LEFT JOIN jobs j ON c.id = j.cast_id
      WHERE c.shop_id = ?
-     GROUP BY c.id
      ORDER BY c.created_at DESC",
     [$shop_id]
 );
@@ -236,8 +233,8 @@ ob_start();
                                                 <div class="fw-bold"><?php echo $cast['age'] ? $cast['age'] . '歳' : '未設定'; ?></div>
                                             </div>
                                             <div class="col-6">
-                                                <small class="text-muted">担当求人</small>
-                                                <div class="fw-bold"><?php echo $cast['job_count']; ?>件</div>
+                                                <small class="text-muted">登録日</small>
+                                                <div class="fw-bold"><?php echo date('Y/m/d', strtotime($cast['created_at'])); ?></div>
                                             </div>
                                         </div>
                                         <?php if (!empty($cast['special_skill'])): ?>
