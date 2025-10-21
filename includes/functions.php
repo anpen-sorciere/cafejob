@@ -2,11 +2,11 @@
 // 管理者パネルからのアクセスかどうかを判定してパスを調整
 if (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) {
     require_once '../config/config.php';
+    require_once '../config/database.php';
 } else {
     require_once 'config/config.php';
+    require_once 'config/database.php';
 }
-
-// データベース接続は既に読み込まれている前提
 
 // セキュリティ関数
 function sanitize_input($data) {
