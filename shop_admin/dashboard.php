@@ -264,6 +264,43 @@ ob_start();
         </div>
         <?php endif; ?>
         
+        <!-- クイックアクション -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>クイックアクション
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="job_create.php" class="btn btn-primary w-100">
+                                    <i class="fas fa-plus me-1"></i>新規求人投稿
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="jobs.php" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-briefcase me-1"></i>求人管理
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="applications.php" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-file-alt me-1"></i>応募管理
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="shop_info.php" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-store me-1"></i>店舗情報編集
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- 最新情報 -->
         <div class="row">
             <!-- 最新の応募 -->
