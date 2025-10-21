@@ -14,7 +14,7 @@ if ($_POST && isset($_POST['login'])) {
     
     if (empty($errors)) {
         $shop_admin = $db->fetch(
-            "SELECT sa.*, s.name as shop_name, s.status as shop_status
+            "SELECT sa.*, s.name as shop_name, s.status as shop_status, s.verification_code
              FROM shop_admins sa
              JOIN shops s ON sa.shop_id = s.id
              WHERE sa.email = ? AND sa.status = 'active'",
@@ -28,6 +28,7 @@ if ($_POST && isset($_POST['login'])) {
             $_SESSION['shop_id'] = $shop_admin['shop_id'];
             $_SESSION['shop_name'] = $shop_admin['shop_name'];
             $_SESSION['shop_status'] = $shop_admin['shop_status'];
+            $_SESSION['verification_code'] = $shop_admin['verification_code'];
             
             $_SESSION['success_message'] = 'ログインしました。';
             
