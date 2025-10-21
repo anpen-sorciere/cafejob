@@ -150,17 +150,17 @@ ob_start();
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 mb-2">
-                            <a href="?page=job_post" class="btn btn-primary w-100">
+                            <a href="shop_admin/job_create.php" class="btn btn-primary w-100">
                                 <i class="fas fa-plus me-1"></i>新規求人投稿
                             </a>
                         </div>
                         <div class="col-md-3 mb-2">
-                            <a href="?page=shop_jobs" class="btn btn-outline-primary w-100">
+                            <a href="shop_admin/jobs.php" class="btn btn-outline-primary w-100">
                                 <i class="fas fa-briefcase me-1"></i>求人管理
                             </a>
                         </div>
                         <div class="col-md-3 mb-2">
-                            <a href="?page=shop_applications" class="btn btn-outline-success w-100">
+                            <a href="shop_admin/applications.php" class="btn btn-outline-success w-100">
                                 <i class="fas fa-file-alt me-1"></i>応募管理
                             </a>
                         </div>
@@ -225,7 +225,7 @@ ob_start();
                             </div>
                         <?php endforeach; ?>
                         <div class="text-center mt-3">
-                            <a href="?page=shop_applications" class="btn btn-outline-primary">
+                            <a href="shop_admin/applications.php" class="btn btn-outline-primary">
                                 すべての応募を見る
                             </a>
                         </div>
@@ -246,7 +246,7 @@ ob_start();
                     <?php if (empty($shop_jobs)): ?>
                         <p class="text-muted text-center">求人がありません</p>
                         <div class="text-center">
-                            <a href="?page=job_post" class="btn btn-primary btn-sm">
+                            <a href="shop_admin/job_create.php" class="btn btn-primary btn-sm">
                                 新規求人投稿
                             </a>
                         </div>
@@ -276,7 +276,7 @@ ob_start();
                             </div>
                         <?php endforeach; ?>
                         <div class="text-center mt-3">
-                            <a href="?page=shop_jobs" class="btn btn-outline-success">
+                            <a href="shop_admin/jobs.php" class="btn btn-outline-success">
                                 すべての求人を見る
                             </a>
                         </div>
