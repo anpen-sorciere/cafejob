@@ -380,6 +380,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     addressInput.value = result.address3;
                     addressInput.focus();
                     
+                    // バリデーション状態を更新
+                    cityInput.classList.remove('is-invalid');
+                    cityInput.classList.add('is-valid');
+                    addressInput.classList.remove('is-invalid');
+                    addressInput.classList.add('is-valid');
+                    
                     // 成功メッセージ
                     showMessage('住所を自動補完しました。番地・建物名を追加してください。', 'success');
                 } else {
