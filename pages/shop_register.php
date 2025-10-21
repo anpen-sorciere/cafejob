@@ -6,6 +6,7 @@ $page_description = 'コンカフェの店舗登録を行います。';
 if ($_POST && isset($_POST['register'])) {
     $name = sanitize_input($_POST['name']);
     $description = sanitize_input($_POST['description']);
+    $postal_code = sanitize_input($_POST['postal_code']);
     $address = sanitize_input($_POST['address']);
     $prefecture_id = (int)$_POST['prefecture_id'];
     $city_id = (int)$_POST['city_id'];
@@ -29,6 +30,7 @@ if ($_POST && isset($_POST['register'])) {
     // バリデーション
     if (empty($name)) $errors[] = '店舗名を入力してください';
     if (empty($description)) $errors[] = '店舗説明を入力してください';
+    if (empty($postal_code)) $errors[] = '郵便番号を入力してください';
     if (empty($address)) $errors[] = '住所を入力してください';
     if (!$prefecture_id) $errors[] = '都道府県を選択してください';
     if (empty($phone)) $errors[] = '電話番号を入力してください';
@@ -58,13 +60,16 @@ if ($_POST && isset($_POST['register'])) {
             // 6桁の確認コードを生成
             $verification_code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             
+            // 郵便番号を数値に変換（ハイフンを除去）
+            $postal_code_numeric = (int)str_replace('-', '', $postal_code);
+            
             // 店舗データを挿入（city_idはNULLにして、市区町村名をaddressに含める）
             $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address; // 市区町村名 + 住所
             $stmt = $db->query(
-                "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, 
+                "INSERT INTO shops (name, description, postal_code, address, prefecture_id, city_id, phone, email, website, 
                                    opening_hours, concept_type, uniform_type, status, verification_code, verification_sent_at, created_at) 
-                 VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'verification_pending', ?, NOW(), NOW())",
-                [$name, $description, $full_address, $prefecture_id, $phone, $email, $website, 
+                 VALUES (?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'verification_pending', ?, NOW(), NOW())",
+                [$name, $description, $postal_code_numeric, $full_address, $prefecture_id, $phone, $email, $website, 
                  $opening_hours, $concept_type, $uniform_type, $verification_code]
             );
             $shop_id = $db->getConnection()->lastInsertId();
