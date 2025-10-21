@@ -67,16 +67,7 @@ try {
     $recent_reviews = [];
 }
 
-// time_ago関数を定義
-function time_ago($datetime) {
-    $time = time() - strtotime($datetime);
-    if ($time < 60) return 'たった今';
-    if ($time < 3600) return floor($time/60) . '分前';
-    if ($time < 86400) return floor($time/3600) . '時間前';
-    if ($time < 2592000) return floor($time/86400) . '日前';
-    if ($time < 31536000) return floor($time/2592000) . 'ヶ月前';
-    return floor($time/31536000) . '年前';
-}
+// time_ago関数はincludes/functions.phpで定義済み
 
 ob_start();
 ?>
