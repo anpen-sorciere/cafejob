@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // 管理者パネル用の設定ファイル
 // 管理者パネルからアクセスする際のパス調整
 

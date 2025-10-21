@@ -1,6 +1,8 @@
 <?php
 // サンプルデータ投入機能
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'includes.php';
 
 // 管理者認証チェック

@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'includes.php';
 
 // 管理者認証チェック
@@ -17,7 +19,8 @@ $stats = [
     'total_shops' => $db->fetch("SELECT COUNT(*) as count FROM shops")['count'],
     'total_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs")['count'],
     'total_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications")['count'],
-    'pending_shops' => $db->fetch("SELECT COUNT(*) as count FROM shops WHERE status = 'pending'")['count'],
+    'total_casts' => $db->fetch("SELECT COUNT(*) as count FROM casts")['count'],
+    'pending_shops' => $db->fetch("SELECT COUNT(*) as count FROM shops WHERE status IN ('pending', 'verification_pending')")['count'],
     'pending_reviews' => $db->fetch("SELECT COUNT(*) as count FROM reviews WHERE status = 'pending'")['count']
 ];
 
@@ -51,6 +54,17 @@ $recent_reviews = $db->fetchAll(
      ORDER BY r.created_at DESC
      LIMIT 10"
 );
+
+// time_ago関数を定義
+function time_ago($datetime) {
+    $time = time() - strtotime($datetime);
+    if ($time < 60) return 'たった今';
+    if ($time < 3600) return floor($time/60) . '分前';
+    if ($time < 86400) return floor($time/3600) . '時間前';
+    if ($time < 2592000) return floor($time/86400) . '日前';
+    if ($time < 31536000) return floor($time/2592000) . 'ヶ月前';
+    return floor($time/31536000) . '年前';
+}
 
 ob_start();
 ?>
@@ -222,6 +236,29 @@ ob_start();
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 追加統計カード -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-secondary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                    総キャスト数
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    <?php echo number_format($stats['total_casts']); ?>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -413,8 +450,6 @@ ob_start();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
 <?php
-$content = ob_get_clean();
-echo $content;
+ob_end_flush();
 ?>
