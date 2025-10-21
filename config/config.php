@@ -10,7 +10,7 @@ if ($is_production) {
     define('DB_HOST', 'mysql2103.db.sakura.ne.jp');
     define('DB_NAME', 'purplelion51_cafejob');
     define('DB_USER', 'purplelion51');
-    define('DB_PASS', '-6r_am73');
+    define('DB_PASS', 'UB5UY-hnMMY=');
     define('SITE_URL', 'https://purplelion51.sakura.ne.jp/cafejob');
     define('DEBUG_MODE', false);
     define('LOG_LEVEL', 'ERROR');
