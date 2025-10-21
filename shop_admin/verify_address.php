@@ -21,21 +21,23 @@ try {
     require_shop_admin();
     custom_error_log('verify_address.php - require_shop_admin() completed');
 
-// 住所確認が必要でない場合はダッシュボードにリダイレクト
-if ($_SESSION['shop_status'] !== 'verification_pending') {
-    header('Location: ../?page=shop_dashboard');
-    exit;
-}
+    // 住所確認が必要でない場合はダッシュボードにリダイレクト
+    if ($_SESSION['shop_status'] !== 'verification_pending') {
+        custom_error_log('verify_address.php - Shop status is not verification_pending, redirecting to dashboard');
+        header('Location: ../?page=shop_dashboard');
+        exit;
+    }
 
-$page_title = '住所確認';
-$shop_id = get_shop_admin_shop_id();
-$shop_name = get_shop_admin_shop_name();
+    $page_title = '住所確認';
+    $shop_id = get_shop_admin_shop_id();
+    $shop_name = get_shop_admin_shop_name();
 
-// セッション情報が不足している場合はログインページにリダイレクト
-if (!$shop_id || !$shop_name) {
-    header('Location: ../?page=shop_login');
-    exit;
-}
+    // セッション情報が不足している場合はログインページにリダイレクト
+    if (!$shop_id || !$shop_name) {
+        custom_error_log('verify_address.php - Missing shop_id or shop_name, redirecting to shop_login');
+        header('Location: ../?page=shop_login');
+        exit;
+    }
 
 // 確認コードの処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
@@ -194,4 +196,17 @@ ob_start();
 <?php
 $content = ob_get_clean();
 echo $content;
+
+} catch (Exception $e) {
+    custom_error_log('verify_address.php - Exception caught', [
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    
+    // エラーが発生した場合はログインページにリダイレクト
+    header('Location: ../?page=shop_login');
+    exit;
+}
 ?>
