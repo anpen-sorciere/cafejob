@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes.php';
+require_once '../config/config.php';
+require_once '../includes/functions.php';
 
 // 店舗管理者認証チェック
 require_shop_admin();

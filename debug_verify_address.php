@@ -7,8 +7,11 @@ echo "<h1>住所確認ページ デバッグ</h1>";
 try {
     echo "<h2>1. 基本ファイル読み込みテスト</h2>";
     
-    require_once 'includes.php';
-    echo "<p>✅ includes.php loaded</p>";
+    require_once 'config/config.php';
+    echo "<p>✅ config.php loaded</p>";
+    
+    require_once 'includes/functions.php';
+    echo "<p>✅ functions.php loaded</p>";
     
     echo "<h2>2. セッション確認</h2>";
     session_start();
