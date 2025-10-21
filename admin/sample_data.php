@@ -256,40 +256,34 @@ function insertSampleData() {
         [
             'username' => 'user1',
             'email' => 'user1@example.com',
-            'password' => password_hash('password123', PASSWORD_DEFAULT),
+            'password_hash' => password_hash('password123', PASSWORD_DEFAULT),
             'first_name' => '花子',
             'last_name' => '田中',
             'phone' => '090-1234-5678',
             'birth_date' => '1995-05-15',
             'gender' => 'female',
-            'prefecture_id' => 13,
-            'city_id' => 1,
             'status' => 'active'
         ],
         [
             'username' => 'user2',
             'email' => 'user2@example.com',
-            'password' => password_hash('password123', PASSWORD_DEFAULT),
+            'password_hash' => password_hash('password123', PASSWORD_DEFAULT),
             'first_name' => '太郎',
             'last_name' => '佐藤',
             'phone' => '090-2345-6789',
             'birth_date' => '1998-08-20',
             'gender' => 'male',
-            'prefecture_id' => 13,
-            'city_id' => 2,
             'status' => 'active'
         ],
         [
             'username' => 'user3',
             'email' => 'user3@example.com',
-            'password' => password_hash('password123', PASSWORD_DEFAULT),
+            'password_hash' => password_hash('password123', PASSWORD_DEFAULT),
             'first_name' => '美咲',
             'last_name' => '鈴木',
             'phone' => '090-3456-7890',
             'birth_date' => '1996-12-10',
             'gender' => 'female',
-            'prefecture_id' => 27,
-            'city_id' => 4,
             'status' => 'active'
         ]
     ];
@@ -297,8 +291,8 @@ function insertSampleData() {
     // ユーザーデータを挿入
     foreach ($sample_users as $user_data) {
         $db->query(
-            "INSERT INTO users (username, email, password, first_name, last_name, phone, birth_date, gender, prefecture_id, city_id, status, created_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+            "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, birth_date, gender, status, created_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
             array_values($user_data)
         );
     }
