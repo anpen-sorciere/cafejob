@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($shop_admin && verify_password($password, $shop_admin['password_hash'])) {
             $_SESSION['shop_admin_id'] = $shop_admin['id'];
             $_SESSION['shop_admin_email'] = $shop_admin['email'];
+            $_SESSION['shop_admin_username'] = $shop_admin['username'];
             $_SESSION['shop_id'] = $shop_admin['shop_id'];
             $_SESSION['shop_name'] = $shop_admin['shop_name'];
             

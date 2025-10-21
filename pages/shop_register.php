@@ -17,7 +17,8 @@ if ($_POST && isset($_POST['register'])) {
     $uniform_type = sanitize_input($_POST['uniform_type']);
     
     // 店舗管理者情報
-    $admin_username = sanitize_input($_POST['admin_username']);
+    $admin_last_name = sanitize_input($_POST['admin_last_name']);
+    $admin_first_name = sanitize_input($_POST['admin_first_name']);
     $admin_email = sanitize_input($_POST['admin_email']);
     $admin_password = $_POST['admin_password'];
     $admin_password_confirm = $_POST['admin_password_confirm'];
@@ -31,7 +32,8 @@ if ($_POST && isset($_POST['register'])) {
     if (!$prefecture_id) $errors[] = '都道府県を選択してください';
     if (empty($phone)) $errors[] = '電話番号を入力してください';
     if (empty($email) || !validate_email($email)) $errors[] = '有効なメールアドレスを入力してください';
-    if (empty($admin_username)) $errors[] = '管理者ユーザー名を入力してください';
+    if (empty($admin_last_name)) $errors[] = '管理者の姓を入力してください';
+    if (empty($admin_first_name)) $errors[] = '管理者の名前を入力してください';
     if (empty($admin_email) || !validate_email($admin_email)) $errors[] = '有効な管理者メールアドレスを入力してください';
     if (empty($admin_password)) $errors[] = 'パスワードを入力してください';
     if ($admin_password !== $admin_password_confirm) $errors[] = 'パスワードが一致しません';
@@ -40,9 +42,8 @@ if ($_POST && isset($_POST['register'])) {
     if ($db->fetch("SELECT id FROM shops WHERE name = ?", [$name])) {
         $errors[] = 'この店舗名は既に登録されています';
     }
-    if ($db->fetch("SELECT id FROM shop_admins WHERE username = ?", [$admin_username])) {
-        $errors[] = 'このユーザー名は既に使用されています';
-    }
+    // 管理者のユーザー名は姓+名で自動生成
+    $admin_username = $admin_last_name . $admin_first_name;
     if ($db->fetch("SELECT id FROM shop_admins WHERE email = ?", [$admin_email])) {
         $errors[] = 'このメールアドレスは既に使用されています';
     }
@@ -228,29 +229,44 @@ ob_start();
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="admin_username" class="form-label">管理者ユーザー名 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="admin_username" name="admin_username" 
-                                       value="<?php echo htmlspecialchars($_POST['admin_username'] ?? ''); ?>" required>
-                                <div class="invalid-feedback">管理者ユーザー名を入力してください</div>
+                                <label for="admin_last_name" class="form-label">管理者の姓 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="admin_last_name" name="admin_last_name" 
+                                       value="<?php echo htmlspecialchars($_POST['admin_last_name'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">管理者の姓を入力してください</div>
                             </div>
+                            <div class="col-md-6">
+                                <label for="admin_first_name" class="form-label">管理者の名前 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="admin_first_name" name="admin_first_name" 
+                                       value="<?php echo htmlspecialchars($_POST['admin_first_name'] ?? ''); ?>" required>
+                                <div class="invalid-feedback">管理者の名前を入力してください</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="admin_email" class="form-label">管理者メールアドレス <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="admin_email" name="admin_email" 
                                        value="<?php echo htmlspecialchars($_POST['admin_email'] ?? ''); ?>" required>
                                 <div class="invalid-feedback">有効な管理者メールアドレスを入力してください</div>
                             </div>
-                        </div>
-                        
-                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="admin_password" class="form-label">パスワード <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="admin_password" name="admin_password" required>
                                 <div class="invalid-feedback">パスワードを入力してください</div>
                             </div>
+                        </div>
+                        
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="admin_password_confirm" class="form-label">パスワード確認 <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="admin_password_confirm" name="admin_password_confirm" required>
                                 <div class="invalid-feedback">パスワード確認を入力してください</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    ログイン時はメールアドレスとパスワードを使用します
+                                </div>
                             </div>
                         </div>
                         
