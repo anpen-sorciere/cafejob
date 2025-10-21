@@ -1,5 +1,5 @@
 open purplelion51.sakura.ne.jp 
-user purplelion51 -6r_am73 
+user purplelion51 UB5UY-hnMMY= 
 binary 
 cd cafejob 
 lcd "C:\develop\cafejob" 
