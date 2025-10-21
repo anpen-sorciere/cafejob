@@ -31,6 +31,12 @@ $jobs = $db->fetchAll(
     [$shop_id]
 );
 
+// 求人制限の計算
+$total_jobs = count($jobs);
+$basic_job_limit = 1; // 基本料金に含まれる求人数
+$can_add_more = $total_jobs < $basic_job_limit;
+$additional_jobs = max(0, $total_jobs - $basic_job_limit);
+
 // 求人ステータス更新処理
 if ($_POST && isset($_POST['update_status'])) {
     $job_id = (int)$_POST['job_id'];
@@ -132,9 +138,25 @@ ob_start();
                     <h1 class="h3 mb-0">
                         <i class="fas fa-briefcase me-2"></i>求人管理
                     </h1>
-                    <a href="job_create.php" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>新しい求人を投稿
-                    </a>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- 求人制限表示 -->
+                        <div class="text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            基本求人: <span class="fw-bold"><?php echo $total_jobs; ?>/<?php echo $basic_job_limit; ?></span>
+                            <?php if ($additional_jobs > 0): ?>
+                                <span class="text-warning">(+<?php echo $additional_jobs; ?> オプション)</span>
+                            <?php endif; ?>
+                        </div>
+                        <?php if ($can_add_more): ?>
+                            <a href="job_create.php" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>新しい求人を投稿
+                            </a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-primary" disabled>
+                                <i class="fas fa-plus me-2"></i>新しい求人を投稿
+                            </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
                 <?php if (isset($_SESSION['success_message'])): ?>
@@ -143,6 +165,30 @@ ob_start();
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 <?php endif; ?>
+
+                <?php if (isset($_SESSION['error_message'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <!-- 求人制限情報 -->
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-info-circle me-2"></i>求人制限について
+                    </h6>
+                    <p class="mb-2">
+                        <strong>基本料金</strong>：1つの求人まで無料で投稿できます。<br>
+                        <strong>追加求人</strong>：2つ目以降はオプション課金が必要です。
+                    </p>
+                    <?php if ($total_jobs >= $basic_job_limit): ?>
+                        <p class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            基本求人制限に達しています。追加求人をご希望の場合は、オプション課金をお申し込みください。
+                        </p>
+                    <?php endif; ?>
+                </div>
 
                 <?php if (empty($jobs)): ?>
                     <div class="card">
@@ -157,14 +203,19 @@ ob_start();
                     </div>
                 <?php else: ?>
                     <div class="row">
-                        <?php foreach ($jobs as $job): ?>
+                        <?php foreach ($jobs as $loop_index => $job): ?>
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <div class="card h-100">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0"><?php echo htmlspecialchars($job['title']); ?></h6>
-                                        <span class="badge bg-<?php echo $job['status'] === 'active' ? 'success' : ($job['status'] === 'inactive' ? 'warning' : 'secondary'); ?>">
-                                            <?php echo $job['status'] === 'active' ? '公開中' : ($job['status'] === 'inactive' ? '非公開' : '終了'); ?>
-                                        </span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-<?php echo $job['status'] === 'active' ? 'success' : ($job['status'] === 'inactive' ? 'warning' : 'secondary'); ?>">
+                                                <?php echo $job['status'] === 'active' ? '公開中' : ($job['status'] === 'inactive' ? '非公開' : '終了'); ?>
+                                            </span>
+                                            <?php if ($loop_index >= $basic_job_limit): ?>
+                                                <span class="badge bg-warning">オプション</span>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text text-muted small">

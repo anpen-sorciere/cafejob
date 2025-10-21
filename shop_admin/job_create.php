@@ -18,6 +18,18 @@ $page_title = '求人投稿';
 $shop_id = $_SESSION['shop_id'];
 $shop_name = $_SESSION['shop_name'];
 
+// 求人制限のチェック
+$current_jobs = $db->fetchAll("SELECT id FROM jobs WHERE shop_id = ?", [$shop_id]);
+$total_jobs = count($current_jobs);
+$basic_job_limit = 1; // 基本料金に含まれる求人数
+
+// 基本求人制限に達している場合はリダイレクト
+if ($total_jobs >= $basic_job_limit) {
+    $_SESSION['error_message'] = '基本求人制限に達しています。追加求人はオプション課金が必要です。';
+    header('Location: jobs.php');
+    exit;
+}
+
 // 求人投稿処理
 if ($_POST && isset($_POST['create_job'])) {
     $title = sanitize_input($_POST['title']);
