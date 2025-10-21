@@ -37,7 +37,6 @@ if ($_POST && isset($_POST['create_job'])) {
     $requirements = sanitize_input($_POST['requirements']);
     $benefits = sanitize_input($_POST['benefits']);
     $work_hours = sanitize_input($_POST['work_hours']);
-    $salary_type = sanitize_input($_POST['salary_type']);
     $salary_min = !empty($_POST['salary_min']) ? (int)$_POST['salary_min'] : null;
     $salary_max = !empty($_POST['salary_max']) ? (int)$_POST['salary_max'] : null;
     $location = sanitize_input($_POST['location']);
@@ -49,22 +48,18 @@ if ($_POST && isset($_POST['create_job'])) {
     if (empty($title)) $errors[] = '求人タイトルを入力してください';
     if (empty($description)) $errors[] = '仕事内容を入力してください';
     if (empty($work_hours)) $errors[] = '勤務時間を入力してください';
-    if (empty($salary_type)) $errors[] = '給与形態を選択してください';
-    if ($salary_type === 'hourly' && (!$salary_min || !$salary_max)) {
-        $errors[] = '時給の最低額と最高額を入力してください';
-    }
-    if ($salary_type === 'monthly' && (!$salary_min || !$salary_max)) {
-        $errors[] = '月給の最低額と最高額を入力してください';
+    if (!$salary_min || !$salary_max) {
+        $errors[] = '給与の最低額と最高額を入力してください';
     }
     
     if (empty($errors)) {
         try {
             $db->query(
                 "INSERT INTO jobs (shop_id, title, description, requirements, benefits, work_hours, 
-                                 salary_type, salary_min, salary_max, location, status, created_at, updated_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+                                 salary_min, salary_max, location, status, created_at, updated_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
                 [$shop_id, $title, $description, $requirements, $benefits, $work_hours, 
-                 $salary_type, $salary_min, $salary_max, $location, $status]
+                 $salary_min, $salary_max, $location, $status]
             );
             
             $_SESSION['success_message'] = '求人を投稿しました。';
@@ -206,42 +201,30 @@ ob_start();
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="salary_type" class="form-label">給与形態 <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="salary_type" name="salary_type" required>
-                                        <option value="">選択してください</option>
-                                        <option value="hourly" <?php echo ($_POST['salary_type'] ?? '') === 'hourly' ? 'selected' : ''; ?>>時給制</option>
-                                        <option value="monthly" <?php echo ($_POST['salary_type'] ?? '') === 'monthly' ? 'selected' : ''; ?>>月給制</option>
-                                        <option value="daily" <?php echo ($_POST['salary_type'] ?? '') === 'daily' ? 'selected' : ''; ?>>日給制</option>
-                                    </select>
-                                    <div class="invalid-feedback">給与形態を選択してください</div>
+                                    <label for="salary_min" class="form-label">最低給与 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="salary_min" name="salary_min" 
+                                               min="0" step="1" required
+                                               value="<?php echo htmlspecialchars($_POST['salary_min'] ?? ''); ?>">
+                                        <span class="input-group-text">円</span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="location" class="form-label">勤務地</label>
-                                    <input type="text" class="form-control" id="location" name="location" 
-                                           placeholder="例: 大阪市浪速区なんば"
-                                           value="<?php echo htmlspecialchars($_POST['location'] ?? ''); ?>">
+                                    <label for="salary_max" class="form-label">最高給与 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="salary_max" name="salary_max" 
+                                               min="0" step="1" required
+                                               value="<?php echo htmlspecialchars($_POST['salary_max'] ?? ''); ?>">
+                                        <span class="input-group-text">円</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row mb-3" id="salary_range" style="display: none;">
-                                <div class="col-md-6">
-                                    <label for="salary_min" class="form-label">最低額</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="salary_min" name="salary_min" 
-                                               min="0" step="1"
-                                               value="<?php echo htmlspecialchars($_POST['salary_min'] ?? ''); ?>">
-                                        <span class="input-group-text" id="salary_unit">円</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="salary_max" class="form-label">最高額</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="salary_max" name="salary_max" 
-                                               min="0" step="1"
-                                               value="<?php echo htmlspecialchars($_POST['salary_max'] ?? ''); ?>">
-                                        <span class="input-group-text" id="salary_unit_max">円</span>
-                                    </div>
-                                </div>
+                            <div class="mb-3">
+                                <label for="location" class="form-label">勤務地</label>
+                                <input type="text" class="form-control" id="location" name="location" 
+                                       placeholder="例: 大阪市浪速区なんば"
+                                       value="<?php echo htmlspecialchars($_POST['location'] ?? ''); ?>">
                             </div>
 
                             <!-- 公開設定 -->
@@ -275,25 +258,6 @@ ob_start();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const salaryTypeSelect = document.getElementById('salary_type');
-        const salaryRange = document.getElementById('salary_range');
-        const salaryUnit = document.getElementById('salary_unit');
-        const salaryUnitMax = document.getElementById('salary_unit_max');
-        
-        function updateSalaryDisplay() {
-            const type = salaryTypeSelect.value;
-            if (type === 'hourly' || type === 'monthly') {
-                salaryRange.style.display = 'block';
-                salaryUnit.textContent = type === 'hourly' ? '円/時' : '円/月';
-                salaryUnitMax.textContent = type === 'hourly' ? '円/時' : '円/月';
-            } else {
-                salaryRange.style.display = 'none';
-            }
-        }
-        
-        salaryTypeSelect.addEventListener('change', updateSalaryDisplay);
-        updateSalaryDisplay(); // 初期表示
-        
         // Bootstrapバリデーション
         const form = document.querySelector('.needs-validation');
         form.addEventListener('submit', function(event) {
