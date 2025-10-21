@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = 'メールアドレスとパスワードを入力してください。';
     } else {
         $shop_admin = $db->fetch(
-            "SELECT sa.*, s.name as shop_name, s.id as shop_id
+            "SELECT sa.*, s.name as shop_name, s.id as shop_id, s.status as shop_status, s.verification_code
              FROM shop_admins sa
              JOIN shops s ON sa.shop_id = s.id
              WHERE sa.email = ? AND sa.status = 'active'",
@@ -24,6 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['shop_admin_username'] = $shop_admin['username'];
             $_SESSION['shop_id'] = $shop_admin['shop_id'];
             $_SESSION['shop_name'] = $shop_admin['shop_name'];
+            $_SESSION['shop_status'] = $shop_admin['shop_status'];
+            $_SESSION['verification_code'] = $shop_admin['verification_code'];
+            
+            // 住所確認が必要な場合は確認ページにリダイレクト
+            if ($shop_admin['shop_status'] === 'verification_pending') {
+                header('Location: shop_admin/verify_address.php');
+                exit;
+            }
             
             header('Location: shop_admin/dashboard.php');
             exit;

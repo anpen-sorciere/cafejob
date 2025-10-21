@@ -55,14 +55,17 @@ if ($_POST && isset($_POST['register'])) {
         try {
             $db->getConnection()->beginTransaction();
             
+            // 6桁の確認コードを生成
+            $verification_code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            
             // 店舗データを挿入（city_idはNULLにして、市区町村名をaddressに含める）
             $full_address = !empty($city_id) ? $city_id . ' ' . $address : $address; // 市区町村名 + 住所
             $shop_id = $db->query(
                 "INSERT INTO shops (name, description, address, prefecture_id, city_id, phone, email, website, 
-                                   opening_hours, concept_type, uniform_type, status, created_at) 
-                 VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'pending', NOW())",
+                                   opening_hours, concept_type, uniform_type, status, verification_code, verification_sent_at, created_at) 
+                 VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'verification_pending', ?, NOW(), NOW())",
                 [$name, $description, $full_address, $prefecture_id, $phone, $email, $website, 
-                 $opening_hours, $concept_type, $uniform_type]
+                 $opening_hours, $concept_type, $uniform_type, $verification_code]
             )->lastInsertId();
             
             // 店舗管理者データを挿入
@@ -75,7 +78,7 @@ if ($_POST && isset($_POST['register'])) {
             
             $db->getConnection()->commit();
             
-            $_SESSION['success_message'] = '店舗登録が完了しました。管理者による承認をお待ちください。';
+            $_SESSION['success_message'] = '店舗登録が完了しました。住所確認のため、入力された住所に6桁の確認コード（' . $verification_code . '）を記載した郵便を送信いたします。郵便が届きましたら、店舗管理者ログイン後に確認コードを入力してください。';
             header('Location: ?page=shop_login');
             exit;
             

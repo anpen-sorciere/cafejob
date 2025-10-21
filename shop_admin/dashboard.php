@@ -8,6 +8,12 @@ if (!is_shop_admin()) {
     exit;
 }
 
+// 住所確認が必要な場合は確認ページにリダイレクト
+if ($_SESSION['shop_status'] === 'verification_pending') {
+    header('Location: verify_address.php');
+    exit;
+}
+
 $page_title = '店舗管理ダッシュボード';
 $shop_id = $_SESSION['shop_id'];
 $shop_name = $_SESSION['shop_name'];
