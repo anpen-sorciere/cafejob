@@ -150,11 +150,11 @@ ErrorDocument 500 /cafejob/500.html
     RewriteRule .* - [F,L]
 </IfModule>
 
-# ファイルタイプの制限
-<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
-    Order Allow,Deny
-    Deny from all
-</FilesMatch>
+# ファイルタイプの制限（削除 - PHPファイルへのアクセスを禁止していた）
+# <FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+#     Order Allow,Deny
+#     Deny from all
+# </FilesMatch>
 
 # アップロードディレクトリでのPHP実行禁止
 <Directory "uploads">

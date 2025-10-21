@@ -3,7 +3,10 @@
 // 環境自動判定版
 
 // 環境判定
-$is_production = (strpos($_SERVER['HTTP_HOST'], 'purplelion51.sakura.ne.jp') !== false);
+$is_production = false;
+if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'purplelion51.sakura.ne.jp') !== false) {
+    $is_production = true;
+}
 
 if ($is_production) {
     // 本番環境設定
