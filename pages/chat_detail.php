@@ -50,14 +50,46 @@ if (!$room) {
 // メッセージ送信処理
 if ($_POST['action'] ?? '' === 'send_message') {
     $message = trim($_POST['message'] ?? '');
+    $message_type = 'text';
+    $file_path = null;
+    
+    // ファイルアップロード処理
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = 'uploads/chat/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        
+        $file_info = pathinfo($_FILES['image']['name']);
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+        $max_file_size = 5 * 1024 * 1024; // 5MB
+        
+        if (in_array(strtolower($file_info['extension']), $allowed_extensions) && 
+            $_FILES['image']['size'] <= $max_file_size) {
+            
+            $file_name = uniqid() . '_' . time() . '.' . $file_info['extension'];
+            $file_path = $upload_dir . $file_name;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $file_path)) {
+                $message_type = 'image';
+                if (empty($message)) {
+                    $message = '[画像を送信しました]';
+                }
+            } else {
+                $_SESSION['error_message'] = 'ファイルのアップロードに失敗しました。';
+            }
+        } else {
+            $_SESSION['error_message'] = '無効なファイル形式またはファイルサイズが大きすぎます。';
+        }
+    }
     
     if (!empty($message)) {
         try {
             // メッセージを送信
             $db->query("
-                INSERT INTO chat_messages (room_id, sender_type, sender_id, message, created_at)
-                VALUES (?, 'user', ?, ?, NOW())
-            ", [$room_id, $user_id, $message]);
+                INSERT INTO chat_messages (room_id, sender_type, sender_id, message, message_type, file_path, created_at)
+                VALUES (?, 'user', ?, ?, ?, ?, NOW())
+            ", [$room_id, $user_id, $message, $message_type, $file_path]);
             
             // ルームの更新時間を更新
             $db->query("
@@ -151,6 +183,15 @@ ob_start();
                             <div class="message-item mb-3 <?php echo $message['sender_type'] === 'user' ? 'text-end' : 'text-start'; ?>">
                                 <div class="d-inline-block">
                                     <div class="message-bubble <?php echo $message['sender_type'] === 'user' ? 'bg-primary text-white' : 'bg-light'; ?>" style="max-width: 70%; padding: 10px 15px; border-radius: 18px;">
+                                        <?php if ($message['message_type'] === 'image' && $message['file_path']): ?>
+                                            <div class="message-image mb-2">
+                                                <img src="<?php echo htmlspecialchars($message['file_path']); ?>" 
+                                                     alt="送信された画像" 
+                                                     class="img-fluid rounded" 
+                                                     style="max-width: 200px; max-height: 200px; cursor: pointer;"
+                                                     onclick="openImageModal('<?php echo htmlspecialchars($message['file_path']); ?>')">
+                                            </div>
+                                        <?php endif; ?>
                                         <div class="message-text"><?php echo nl2br(htmlspecialchars($message['message'])); ?></div>
                                         <div class="message-meta mt-1" style="font-size: 0.8em; opacity: 0.7;">
                                             <?php echo $message['sender_type'] === 'user' ? $message['user_name'] : $message['shop_admin_name']; ?>
@@ -165,16 +206,35 @@ ob_start();
                 
                 <!-- メッセージ送信フォーム -->
                 <div class="card-footer">
-                    <form method="POST" id="message-form">
+                    <form method="POST" id="message-form" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="send_message">
+                        <div class="mb-2">
+                            <input type="file" class="form-control form-control-sm" name="image" id="image-upload" accept="image/*">
+                            <small class="text-muted">画像ファイル（JPG, PNG, GIF）最大5MB</small>
+                        </div>
                         <div class="input-group">
-                            <textarea class="form-control" name="message" placeholder="メッセージを入力してください..." rows="2" required></textarea>
+                            <textarea class="form-control" name="message" placeholder="メッセージを入力してください..." rows="2"></textarea>
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 画像拡大表示モーダル -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">画像を表示</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="拡大画像" class="img-fluid">
             </div>
         </div>
     </div>
@@ -193,6 +253,14 @@ ob_start();
 .message-item:last-child {
     margin-bottom: 0 !important;
 }
+
+.message-image img {
+    transition: transform 0.2s;
+}
+
+.message-image img:hover {
+    transform: scale(1.05);
+}
 </style>
 
 <script>
@@ -200,6 +268,13 @@ ob_start();
 function scrollToBottom() {
     const chatMessages = document.getElementById('chat-messages');
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// 画像拡大表示
+function openImageModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    imageModal.show();
 }
 
 // ページ読み込み時に最下部にスクロール
@@ -210,17 +285,44 @@ document.addEventListener('DOMContentLoaded', function() {
 // メッセージ送信時の処理
 document.getElementById('message-form').addEventListener('submit', function(e) {
     const messageTextarea = this.querySelector('textarea[name="message"]');
+    const imageUpload = this.querySelector('input[name="image"]');
     const message = messageTextarea.value.trim();
+    const hasImage = imageUpload.files.length > 0;
     
-    if (message === '') {
+    if (message === '' && !hasImage) {
         e.preventDefault();
+        alert('メッセージまたは画像を入力してください。');
         return;
+    }
+    
+    // ファイルサイズチェック
+    if (hasImage) {
+        const file = imageUpload.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+            e.preventDefault();
+            alert('ファイルサイズが大きすぎます。5MB以下の画像を選択してください。');
+            return;
+        }
     }
     
     // 送信ボタンを無効化
     const submitBtn = this.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+});
+
+// ファイル選択時のプレビュー
+document.getElementById('image-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // プレビュー表示（オプション）
+            console.log('画像が選択されました:', file.name);
+        };
+        reader.readAsDataURL(file);
+    }
 });
 </script>
 

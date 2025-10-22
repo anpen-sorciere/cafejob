@@ -53,14 +53,46 @@ if (!$room) {
 // メッセージ送信処理
 if ($_POST['action'] ?? '' === 'send_message') {
     $message = trim($_POST['message'] ?? '');
+    $message_type = 'text';
+    $file_path = null;
+    
+    // ファイルアップロード処理
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/chat/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        
+        $file_info = pathinfo($_FILES['image']['name']);
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+        $max_file_size = 5 * 1024 * 1024; // 5MB
+        
+        if (in_array(strtolower($file_info['extension']), $allowed_extensions) && 
+            $_FILES['image']['size'] <= $max_file_size) {
+            
+            $file_name = uniqid() . '_' . time() . '.' . $file_info['extension'];
+            $file_path = $upload_dir . $file_name;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $file_path)) {
+                $message_type = 'image';
+                if (empty($message)) {
+                    $message = '[画像を送信しました]';
+                }
+            } else {
+                $_SESSION['error_message'] = 'ファイルのアップロードに失敗しました。';
+            }
+        } else {
+            $_SESSION['error_message'] = '無効なファイル形式またはファイルサイズが大きすぎます。';
+        }
+    }
     
     if (!empty($message)) {
         try {
             // メッセージを送信
             $db->query("
-                INSERT INTO chat_messages (room_id, sender_type, sender_id, message, created_at)
-                VALUES (?, 'shop_admin', ?, ?, NOW())
-            ", [$room_id, $shop_admin_id, $message]);
+                INSERT INTO chat_messages (room_id, sender_type, sender_id, message, message_type, file_path, created_at)
+                VALUES (?, 'shop_admin', ?, ?, ?, ?, NOW())
+            ", [$room_id, $shop_admin_id, $message, $message_type, $file_path]);
             
             // ルームの更新時間を更新
             $db->query("
