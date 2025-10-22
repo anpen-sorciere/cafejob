@@ -102,23 +102,37 @@ if ($application_id) {
     }
 } else if ($room_id) {
     // room_idが指定されている場合（チャット一覧からアクセス）
-    $room = $db->fetch("
-        SELECT 
-            cr.*,
-            u.username as user_name,
-            u.first_name,
-            u.last_name,
-            j.title as job_title,
-            a.status as application_status
-        FROM chat_rooms cr
-        JOIN users u ON cr.user_id = u.id
-        JOIN applications a ON cr.application_id = a.id
-        JOIN jobs j ON a.job_id = j.id
-        WHERE cr.id = ? AND cr.shop_id = ?
-    ", [$room_id, $shop_id]);
-    
-    if (!$room) {
-        $_SESSION['error_message'] = 'チャットルームが見つかりません。';
+    try {
+        error_log("Chat detail - room_id: $room_id, shop_id: $shop_id");
+        
+        $room = $db->fetch("
+            SELECT 
+                cr.*,
+                u.username as user_name,
+                u.first_name,
+                u.last_name,
+                j.title as job_title,
+                a.status as application_status
+            FROM chat_rooms cr
+            JOIN users u ON cr.user_id = u.id
+            JOIN applications a ON cr.application_id = a.id
+            JOIN jobs j ON a.job_id = j.id
+            WHERE cr.id = ? AND cr.shop_id = ?
+        ", [$room_id, $shop_id]);
+        
+        if (!$room) {
+            error_log("Chat room not found - room_id: $room_id, shop_id: $shop_id");
+            $_SESSION['error_message'] = 'チャットルームが見つかりません。';
+            header('Location: chat.php');
+            exit;
+        }
+        
+        error_log("Chat room found: " . json_encode($room));
+        
+    } catch (Exception $e) {
+        error_log("Chat room query error: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        $_SESSION['error_message'] = 'チャットルームの取得に失敗しました: ' . $e->getMessage();
         header('Location: chat.php');
         exit;
     }
@@ -214,24 +228,40 @@ if ($_POST['action'] ?? '' === 'send_message') {
 }
 
 // メッセージ一覧を取得
-$messages = $db->fetchAll("
-    SELECT 
-        cm.*,
-        u.username as user_name,
-        sa.username as shop_admin_name
-    FROM chat_messages cm
-    LEFT JOIN users u ON cm.sender_type = 'user' AND cm.sender_id = u.id
-    LEFT JOIN shop_admins sa ON cm.sender_type = 'shop_admin' AND cm.sender_id = sa.id
-    WHERE cm.room_id = ?
-    ORDER BY cm.created_at ASC
-", [$room['id']]);
+try {
+    error_log("Fetching messages for room_id: " . $room['id']);
+    
+    $messages = $db->fetchAll("
+        SELECT 
+            cm.*,
+            u.username as user_name,
+            sa.username as shop_admin_name
+        FROM chat_messages cm
+        LEFT JOIN users u ON cm.sender_type = 'user' AND cm.sender_id = u.id
+        LEFT JOIN shop_admins sa ON cm.sender_type = 'shop_admin' AND cm.sender_id = sa.id
+        WHERE cm.room_id = ?
+        ORDER BY cm.created_at ASC
+    ", [$room['id']]);
+    
+    error_log("Found " . count($messages) . " messages");
+    
+} catch (Exception $e) {
+    error_log("Messages query error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    $messages = [];
+    $_SESSION['error_message'] = 'メッセージの取得に失敗しました: ' . $e->getMessage();
+}
 
 // 未読メッセージを既読にマーク
-$db->query("
-    UPDATE chat_messages 
-    SET is_read = TRUE, read_at = NOW() 
-    WHERE room_id = ? AND sender_type = 'user' AND is_read = FALSE
-", [$room['id']]);
+try {
+    $db->query("
+        UPDATE chat_messages 
+        SET is_read = TRUE, read_at = NOW() 
+        WHERE room_id = ? AND sender_type = 'user' AND is_read = FALSE
+    ", [$room['id']]);
+} catch (Exception $e) {
+    error_log("Mark messages as read error: " . $e->getMessage());
+}
 
 $page_title = 'チャット - ' . $room['last_name'] . ' ' . $room['first_name'];
 ob_start();

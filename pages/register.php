@@ -13,6 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = sanitize_input($_POST['phone']);
     $birth_date = $_POST['birth_date'];
     $gender = $_POST['gender'];
+    $postal_code = sanitize_input($_POST['postal_code']);
+    $prefecture_id = (int)($_POST['prefecture_id'] ?? 0);
+    $city_id = (int)($_POST['city_id'] ?? 0);
+    $address = sanitize_input($_POST['address']);
     $agree_terms = isset($_POST['agree_terms']);
     
     $errors = [];
@@ -77,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             $db->query(
-                "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, birth_date, gender, status) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')",
+                "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, birth_date, gender, postal_code, prefecture_id, city_id, address, status) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')",
                 [
                     $username,
                     $email,
@@ -87,7 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $last_name,
                     $phone ?: null,
                     $birth_date ?: null,
-                    $gender ?: null
+                    $gender ?: null,
+                    $postal_code ?: null,
+                    $prefecture_id ?: null,
+                    $city_id ?: null,
+                    $address ?: null
                 ]
             );
             
@@ -242,6 +250,68 @@ ob_start();
                                 <option value="female" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'female') ? 'selected' : ''; ?>>女性</option>
                                 <option value="other" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'other') ? 'selected' : ''; ?>>その他</option>
                             </select>
+                        </div>
+                        
+                        <!-- 住所情報 -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="postal_code" class="form-label">
+                                    <i class="fas fa-mail-bulk me-1"></i>郵便番号
+                                </label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code" 
+                                       placeholder="123-4567" pattern="[0-9]{3}-[0-9]{4}"
+                                       value="<?php echo isset($_POST['postal_code']) ? htmlspecialchars($_POST['postal_code']) : ''; ?>">
+                                <div class="form-text">例: 123-4567</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="prefecture_id" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-1"></i>都道府県
+                                </label>
+                                <select class="form-select" id="prefecture_id" name="prefecture_id">
+                                    <option value="">選択してください</option>
+                                    <?php
+                                    // 都道府県一覧を取得
+                                    $prefectures = $db->fetchAll("SELECT id, name FROM prefectures ORDER BY id");
+                                    foreach ($prefectures as $prefecture):
+                                    ?>
+                                        <option value="<?php echo $prefecture['id']; ?>" 
+                                                <?php echo (isset($_POST['prefecture_id']) && $_POST['prefecture_id'] == $prefecture['id']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($prefecture['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city_id" class="form-label">
+                                    <i class="fas fa-city me-1"></i>市区町村
+                                </label>
+                                <select class="form-select" id="city_id" name="city_id">
+                                    <option value="">選択してください</option>
+                                    <?php
+                                    // 市区町村一覧を取得
+                                    $cities = $db->fetchAll("SELECT id, name FROM cities ORDER BY name");
+                                    foreach ($cities as $city):
+                                    ?>
+                                        <option value="<?php echo $city['id']; ?>" 
+                                                <?php echo (isset($_POST['city_id']) && $_POST['city_id'] == $city['id']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($city['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="address" class="form-label">
+                                    <i class="fas fa-home me-1"></i>住所
+                                </label>
+                                <input type="text" class="form-control" id="address" name="address" 
+                                       placeholder="町名・番地・建物名"
+                                       value="<?php echo isset($_POST['address']) ? htmlspecialchars($_POST['address']) : ''; ?>">
+                            </div>
                         </div>
                         
                         <div class="mb-3 form-check">

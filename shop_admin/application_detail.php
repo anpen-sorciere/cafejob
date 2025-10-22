@@ -40,7 +40,7 @@ try {
     $application = $db->fetch(
         "SELECT a.*, j.title as job_title, j.description as job_description, j.id as job_id,
                 u.username, u.email, u.phone, u.first_name, u.last_name, u.created_at as user_created_at,
-                u.birth_date, u.gender, u.prefecture_id, u.city_id, u.address,
+                u.birth_date, u.gender, u.prefecture_id, u.city_id, u.address, u.postal_code,
                 p.name as prefecture_name, c.name as city_name
          FROM applications a
          JOIN jobs j ON a.job_id = j.id
@@ -292,6 +292,11 @@ ob_start();
                                                 <div class="text-muted">
                                                     <?php 
                                                     $address_parts = [];
+                                                    
+                                                    // 郵便番号（データがある場合のみ）
+                                                    if (!empty($application['postal_code'])) {
+                                                        $address_parts[] = '〒' . $application['postal_code'];
+                                                    }
                                                     
                                                     // 都道府県名（データがある場合のみ）
                                                     if (!empty($application['prefecture_name'])) {
