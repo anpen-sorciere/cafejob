@@ -67,7 +67,6 @@ $shop_jobs = $db->fetchAll(
     [$shop_id]
 );
 
-
 // 応募ステータス更新処理
 if ($_POST && isset($_POST['update_status'])) {
     $application_id = (int)$_POST['application_id'];
@@ -101,54 +100,203 @@ ob_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?> - <?php echo htmlspecialchars($shop_name); ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <title><?php echo htmlspecialchars($page_title); ?> - <?php echo htmlspecialchars($shop_name); ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px 15px 0 0 !important;
+        border: none;
+    }
+    
+    .application-item {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .application-item:hover {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .info-item {
+        transition: all 0.3s ease;
+        padding: 10px;
+        border-radius: 8px;
+    }
+    
+    .info-item:hover {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        transform: translateX(5px);
+    }
+    
+    .btn {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .badge {
+        border-radius: 20px;
+        padding: 8px 12px;
+        font-weight: 500;
+    }
+    
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+    }
+    
+    .badge.bg-info {
+        background-color: #17a2b8 !important;
+    }
+    
+    .badge.bg-primary {
+        background-color: #007bff !important;
+    }
+    
+    .badge.bg-success {
+        background-color: #28a745 !important;
+    }
+    
+    .badge.bg-danger {
+        background-color: #dc3545 !important;
+    }
+    
+    /* モーダルの完全制御 */
+    .modal {
+        display: none !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        overflow: hidden;
+        outline: 0;
+    }
+    
+    .modal.show {
+        display: block !important;
+    }
+    
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: 1.75rem auto;
+        max-width: 500px;
+        pointer-events: none;
+    }
+    
+    .modal-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.2);
+        border-radius: 0.3rem;
+        outline: 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .modal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 1rem 1rem;
+        border-bottom: 1px solid #dee2e6;
+        border-top-left-radius: calc(0.3rem - 1px);
+        border-top-right-radius: calc(0.3rem - 1px);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .modal-body {
+        position: relative;
+        flex: 1 1 auto;
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0.75rem;
+        border-top: 1px solid #dee2e6;
+        border-bottom-right-radius: calc(0.3rem - 1px);
+        border-bottom-left-radius: calc(0.3rem - 1px);
+    }
+    
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: white;
+        opacity: 0.8;
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+    </style>
 </head>
 <body>
-    <!-- 店舗管理者ナビゲーション -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- ナビゲーションバー -->
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="dashboard.php">
-                <i class="fas fa-store me-2"></i><?php echo htmlspecialchars($shop_name); ?> 管理パネル
+            <a class="navbar-brand fw-bold" href="../">
+                <i class="fas fa-coffee me-2"></i>カフェJob
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.php">
-                            <i class="fas fa-tachometer-alt me-1"></i>ダッシュボード
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="shop_info.php">
-                            <i class="fas fa-store me-1"></i>店舗情報
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="jobs.php">
-                            <i class="fas fa-briefcase me-1"></i>求人管理
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="applications.php">
-                            <i class="fas fa-file-alt me-1"></i>応募管理
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-shield me-1"></i><?php echo htmlspecialchars($_SESSION['shop_admin_username'] ?? '管理者'); ?>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>ログアウト</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="applications.php">
+                    <i class="fas fa-file-alt me-1"></i>応募管理
+                </a>
+                <a class="nav-link" href="chat.php">
+                    <i class="fas fa-comments me-1"></i>チャット
+                </a>
+                <a class="nav-link" href="logout.php">
+                    <i class="fas fa-sign-out-alt me-1"></i>ログアウト
+                </a>
             </div>
         </div>
     </nav>
@@ -158,10 +306,10 @@ ob_start();
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0">
+                    <h1 class="h3 mb-0 text-white">
                         <i class="fas fa-file-alt me-2"></i>応募管理
                     </h1>
-                    <div class="text-muted small">
+                    <div class="text-white small">
                         <i class="fas fa-info-circle me-1"></i>
                         総応募数: <span class="fw-bold"><?php echo count($applications); ?></span>
                     </div>
@@ -199,7 +347,7 @@ ob_start();
                             <div class="col-md-3">
                                 <label for="job_id" class="form-label">求人</label>
                                 <select class="form-select" id="job_id" name="job_id">
-                                    <option value="all" <?php echo $job_filter === 'all' ? 'selected' : ''; ?>>すべての求人</option>
+                                    <option value="all" <?php echo $job_filter === 'all' ? 'selected' : ''; ?>>すべて</option>
                                     <?php foreach ($shop_jobs as $job): ?>
                                         <option value="<?php echo $job['id']; ?>" <?php echo $job_filter == $job['id'] ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($job['title']); ?>
@@ -210,13 +358,16 @@ ob_start();
                             <div class="col-md-4">
                                 <label for="search" class="form-label">検索</label>
                                 <input type="text" class="form-control" id="search" name="search" 
-                                       placeholder="応募者名、メールアドレス、求人タイトルで検索"
+                                       placeholder="ユーザー名、メール、求人タイトルで検索" 
                                        value="<?php echo htmlspecialchars($search); ?>">
                             </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search me-1"></i>検索
-                                </button>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-1"></i>検索
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -226,11 +377,8 @@ ob_start();
                     <div class="card">
                         <div class="card-body text-center py-5">
                             <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-                            <h4 class="text-muted">応募がありません</h4>
-                            <p class="text-muted">求人を投稿すると、応募がここに表示されます。</p>
-                            <a href="jobs.php" class="btn btn-primary">
-                                <i class="fas fa-briefcase me-2"></i>求人管理に戻る
-                            </a>
+                            <h5 class="text-muted">応募がありません</h5>
+                            <p class="text-muted">条件に一致する応募が見つかりませんでした。</p>
                         </div>
                     </div>
                 <?php else: ?>
@@ -309,7 +457,7 @@ ob_start();
                                             </div>
                                             <div class="d-flex gap-2 justify-content-end">
                                                 <button type="button" class="btn btn-outline-primary btn-sm" 
-                                                        data-bs-toggle="modal" data-bs-target="#statusModal<?php echo $application['id']; ?>">
+                                                        onclick="openStatusModal(<?php echo $application['id']; ?>)">
                                                     <i class="fas fa-edit me-1"></i>ステータス更新
                                                 </button>
                                                 <a href="application_detail.php?id=<?php echo $application['id']; ?>" 
@@ -324,333 +472,110 @@ ob_start();
                                         </div>
                                     </div>
                                 </div>
-
-                            <!-- ステータス更新モーダル -->
-                            <div class="modal fade" id="statusModal<?php echo $application['id']; ?>" tabindex="-1" aria-labelledby="statusModalLabel<?php echo $application['id']; ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="statusModalLabel<?php echo $application['id']; ?>">応募ステータス更新</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <form method="POST">
-                                            <div class="modal-body">
-                                                <input type="hidden" name="application_id" value="<?php echo $application['id']; ?>">
-                                                
-                                                <div class="mb-3">
-                                                    <label for="status<?php echo $application['id']; ?>" class="form-label">ステータス</label>
-                                                    <select class="form-select" id="status<?php echo $application['id']; ?>" name="status" required>
-                                                        <option value="pending" <?php echo $application['status'] === 'pending' ? 'selected' : ''; ?>>未読</option>
-                                                        <option value="reviewed" <?php echo $application['status'] === 'reviewed' ? 'selected' : ''; ?>>読了</option>
-                                                        <option value="interview" <?php echo $application['status'] === 'interview' ? 'selected' : ''; ?>>面接</option>
-                                                        <option value="accepted" <?php echo $application['status'] === 'accepted' ? 'selected' : ''; ?>>採用</option>
-                                                        <option value="rejected" <?php echo $application['status'] === 'rejected' ? 'selected' : ''; ?>>不採用</option>
-                                                    </select>
-                                                </div>
-                                                
-                                                <div class="mb-3">
-                                                    <label for="admin_notes<?php echo $application['id']; ?>" class="form-label">管理者メモ</label>
-                                                    <textarea class="form-control" id="admin_notes<?php echo $application['id']; ?>" 
-                                                              name="admin_notes" rows="3" 
-                                                              placeholder="面接日時、採用理由、不採用理由などを記録してください"><?php echo htmlspecialchars($application['admin_notes'] ?? ''); ?></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-                                                <button type="submit" name="update_status" class="btn btn-primary">
-                                                    <i class="fas fa-save me-1"></i>更新
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <style>
-    /* もえなび！スタイルの応募管理画面 */
-    .application-item {
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    
-    .application-item:hover {
-        background-color: #f8f9fa;
-        transform: translateX(5px);
-    }
-    
-    .application-item:last-child {
-        border-bottom: none !important;
-    }
-    
-    .application-item .bg-primary {
-        background: linear-gradient(135deg, #007bff, #0056b3) !important;
-    }
-    
-    .card-header.bg-primary {
-        background: linear-gradient(135deg, #007bff, #0056b3) !important;
-    }
-    
-    .badge {
-        font-size: 0.75em;
-        padding: 0.5em 0.75em;
-    }
-    
-    .btn-sm {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.875rem;
-    }
-    
-    .text-truncate {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    /* レスポンシブ対応 */
-    @media (max-width: 768px) {
-        .application-item .row {
-            flex-direction: column;
-        }
-        
-        .application-item .col-md-4 {
-            text-align: left !important;
-            margin-top: 1rem;
-        }
-        
-        .application-item .d-flex.gap-2 {
-            flex-wrap: wrap;
-        }
-        
-        .application-item .btn-sm {
-            margin-bottom: 0.5rem;
-        }
-    }
-    
-    /* アニメーション効果 */
-    .application-item {
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    /* ステータス別の色分け */
-    .badge.bg-warning {
-        background-color: #ffc107 !important;
-        color: #000 !important;
-    }
-    
-    .badge.bg-info {
-        background-color: #17a2b8 !important;
-    }
-    
-    .badge.bg-primary {
-        background-color: #007bff !important;
-    }
-    
-    .badge.bg-success {
-        background-color: #28a745 !important;
-    }
-    
-    .badge.bg-danger {
-        background-color: #dc3545 !important;
-    }
-    
-    /* モーダルのちらつき防止 */
-    .modal {
-        display: none !important;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1055;
-        overflow: hidden;
-        outline: 0;
-    }
-    
-    .modal.show {
-        display: block !important;
-    }
-    
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1050;
-        width: 100vw;
-        height: 100vh;
-        background-color: #000;
-        opacity: 0.5;
-    }
-    
-    .modal-dialog {
-        position: relative;
-        width: auto;
-        margin: 0.5rem;
-        pointer-events: none;
-    }
-    
-    .modal-content {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        pointer-events: auto;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid rgba(0,0,0,.2);
-        border-radius: 0.3rem;
-        outline: 0;
-    }
-    
-    @media (min-width: 576px) {
-        .modal-dialog {
-            max-width: 500px;
-            margin: 1.75rem auto;
-        }
-    }
-    </style>
-    
+    <!-- ステータス更新モーダル -->
+    <div id="statusModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">応募ステータス更新</h5>
+                    <button type="button" class="btn-close" onclick="closeStatusModal()"></button>
+                </div>
+                <form method="POST" id="statusForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="application_id" id="modalApplicationId">
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label">ステータス</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="pending">未読</option>
+                                <option value="reviewed">読了</option>
+                                <option value="interview">面接</option>
+                                <option value="accepted">採用</option>
+                                <option value="rejected">不採用</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="admin_notes" class="form-label">管理者メモ</label>
+                            <textarea class="form-control" id="admin_notes" 
+                                      name="admin_notes" rows="3" 
+                                      placeholder="面接日時、採用理由、不採用理由などを記録してください"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeStatusModal()">キャンセル</button>
+                        <button type="submit" name="update_status" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>更新
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-    // モーダル制御の完全な修正
-    document.addEventListener('DOMContentLoaded', function() {
-        // すべてのモーダルを無効化
-        document.querySelectorAll('.modal').forEach(function(modal) {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            modal.setAttribute('aria-hidden', 'true');
-            modal.removeAttribute('aria-modal');
-        });
+    // モーダル制御関数
+    function openStatusModal(applicationId) {
+        document.getElementById('modalApplicationId').value = applicationId;
+        document.getElementById('statusModal').style.display = 'block';
+        document.getElementById('statusModal').classList.add('show');
         
-        // モーダルボタンのクリックイベント
-        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(button) {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const targetId = this.getAttribute('data-bs-target');
-                const modalElement = document.querySelector(targetId);
-                
-                if (modalElement) {
-                    // 他のモーダルをすべて閉じる
-                    document.querySelectorAll('.modal').forEach(function(modal) {
-                        if (modal !== modalElement) {
-                            modal.style.display = 'none';
-                            modal.classList.remove('show');
-                            modal.setAttribute('aria-hidden', 'true');
-                            modal.removeAttribute('aria-modal');
-                        }
-                    });
-                    
-                    // 対象のモーダルを表示
-                    modalElement.style.display = 'block';
-                    modalElement.classList.add('show');
-                    modalElement.setAttribute('aria-hidden', 'false');
-                    modalElement.setAttribute('aria-modal', 'true');
-                    
-                    // バックドロップを追加
-                    if (!document.querySelector('.modal-backdrop')) {
-                        const backdrop = document.createElement('div');
-                        backdrop.className = 'modal-backdrop fade show';
-                        document.body.appendChild(backdrop);
-                    }
-                    
-                    // フォーカスを最初の入力フィールドに
-                    setTimeout(function() {
-                        const firstInput = modalElement.querySelector('input, select, textarea');
-                        if (firstInput) {
-                            firstInput.focus();
-                        }
-                    }, 100);
-                }
-            });
-        });
+        // バックドロップを追加
+        if (!document.querySelector('.modal-backdrop')) {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop';
+            document.body.appendChild(backdrop);
+        }
         
-        // モーダルを閉じるボタンのイベント
-        document.querySelectorAll('.btn-close, [data-bs-dismiss="modal"]').forEach(function(closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // モーダルを閉じる
-                const modal = this.closest('.modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    modal.classList.remove('show');
-                    modal.setAttribute('aria-hidden', 'true');
-                    modal.removeAttribute('aria-modal');
-                    
-                    // バックドロップを削除
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) {
-                        backdrop.remove();
-                    }
-                    
-                    // フォームをリセット
-                    const form = modal.querySelector('form');
-                    if (form) {
-                        form.reset();
-                    }
-                }
-            });
-        });
+        // フォーカスを最初の入力フィールドに
+        setTimeout(function() {
+            document.getElementById('status').focus();
+        }, 100);
+    }
+    
+    function closeStatusModal() {
+        document.getElementById('statusModal').style.display = 'none';
+        document.getElementById('statusModal').classList.remove('show');
         
-        // バックドロップクリックでモーダルを閉じる
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal-backdrop')) {
-                document.querySelectorAll('.modal').forEach(function(modal) {
-                    modal.style.display = 'none';
-                    modal.classList.remove('show');
-                    modal.setAttribute('aria-hidden', 'true');
-                    modal.removeAttribute('aria-modal');
-                });
-                e.target.remove();
-            }
-        });
+        // バックドロップを削除
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
         
-        // ESCキーでモーダルを閉じる
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(function(modal) {
-                    modal.style.display = 'none';
-                    modal.classList.remove('show');
-                    modal.setAttribute('aria-hidden', 'true');
-                    modal.removeAttribute('aria-modal');
-                });
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }
-        });
-        
-        // フォーム送信時の処理
-        document.querySelectorAll('form').forEach(function(form) {
-            form.addEventListener('submit', function(e) {
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>処理中...';
-                }
-            });
-        });
+        // フォームをリセット
+        document.getElementById('statusForm').reset();
+    }
+    
+    // ESCキーでモーダルを閉じる
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeStatusModal();
+        }
+    });
+    
+    // バックドロップクリックでモーダルを閉じる
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-backdrop')) {
+            closeStatusModal();
+        }
+    });
+    
+    // フォーム送信時の処理
+    document.getElementById('statusForm').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>処理中...';
+        }
     });
     </script>
 </body>
