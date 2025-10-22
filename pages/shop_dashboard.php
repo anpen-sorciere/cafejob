@@ -7,6 +7,9 @@ require_once '../config/config.php';
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
+// データベース接続を確実に取得
+$db = new Database();
+
 // 店舗管理者認証チェック
 if (!is_shop_admin()) {
     header('Location: ?page=shop_admin_login');
@@ -20,49 +23,73 @@ if ($_SESSION['shop_status'] === 'verification_pending') {
 }
 
 // 住所変更がロックされている場合は確認ページにリダイレクト
-$db = new Database();
 $shop_id = $_SESSION['shop_id'];
 
-$locked_address_change = $db->fetch(
-    "SELECT id FROM shop_address_changes 
-     WHERE shop_id = ? AND status = 'pending' AND is_locked = TRUE 
-     ORDER BY created_at DESC LIMIT 1",
-    [$shop_id]
-);
+try {
+    $locked_address_change = $db->fetch(
+        "SELECT id FROM shop_address_changes 
+         WHERE shop_id = ? AND status = 'pending' AND is_locked = TRUE 
+         ORDER BY created_at DESC LIMIT 1",
+        [$shop_id]
+    );
+    
+    if ($locked_address_change && basename($_SERVER['PHP_SELF']) !== 'verify_address.php') {
+        $_SESSION['address_verification_pending'] = true;
+        header('Location: shop_admin/verify_address.php');
+        exit;
+    }
+} catch (Exception $e) {
+    error_log("Shop dashboard lock check error: " . $e->getMessage());
+    // エラーの場合はロックチェックをスキップ
+}
 
-if ($locked_address_change && basename($_SERVER['PHP_SELF']) !== 'verify_address.php') {
-    $_SESSION['address_verification_pending'] = true;
-    header('Location: shop_admin/verify_address.php');
-    exit;
+// 統計データの取得
+try {
+    $stats = [
+        'total_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ?", [$shop_id])['count'] ?? 0,
+        'active_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ? AND status = 'active'", [$shop_id])['count'] ?? 0,
+        'total_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ?", [$shop_id])['count'] ?? 0,
+        'pending_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ? AND a.status = 'pending'", [$shop_id])['count'] ?? 0
+    ];
+} catch (Exception $e) {
+    error_log("Shop dashboard stats error: " . $e->getMessage());
+    $stats = [
+        'total_jobs' => 0,
+        'active_jobs' => 0,
+        'total_applications' => 0,
+        'pending_applications' => 0
+    ];
+}
+
+// 最新の応募情報
+try {
+    $recent_applications = $db->fetchAll(
+        "SELECT a.*, j.title as job_title, u.username, u.email, u.phone
+         FROM applications a
+         JOIN jobs j ON a.job_id = j.id
+         JOIN users u ON a.user_id = u.id
+         WHERE j.shop_id = ?
+         ORDER BY a.applied_at DESC
+         LIMIT 10",
+        [$shop_id]
+    );
+} catch (Exception $e) {
+    error_log("Shop dashboard recent applications error: " . $e->getMessage());
+    $recent_applications = [];
+}
+
+// 店舗の求人一覧
+try {
+    $shop_jobs = $db->fetchAll(
+        "SELECT * FROM jobs WHERE shop_id = ? ORDER BY created_at DESC",
+        [$shop_id]
+    );
+} catch (Exception $e) {
+    error_log("Shop dashboard jobs error: " . $e->getMessage());
+    $shop_jobs = [];
 }
 
 $page_title = '店舗ダッシュボード';
-
-// 統計データの取得
-$stats = [
-    'total_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ?", [$shop_id])['count'],
-    'active_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ? AND status = 'active'", [$shop_id])['count'],
-    'total_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ?", [$shop_id])['count'],
-    'pending_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ? AND a.status = 'pending'", [$shop_id])['count']
-];
-
-// 最新の応募情報
-$recent_applications = $db->fetchAll(
-    "SELECT a.*, j.title as job_title, u.username, u.email, u.phone
-     FROM applications a
-     JOIN jobs j ON a.job_id = j.id
-     JOIN users u ON a.user_id = u.id
-     WHERE j.shop_id = ?
-     ORDER BY a.applied_at DESC
-     LIMIT 10",
-    [$shop_id]
-);
-
-// 店舗の求人一覧
-$shop_jobs = $db->fetchAll(
-    "SELECT * FROM jobs WHERE shop_id = ? ORDER BY created_at DESC",
-    [$shop_id]
-);
 
 ob_start();
 ?>
