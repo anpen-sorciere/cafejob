@@ -51,6 +51,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <?php echo ($page == 'chat') ? 'active' : ''; ?>" href="?page=chat">
+                            <i class="fas fa-comments me-1"></i>チャット
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <?php echo ($page == 'updates') ? 'active' : ''; ?>" href="?page=updates">
                             <i class="fas fa-clock me-1"></i>最新情報
                         </a>

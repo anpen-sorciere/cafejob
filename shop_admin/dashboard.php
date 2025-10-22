@@ -117,11 +117,16 @@ ob_start();
                             <i class="fas fa-star me-1"></i>口コミ管理
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cast_management.php">
-                            <i class="fas fa-users me-1"></i>キャスト管理
-                        </a>
-                    </li>
+            <li class="nav-item">
+                <a class="nav-link" href="cast_management.php">
+                    <i class="fas fa-users me-1"></i>キャスト管理
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="chat.php">
+                    <i class="fas fa-comments me-1"></i>チャット管理
+                </a>
+            </li>
                 </ul>
                 
                 <ul class="navbar-nav">
