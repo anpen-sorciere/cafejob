@@ -308,8 +308,9 @@ ob_start();
                                                    class="btn btn-outline-info btn-sm">
                                                     <i class="fas fa-eye me-1"></i>詳細
                                                 </a>
-                                                <a href="chat_detail.php?application_id=<?php echo $application['id']; ?>" 
-                                                   class="btn btn-success btn-sm">
+                                                <a href="chat.php" 
+                                                   class="btn btn-success btn-sm"
+                                                   title="チャットルーム一覧を表示">
                                                     <i class="fas fa-comments me-1"></i>チャット
                                                 </a>
                                             </div>
@@ -318,12 +319,12 @@ ob_start();
                                 </div>
 
                             <!-- ステータス更新モーダル -->
-                            <div class="modal fade" id="statusModal<?php echo $application['id']; ?>" tabindex="-1">
+                            <div class="modal fade" id="statusModal<?php echo $application['id']; ?>" tabindex="-1" aria-labelledby="statusModalLabel<?php echo $application['id']; ?>" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">応募ステータス更新</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            <h5 class="modal-title" id="statusModalLabel<?php echo $application['id']; ?>">応募ステータス更新</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <form method="POST">
                                             <div class="modal-body">
@@ -464,6 +465,64 @@ ob_start();
         background-color: #dc3545 !important;
     }
     </style>
+    
+    <script>
+    // モーダルの問題を修正
+    document.addEventListener('DOMContentLoaded', function() {
+        // Bootstrapが読み込まれているかチェック
+        if (typeof bootstrap === 'undefined') {
+            console.error('Bootstrap is not loaded');
+            return;
+        }
+        
+        // モーダルのイベントハンドラーを追加
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(trigger) {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const targetId = this.getAttribute('data-bs-target');
+                const modal = document.querySelector(targetId);
+                
+                if (modal) {
+                    try {
+                        const bsModal = new bootstrap.Modal(modal, {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        bsModal.show();
+                    } catch (error) {
+                        console.error('Error opening modal:', error);
+                    }
+                } else {
+                    console.error('Modal not found:', targetId);
+                }
+            });
+        });
+        
+        // モーダルが閉じられた時の処理
+        document.querySelectorAll('.modal').forEach(function(modal) {
+            modal.addEventListener('hidden.bs.modal', function() {
+                // フォームをリセット
+                const form = this.querySelector('form');
+                if (form) {
+                    form.reset();
+                }
+            });
+        });
+        
+        // フォーム送信時の処理
+        document.querySelectorAll('form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>処理中...';
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
 
