@@ -290,6 +290,10 @@ ob_start();
         // 数字のみ入力可能
         codeInput.addEventListener('input', function(e) {
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            // 6桁を超えた場合は切り詰める
+            if (e.target.value.length > 6) {
+                e.target.value = e.target.value.substring(0, 6);
+            }
         });
         
         // Bootstrapバリデーション

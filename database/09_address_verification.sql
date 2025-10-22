@@ -13,7 +13,7 @@ CREATE TABLE shop_address_changes (
     new_city_name VARCHAR(100),
     new_address VARCHAR(255),
     status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
-    verification_code VARCHAR(10),
+    verification_code VARCHAR(6),
     verification_sent_at TIMESTAMP NULL,
     verified_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

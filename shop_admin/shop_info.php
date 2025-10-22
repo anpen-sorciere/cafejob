@@ -100,7 +100,7 @@ if ($_POST && isset($_POST['update_shop'])) {
             
             if ($address_changed) {
                 // 住所変更履歴を記録
-                $verification_code = strtoupper(substr(md5(uniqid()), 0, 8));
+                $verification_code = str_pad(rand(100000, 999999), 6, '0', STR_PAD_LEFT);
                 
                 $db->query(
                     "INSERT INTO shop_address_changes 
