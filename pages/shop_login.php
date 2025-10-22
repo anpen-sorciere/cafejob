@@ -35,6 +35,7 @@ if ($_POST && isset($_POST['login'])) {
                 
                 // 住所確認が必要な場合は確認ページにリダイレクト
                 if ($shop_admin['shop_status'] === 'verification_pending') {
+                    $_SESSION['address_verification_pending'] = true;
                     header('Location: ../shop_admin/verify_address.php');
                     exit;
                 }
