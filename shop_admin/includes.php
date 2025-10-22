@@ -12,6 +12,12 @@ if (!is_shop_admin()) {
     exit;
 }
 
+// 住所確認が必要な場合は確認ページにリダイレクト
+if ($_SESSION['shop_status'] === 'verification_pending') {
+    header('Location: verify_address.php');
+    exit;
+}
+
 // 住所変更がロックされている場合は確認ページにリダイレクト
 $db = new Database();
 $shop_id = $_SESSION['shop_id'];

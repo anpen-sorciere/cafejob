@@ -4,18 +4,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once 'includes.php';
 
-// 店舗管理者認証チェック
-if (!is_shop_admin()) {
-    header('Location: ../?page=shop_admin_login');
-    exit;
-}
-
-// 住所確認が必要な場合は確認ページにリダイレクト
-if ($_SESSION['shop_status'] === 'verification_pending') {
-    header('Location: verify_address.php');
-    exit;
-}
-
 $page_title = '応募管理';
 $shop_id = $_SESSION['shop_id'];
 $shop_name = $_SESSION['shop_name'];

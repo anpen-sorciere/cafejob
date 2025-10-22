@@ -20,6 +20,23 @@ if ($_SESSION['shop_status'] === 'verification_pending') {
     exit;
 }
 
+// 住所変更がロックされている場合は確認ページにリダイレクト
+$db = new Database();
+$shop_id = $_SESSION['shop_id'];
+
+$locked_address_change = $db->fetch(
+    "SELECT id FROM shop_address_changes 
+     WHERE shop_id = ? AND status = 'pending' AND is_locked = TRUE 
+     ORDER BY created_at DESC LIMIT 1",
+    [$shop_id]
+);
+
+if ($locked_address_change && basename($_SERVER['PHP_SELF']) !== 'verify_address.php') {
+    $_SESSION['address_verification_pending'] = true;
+    header('Location: verify_address.php');
+    exit;
+}
+
 $page_title = 'キャスト管理';
 $shop_id = $_SESSION['shop_id'];
 $shop_name = $_SESSION['shop_name'];
