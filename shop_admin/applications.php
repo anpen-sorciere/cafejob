@@ -1,7 +1,20 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+// 既存セッションを完全に破棄してから新しいセッションを開始
+if (session_status() !== PHP_SESSION_NONE) {
+    session_destroy();
 }
+
+// セッション設定をリセット
+ini_set('session.use_cookies', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 0);
+ini_set('session.cookie_samesite', 'Lax');
+
+// cafejob専用セッションを開始
+session_name('cafejob_session');
+session_start();
+
 require_once 'includes.php';
 
 $page_title = '応募管理';
