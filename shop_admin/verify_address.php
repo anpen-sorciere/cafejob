@@ -29,6 +29,18 @@ try {
         header('Location: dashboard.php');
         exit;
     }
+    
+    // 住所変更がロックされているかチェック
+    $locked_address_change = $db->fetch(
+        "SELECT id FROM shop_address_changes 
+         WHERE shop_id = ? AND status = 'pending' AND is_locked = TRUE 
+         ORDER BY created_at DESC LIMIT 1",
+        [$shop_id]
+    );
+    
+    if ($locked_address_change) {
+        $_SESSION['address_verification_pending'] = true;
+    }
 
     $page_title = '住所確認';
     $shop_id = get_shop_admin_shop_id();
@@ -298,7 +310,8 @@ ob_start();
                                 </label>
                                 <input type="text" class="form-control form-control-lg text-center" 
                                        id="verification_code" name="verification_code" 
-                                       placeholder="123456" maxlength="6" pattern="[0-9]{6}" required>
+                                       placeholder="123456" maxlength="6" pattern="[0-9]{6}" required
+                                       <?php echo $is_locked ? 'disabled' : ''; ?>>
                                 <div class="form-text">
                                     郵便に記載された6桁の数字を入力してください
                                 </div>
@@ -308,9 +321,15 @@ ob_start();
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" name="verify_code" class="btn btn-success btn-lg">
-                                    <i class="fas fa-check-circle me-2"></i>住所確認を完了
-                                </button>
+                                <?php if ($is_locked): ?>
+                                    <button type="button" class="btn btn-secondary btn-lg" disabled>
+                                        <i class="fas fa-lock me-2"></i>ロック中
+                                    </button>
+                                <?php else: ?>
+                                    <button type="submit" name="verify_code" class="btn btn-success btn-lg">
+                                        <i class="fas fa-check-circle me-2"></i>住所確認を完了
+                                    </button>
+                                <?php endif; ?>
                                 <a href="logout.php" class="btn btn-outline-secondary">
                                     <i class="fas fa-sign-out-alt me-2"></i>ログアウト
                                 </a>
