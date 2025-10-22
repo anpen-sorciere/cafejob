@@ -48,37 +48,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
     if (empty($input_code)) {
         $error_message = '確認コードを入力してください。';
     } else {
+        // 現在のIPアドレスとユーザーエージェントを取得
+        $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+        
         // 住所変更の確認コードをチェック
         $address_change = $db->fetch(
             "SELECT * FROM shop_address_changes 
-             WHERE shop_id = ? AND verification_code = ? AND status = 'pending' 
+             WHERE shop_id = ? AND status = 'pending' AND is_locked = FALSE
              ORDER BY created_at DESC LIMIT 1",
-            [$shop_id, $input_code]
+            [$shop_id]
         );
         
         if ($address_change) {
-            // 住所変更を承認
+            // 入力ミス履歴を記録
             $db->query(
-                "UPDATE shop_address_changes SET status = 'verified', verified_at = NOW() WHERE id = ?",
-                [$address_change['id']]
+                "INSERT INTO verification_attempts 
+                 (shop_id, attempt_type, verification_code, input_code, ip_address, user_agent, is_successful, attempt_time)
+                 VALUES (?, 'address_change', ?, ?, ?, ?, ?, NOW())",
+                [$shop_id, $address_change['verification_code'], $input_code, $ip_address, $user_agent, 
+                 ($input_code === $address_change['verification_code'])]
             );
             
-            // 店舗の住所を新しい住所に更新
-            $db->query(
-                "UPDATE shops SET 
-                 postal_code = ?, prefecture_id = ?, address = ?, 
-                 address_verification_status = 'verified', address_verification_locked_at = NULL
-                 WHERE id = ?",
-                [$address_change['new_postal_code'], $address_change['new_prefecture_id'], 
-                 $address_change['new_address'], $shop_id]
-            );
-            
-            // セッションをクリア
-            unset($_SESSION['address_verification_pending']);
-            
-            $_SESSION['success_message'] = '住所確認が完了しました。新しい住所が有効になりました。';
-            header('Location: shop_info.php');
-            exit;
+            if ($input_code === $address_change['verification_code']) {
+                // 確認コードが正しい場合
+                $db->query(
+                    "UPDATE shop_address_changes SET status = 'verified', verified_at = NOW() WHERE id = ?",
+                    [$address_change['id']]
+                );
+                
+                // 店舗の住所を新しい住所に更新
+                $db->query(
+                    "UPDATE shops SET 
+                     postal_code = ?, prefecture_id = ?, address = ?, 
+                     address_verification_status = 'verified', address_verification_locked_at = NULL
+                     WHERE id = ?",
+                    [$address_change['new_postal_code'], $address_change['new_prefecture_id'], 
+                     $address_change['new_address'], $shop_id]
+                );
+                
+                // セッションをクリア
+                unset($_SESSION['address_verification_pending']);
+                
+                $_SESSION['success_message'] = '住所確認が完了しました。新しい住所が有効になりました。';
+                header('Location: shop_info.php');
+                exit;
+            } else {
+                // 確認コードが間違っている場合
+                $failed_attempts = $address_change['failed_attempts'] + 1;
+                
+                if ($failed_attempts >= 3) {
+                    // 3回ミスした場合はロック
+                    $db->query(
+                        "UPDATE shop_address_changes SET failed_attempts = ?, is_locked = TRUE, locked_at = NOW() WHERE id = ?",
+                        [$failed_attempts, $address_change['id']]
+                    );
+                    
+                    $error_message = '確認コードの入力ミスが3回に達しました。セキュリティのため、この住所変更はロックされました。運営に問い合わせてください。';
+                } else {
+                    // 失敗回数を更新
+                    $db->query(
+                        "UPDATE shop_address_changes SET failed_attempts = ? WHERE id = ?",
+                        [$failed_attempts, $address_change['id']]
+                    );
+                    
+                    $remaining_attempts = 3 - $failed_attempts;
+                    $error_message = "確認コードが正しくありません。残り{$remaining_attempts}回の試行が可能です。";
+                }
+            }
         } else {
             // 従来の店舗登録時の確認コードもチェック
             $shop = $db->fetch("SELECT verification_code FROM shops WHERE id = ?", [$shop_id]);
@@ -113,6 +150,7 @@ $shop_info = $db->fetch(
 
 // 住所変更情報を取得
 $address_change_info = null;
+$is_locked = false;
 if (isset($_SESSION['address_verification_pending'])) {
     $address_change_info = $db->fetch(
         "SELECT * FROM shop_address_changes 
@@ -120,6 +158,10 @@ if (isset($_SESSION['address_verification_pending'])) {
          ORDER BY created_at DESC LIMIT 1",
         [$shop_id]
     );
+    
+    if ($address_change_info && $address_change_info['is_locked']) {
+        $is_locked = true;
+    }
 }
 
 // 完全な住所を構築
@@ -185,34 +227,45 @@ ob_start();
                         <?php endif; ?>
 
                         <?php if ($address_change_info): ?>
-                            <!-- 住所変更時の確認 -->
-                            <div class="alert alert-info">
-                                <h5 class="alert-heading">
-                                    <i class="fas fa-map-marker-alt me-2"></i>住所変更の確認
-                                </h5>
-                                <p class="mb-3">店舗の住所が変更されました。新しい住所に郵便を送信しましたので、確認コードを入力してください。</p>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h6 class="text-muted">変更前の住所</h6>
-                                        <p class="mb-2">
-                                            〒<?php echo substr($address_change_info['old_postal_code'], 0, 3) . '-' . substr($address_change_info['old_postal_code'], 3); ?><br>
-                                            <?php echo htmlspecialchars($address_change_info['old_address']); ?>
-                                        </p>
+                            <?php if ($is_locked): ?>
+                                <!-- ロック状態の表示 -->
+                                <div class="alert alert-danger">
+                                    <h5 class="alert-heading">
+                                        <i class="fas fa-lock me-2"></i>住所変更がロックされました
+                                    </h5>
+                                    <p class="mb-3">確認コードの入力ミスが3回に達したため、セキュリティのためこの住所変更はロックされました。</p>
+                                    <p class="mb-0"><strong>お問い合わせ:</strong> 運営に問い合わせてください。</p>
+                                </div>
+                            <?php else: ?>
+                                <!-- 住所変更時の確認 -->
+                                <div class="alert alert-info">
+                                    <h5 class="alert-heading">
+                                        <i class="fas fa-map-marker-alt me-2"></i>住所変更の確認
+                                    </h5>
+                                    <p class="mb-3">店舗の住所が変更されました。新しい住所に確認用の郵便を送信しましたので、郵便に記載された6桁の確認コードを入力してください。</p>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="text-muted">変更前の住所</h6>
+                                            <p class="mb-2">
+                                                〒<?php echo substr($address_change_info['old_postal_code'], 0, 3) . '-' . substr($address_change_info['old_postal_code'], 3); ?><br>
+                                                <?php echo htmlspecialchars($address_change_info['old_address']); ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="text-primary">変更後の住所</h6>
+                                            <p class="mb-2">
+                                                〒<?php echo substr($address_change_info['new_postal_code'], 0, 3) . '-' . substr($address_change_info['new_postal_code'], 3); ?><br>
+                                                <?php echo htmlspecialchars($address_change_info['new_address']); ?>
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <h6 class="text-primary">変更後の住所</h6>
-                                        <p class="mb-2">
-                                            〒<?php echo substr($address_change_info['new_postal_code'], 0, 3) . '-' . substr($address_change_info['new_postal_code'], 3); ?><br>
-                                            <?php echo htmlspecialchars($address_change_info['new_address']); ?>
-                                        </p>
+                                    
+                                    <div class="alert alert-warning mt-3">
+                                        <strong>注意:</strong> 新しい住所に郵便を送信しました。郵便に記載された6桁の確認コードを入力してください。
                                     </div>
                                 </div>
-                                
-                                <div class="alert alert-warning mt-3">
-                                    <strong>確認コード:</strong> <?php echo htmlspecialchars($address_change_info['verification_code']); ?>
-                                </div>
-                            </div>
+                            <?php endif; ?>
                         <?php else: ?>
                             <!-- 通常の住所確認 -->
                             <div class="alert alert-info">
@@ -271,8 +324,9 @@ ob_start();
                                 </h6>
                                 <ul class="mb-0">
                                     <li>確認コードは郵便が届いてから入力してください</li>
-                                    <li>住所確認が完了するまで求人の投稿はできません</li>
+                                    <li>住所確認が完了するまで一部機能が制限されます</li>
                                     <li>確認コードが分からない場合は、お問い合わせください</li>
+                                    <li>確認コードは郵便物にのみ記載されています</li>
                                 </ul>
                             </div>
                         </div>

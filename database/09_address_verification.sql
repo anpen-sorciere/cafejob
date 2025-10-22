@@ -1,26 +1,24 @@
 -- 住所変更時の郵便確認機能用テーブル
 
--- 店舗住所変更履歴テーブル
-CREATE TABLE shop_address_changes (
+-- 確認コード入力ミス履歴テーブル
+CREATE TABLE verification_attempts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     shop_id INT NOT NULL,
-    old_postal_code VARCHAR(7),
-    old_prefecture_id INT,
-    old_city_name VARCHAR(100),
-    old_address VARCHAR(255),
-    new_postal_code VARCHAR(7),
-    new_prefecture_id INT,
-    new_city_name VARCHAR(100),
-    new_address VARCHAR(255),
-    status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+    attempt_type ENUM('initial_registration', 'address_change') NOT NULL,
     verification_code VARCHAR(6),
-    verification_sent_at TIMESTAMP NULL,
-    verified_at TIMESTAMP NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE CASCADE,
-    FOREIGN KEY (old_prefecture_id) REFERENCES prefectures(id) ON DELETE SET NULL,
-    FOREIGN KEY (new_prefecture_id) REFERENCES prefectures(id) ON DELETE SET NULL
+    input_code VARCHAR(6),
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    is_successful BOOLEAN DEFAULT FALSE,
+    attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE CASCADE
 );
+
+-- 店舗住所変更履歴テーブルに失敗回数カラムを追加
+ALTER TABLE shop_address_changes 
+ADD COLUMN failed_attempts INT DEFAULT 0 AFTER verification_code,
+ADD COLUMN is_locked BOOLEAN DEFAULT FALSE AFTER failed_attempts,
+ADD COLUMN locked_at TIMESTAMP NULL AFTER is_locked;
 
 -- 店舗テーブルに住所確認状態を追加
 ALTER TABLE shops 

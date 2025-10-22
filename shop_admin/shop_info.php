@@ -119,7 +119,7 @@ if ($_POST && isset($_POST['update_shop'])) {
                     [$shop_id]
                 );
                 
-                $_SESSION['success_message'] = '住所が変更されました。郵便による住所確認が必要です。確認コード: ' . $verification_code;
+                $_SESSION['success_message'] = '住所が変更されました。新しい住所に郵便を送信しましたので、確認コードを入力してください。';
                 $_SESSION['address_verification_pending'] = true;
                 header('Location: verify_address.php');
                 exit;
@@ -449,8 +449,53 @@ ob_start();
             if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
+                form.classList.add('was-validated');
+                return;
             }
-            form.classList.add('was-validated');
+            
+            // 住所変更の確認
+            const postalCodeInput = document.getElementById('postal_code');
+            const prefectureSelect = document.getElementById('prefecture_id');
+            const cityInput = document.getElementById('city_name');
+            const addressInput = document.getElementById('address');
+            
+            // 現在の住所情報（PHPから取得した値）
+            const currentPostalCode = '<?php echo htmlspecialchars($shop_info['postal_code'] ?? ''); ?>';
+            const currentPrefectureId = '<?php echo $shop_info['prefecture_id'] ?? ''; ?>';
+            const currentCityName = '<?php echo htmlspecialchars($shop_info['city_name'] ?? ''); ?>';
+            const currentAddress = '<?php echo htmlspecialchars($shop_info['address'] ?? ''); ?>';
+            
+            // 新しい住所情報
+            const newPostalCode = postalCodeInput.value.replace(/[^0-9]/g, '');
+            const newPrefectureId = prefectureSelect.value;
+            const newCityName = cityInput.value;
+            const newAddress = addressInput.value;
+            
+            // 住所変更の検知
+            const addressChanged = (
+                currentPostalCode !== newPostalCode ||
+                currentPrefectureId !== newPrefectureId ||
+                currentCityName !== newCityName ||
+                currentAddress !== newAddress
+            );
+            
+            if (addressChanged) {
+                event.preventDefault();
+                
+                const confirmMessage = `住所が変更されます。住所変更後は郵便による住所確認が必要になり、確認が完了するまで一部機能が制限されます。
+
+変更前: ${currentPostalCode ? '〒' + currentPostalCode.substring(0, 3) + '-' + currentPostalCode.substring(3) + ' ' : ''}${currentCityName}${currentAddress}
+変更後: ${newPostalCode ? '〒' + newPostalCode.substring(0, 3) + '-' + newPostalCode.substring(3) + ' ' : ''}${newCityName}${newAddress}
+
+本当に住所を変更しますか？`;
+                
+                if (confirm(confirmMessage)) {
+                    form.classList.add('was-validated');
+                    form.submit();
+                }
+            } else {
+                form.classList.add('was-validated');
+            }
         });
 
         // メッセージ表示関数
