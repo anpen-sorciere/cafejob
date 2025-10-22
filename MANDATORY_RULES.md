@@ -14,9 +14,10 @@
 - 住所関連のカラムは削除禁止（prefecture_id, city_id, address, postal_code）
 
 ### 3. ファイルパスルール
-- 相対パスは必ず正しい階層を指定
-- `../config/config.php` ではなく `config/config.php`（ルートディレクトリから）
-- `shop_admin/` 内からは `../config/config.php` を使用
+- **bootstrap.php を使用して絶対パスでファイルを読み込む**
+- `require_once '../config/config.php'` ではなく `require_once 'bootstrap.php'` を使用
+- プロジェクトルートは自動検出されるため、どこからでも同じ方法で読み込み可能
+- 相対パスによる混乱を完全に防止
 
 ### 4. エラーハンドリングルール
 - すべてのデータベース操作は try-catch で囲む
@@ -85,6 +86,19 @@ session_start();
 // $_SESSION = array();
 ```
 
+### 必須のファイル読み込みコード
+```php
+<?php
+// どこからでも同じ方法でファイルを読み込み
+require_once 'bootstrap.php';
+
+// bootstrap.php が以下を自動的に読み込む:
+// - config/config.php
+// - config/database.php  
+// - includes/functions.php
+// - PROJECT_ROOT 定数の定義
+```
+
 ### 禁止事項
 - ❌ `session_name('PHPSESSID')`
 - ❌ `session_name('netpgpos_session')`
@@ -92,12 +106,15 @@ session_start();
 - ❌ 他のシステムのセッション名
 - ❌ セッション破棄なしでの新規開始
 - ❌ デバッグファイルに `debug_` プレフィックスなし
+- ❌ `require_once '../config/config.php'` 等の相対パス
+- ❌ `require_once 'config/config.php'` 等の相対パス
 
 ## 📝 更新履歴
 - 2025-10-23: 初回作成（セッション競合問題対応）
 - 2025-10-23: verification_code 6桁ルール追加
 - 2025-10-23: 住所関連カラム削除禁止ルール追加
 - 2025-10-23: デバッグファイル命名ルール追加
+- 2025-10-23: bootstrap.php による絶対パス設定追加
 
 ## ⚠️ 重要
 このルールに違反した場合、システム全体が不安定になる可能性があります。
