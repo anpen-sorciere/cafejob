@@ -471,33 +471,174 @@ ob_start();
     .badge.bg-danger {
         background-color: #dc3545 !important;
     }
+    
+    /* モーダルのちらつき防止 */
+    .modal {
+        display: none !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1055;
+        overflow: hidden;
+        outline: 0;
+    }
+    
+    .modal.show {
+        display: block !important;
+    }
+    
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1050;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        opacity: 0.5;
+    }
+    
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: 0.5rem;
+        pointer-events: none;
+    }
+    
+    .modal-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.2);
+        border-radius: 0.3rem;
+        outline: 0;
+    }
+    
+    @media (min-width: 576px) {
+        .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+    }
     </style>
     
     <script>
-    // シンプルなモーダル制御
+    // モーダル制御の完全な修正
     document.addEventListener('DOMContentLoaded', function() {
+        // すべてのモーダルを無効化
+        document.querySelectorAll('.modal').forEach(function(modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            modal.removeAttribute('aria-modal');
+        });
+        
         // モーダルボタンのクリックイベント
         document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(button) {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
+                
                 const targetId = this.getAttribute('data-bs-target');
                 const modalElement = document.querySelector(targetId);
                 
-                if (modalElement && typeof bootstrap !== 'undefined') {
-                    // 既存のモーダルインスタンスを破棄
-                    const existingModal = bootstrap.Modal.getInstance(modalElement);
-                    if (existingModal) {
-                        existingModal.dispose();
+                if (modalElement) {
+                    // 他のモーダルをすべて閉じる
+                    document.querySelectorAll('.modal').forEach(function(modal) {
+                        if (modal !== modalElement) {
+                            modal.style.display = 'none';
+                            modal.classList.remove('show');
+                            modal.setAttribute('aria-hidden', 'true');
+                            modal.removeAttribute('aria-modal');
+                        }
+                    });
+                    
+                    // 対象のモーダルを表示
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    modalElement.setAttribute('aria-hidden', 'false');
+                    modalElement.setAttribute('aria-modal', 'true');
+                    
+                    // バックドロップを追加
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        document.body.appendChild(backdrop);
                     }
                     
-                    // 新しいモーダルインスタンスを作成して表示
-                    const modal = new bootstrap.Modal(modalElement, {
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    modal.show();
+                    // フォーカスを最初の入力フィールドに
+                    setTimeout(function() {
+                        const firstInput = modalElement.querySelector('input, select, textarea');
+                        if (firstInput) {
+                            firstInput.focus();
+                        }
+                    }, 100);
                 }
             });
+        });
+        
+        // モーダルを閉じるボタンのイベント
+        document.querySelectorAll('.btn-close, [data-bs-dismiss="modal"]').forEach(function(closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // モーダルを閉じる
+                const modal = this.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                    modal.removeAttribute('aria-modal');
+                    
+                    // バックドロップを削除
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                    
+                    // フォームをリセット
+                    const form = modal.querySelector('form');
+                    if (form) {
+                        form.reset();
+                    }
+                }
+            });
+        });
+        
+        // バックドロップクリックでモーダルを閉じる
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-backdrop')) {
+                document.querySelectorAll('.modal').forEach(function(modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                    modal.removeAttribute('aria-modal');
+                });
+                e.target.remove();
+            }
+        });
+        
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(function(modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                    modal.removeAttribute('aria-modal');
+                });
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            }
         });
         
         // フォーム送信時の処理
