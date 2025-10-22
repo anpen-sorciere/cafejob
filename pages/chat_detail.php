@@ -20,29 +20,90 @@ if (!is_logged_in()) {
 
 $user_id = $_SESSION['user_id'];
 $room_id = $_GET['room_id'] ?? null;
+$application_id = $_GET['application_id'] ?? null;
 $db = new Database();
 
-if (!$room_id) {
-    header('Location: ?page=chat');
-    exit;
-}
-
-// チャットルームの存在確認と権限チェック
-$room = $db->fetch("
-    SELECT 
-        cr.*,
-        s.name as shop_name,
-        j.title as job_title,
-        a.status as application_status
-    FROM chat_rooms cr
-    JOIN shops s ON cr.shop_id = s.id
-    JOIN applications a ON cr.application_id = a.id
-    JOIN jobs j ON a.job_id = j.id
-    WHERE cr.id = ? AND cr.user_id = ?
-", [$room_id, $user_id]);
-
-if (!$room) {
-    $_SESSION['error_message'] = 'チャットルームが見つかりません。';
+// application_idが指定されている場合（応募画面から直接アクセス）
+if ($application_id) {
+    try {
+        // 応募情報を取得
+        $application = $db->fetch("
+            SELECT a.id, a.job_id, j.shop_id, j.title as job_title, a.status as application_status
+            FROM applications a
+            JOIN jobs j ON a.job_id = j.id
+            WHERE a.id = ? AND a.user_id = ?
+        ", [$application_id, $user_id]);
+        
+        if (!$application) {
+            $_SESSION['error_message'] = '応募が見つかりません。';
+            header('Location: ?page=applications');
+            exit;
+        }
+        
+        // 既存のチャットルームをチェック
+        $existing_room = $db->fetch("
+            SELECT cr.*, s.name as shop_name
+            FROM chat_rooms cr
+            JOIN shops s ON cr.shop_id = s.id
+            WHERE cr.application_id = ? AND cr.user_id = ?
+        ", [$application_id, $user_id]);
+        
+        if ($existing_room) {
+            // 既存のルームがある場合はそのルームを使用
+            $room = $existing_room;
+            $room['job_title'] = $application['job_title'];
+            $room['application_status'] = $application['application_status'];
+        } else {
+            // チャットルームを作成
+            $db->query("
+                INSERT INTO chat_rooms (shop_id, user_id, application_id, created_at, updated_at) 
+                VALUES (?, ?, ?, NOW(), NOW())
+            ", [$application['shop_id'], $user_id, $application_id]);
+            
+            $room_id = $db->lastInsertId();
+            
+            // 作成したルームの情報を取得
+            $room = $db->fetch("
+                SELECT 
+                    cr.*,
+                    s.name as shop_name,
+                    j.title as job_title,
+                    a.status as application_status
+                FROM chat_rooms cr
+                JOIN shops s ON cr.shop_id = s.id
+                JOIN applications a ON cr.application_id = a.id
+                JOIN jobs j ON a.job_id = j.id
+                WHERE cr.id = ?
+            ", [$room_id]);
+        }
+    } catch (Exception $e) {
+        error_log("User chat room auto-creation error: " . $e->getMessage());
+        $_SESSION['error_message'] = 'チャットルームの作成に失敗しました。';
+        header('Location: ?page=applications');
+        exit;
+    }
+} else if ($room_id) {
+    // room_idが指定されている場合（チャット一覧からアクセス）
+    $room = $db->fetch("
+        SELECT 
+            cr.*,
+            s.name as shop_name,
+            j.title as job_title,
+            a.status as application_status
+        FROM chat_rooms cr
+        JOIN shops s ON cr.shop_id = s.id
+        JOIN applications a ON cr.application_id = a.id
+        JOIN jobs j ON a.job_id = j.id
+        WHERE cr.id = ? AND cr.user_id = ?
+    ", [$room_id, $user_id]);
+    
+    if (!$room) {
+        $_SESSION['error_message'] = 'チャットルームが見つかりません。';
+        header('Location: ?page=chat');
+        exit;
+    }
+} else {
+    // どちらも指定されていない場合はチャット一覧にリダイレクト
     header('Location: ?page=chat');
     exit;
 }
