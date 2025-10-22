@@ -261,7 +261,7 @@ ob_start();
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="../">
+            <a class="navbar-brand fw-bold" href="dashboard.php">
                 <i class="fas fa-coffee me-2"></i>カフェJob
             </a>
             <div class="navbar-nav ms-auto">

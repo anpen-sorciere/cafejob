@@ -70,20 +70,47 @@ error_log("Shop admin chat.php - shop_id: $shop_id, chat_rooms_count: " . count(
 ob_start();
 ?>
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">
-                    <i class="fas fa-comments me-2"></i>チャット管理
-                </h1>
-                <div class="text-muted small">
-                    <i class="fas fa-info-circle me-1"></i>
-                    応募者とのやり取りを管理できます
+<body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="dashboard.php">
+                <i class="fas fa-coffee me-2"></i>カフェJob
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="applications.php">
+                    <i class="fas fa-file-alt me-1"></i>応募管理
+                </a>
+                <a class="nav-link active" href="chat.php">
+                    <i class="fas fa-comments me-1"></i>チャット
+                    <?php 
+                    $total_unread = get_unread_message_count(null, 'shop_admin');
+                    if ($total_unread > 0): 
+                    ?>
+                        <span class="badge bg-danger ms-1"><?php echo $total_unread; ?></span>
+                    <?php endif; ?>
+                </a>
+                <a class="nav-link" href="logout.php">
+                    <i class="fas fa-sign-out-alt me-1"></i>ログアウト
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-comments me-2"></i>チャット管理
+                    </h1>
+                    <div class="text-muted small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        応募者とのやり取りを管理できます
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <?php if (empty($chat_rooms)): ?>
         <div class="row">
@@ -152,7 +179,9 @@ ob_start();
             </div>
         </div>
     <?php endif; ?>
-</div>
+    </div>
+</body>
+</html>
 
 <style>
 .chat-room-item:hover {

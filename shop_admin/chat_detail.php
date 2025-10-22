@@ -313,6 +313,32 @@ ob_start();
     </style>
 </head>
 <body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="dashboard.php">
+                <i class="fas fa-coffee me-2"></i>カフェJob
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="applications.php">
+                    <i class="fas fa-file-alt me-1"></i>応募管理
+                </a>
+                <a class="nav-link" href="chat.php">
+                    <i class="fas fa-comments me-1"></i>チャット
+                    <?php 
+                    $total_unread = get_unread_message_count(null, 'shop_admin');
+                    if ($total_unread > 0): 
+                    ?>
+                        <span class="badge bg-danger ms-1"><?php echo $total_unread; ?></span>
+                    <?php endif; ?>
+                </a>
+                <a class="nav-link" href="logout.php">
+                    <i class="fas fa-sign-out-alt me-1"></i>ログアウト
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
