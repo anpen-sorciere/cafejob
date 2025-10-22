@@ -346,6 +346,9 @@ ob_start();
                         <a href="chat.php" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>チャット一覧に戻る
                         </a>
+                        <a href="applications.php" class="btn btn-outline-primary ms-2">
+                            <i class="fas fa-file-alt me-1"></i>応募管理に戻る
+                        </a>
                     </div>
                 </div>
 

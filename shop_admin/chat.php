@@ -28,10 +28,13 @@ $db = new Database();
 $chat_rooms = [];
 try {
     // テーブルの存在確認
-    $table_exists = $db->fetch("SHOW TABLES LIKE 'chat_rooms'");
-    if (!$table_exists) {
+    $chat_rooms_exists = $db->fetch("SHOW TABLES LIKE 'chat_rooms'");
+    $chat_messages_exists = $db->fetch("SHOW TABLES LIKE 'chat_messages'");
+    
+    if (!$chat_rooms_exists || !$chat_messages_exists) {
         // テーブルが存在しない場合は空配列を返す
         $chat_rooms = [];
+        error_log("Chat tables do not exist - chat_rooms: " . ($chat_rooms_exists ? 'exists' : 'missing') . ", chat_messages: " . ($chat_messages_exists ? 'exists' : 'missing'));
     } else {
         $chat_rooms = $db->fetchAll("
             SELECT 
@@ -41,7 +44,7 @@ try {
                 u.last_name,
                 j.title as job_title,
                 a.status as application_status,
-                (SELECT COUNT(*) FROM chat_messages cm WHERE cm.room_id = cr.id AND cm.sender_type = 'user' AND cm.is_read = FALSE) as unread_count,
+                COALESCE((SELECT COUNT(*) FROM chat_messages cm WHERE cm.room_id = cr.id AND cm.sender_type = 'user' AND cm.is_read = FALSE), 0) as unread_count,
                 (SELECT cm.message FROM chat_messages cm WHERE cm.room_id = cr.id ORDER BY cm.created_at DESC LIMIT 1) as last_message,
                 (SELECT cm.created_at FROM chat_messages cm WHERE cm.room_id = cr.id ORDER BY cm.created_at DESC LIMIT 1) as last_message_time
             FROM chat_rooms cr
@@ -56,9 +59,14 @@ try {
     // エラーが発生した場合は空配列を返す
     $chat_rooms = [];
     error_log("Chat rooms query error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
 }
 
 $page_title = 'チャット管理';
+
+// デバッグ情報をログに記録
+error_log("Shop admin chat.php - shop_id: $shop_id, chat_rooms_count: " . count($chat_rooms));
+
 ob_start();
 ?>
 
