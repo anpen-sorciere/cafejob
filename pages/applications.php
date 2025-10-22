@@ -108,6 +108,10 @@ ob_start();
                                            class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-eye me-1"></i>詳細を見る
                                         </a>
+                                        <a href="?page=chat_detail&application_id=<?php echo $application['id']; ?>" 
+                                           class="btn btn-success btn-sm">
+                                            <i class="fas fa-comments me-1"></i>チャット
+                                        </a>
                                         <?php if ($application['status'] == 'pending'): ?>
                                             <button class="btn btn-outline-danger btn-sm cancel-application" 
                                                     data-application-id="<?php echo $application['id']; ?>">
