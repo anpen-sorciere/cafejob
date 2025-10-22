@@ -9,49 +9,76 @@ $shop_id = $_SESSION['shop_id'];
 $shop_name = $_SESSION['shop_name'];
 
 // 統計データの取得
-$stats = [
-    'total_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ?", [$shop_id])['count'],
-    'active_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ? AND status = 'active'", [$shop_id])['count'],
-    'total_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ?", [$shop_id])['count'],
-    'pending_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ? AND a.status = 'pending'", [$shop_id])['count'],
-    'total_reviews' => $db->fetch("SELECT COUNT(*) as count FROM reviews WHERE shop_id = ?", [$shop_id])['count'],
-    'average_rating' => $db->fetch("SELECT AVG(rating) as avg FROM reviews WHERE shop_id = ? AND status = 'approved'", [$shop_id])['avg'] ?: 0
-];
+try {
+    $stats = [
+        'total_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ?", [$shop_id])['count'] ?? 0,
+        'active_jobs' => $db->fetch("SELECT COUNT(*) as count FROM jobs WHERE shop_id = ? AND status = 'active'", [$shop_id])['count'] ?? 0,
+        'total_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ?", [$shop_id])['count'] ?? 0,
+        'pending_applications' => $db->fetch("SELECT COUNT(*) as count FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.shop_id = ? AND a.status = 'pending'", [$shop_id])['count'] ?? 0,
+        'total_reviews' => $db->fetch("SELECT COUNT(*) as count FROM reviews WHERE shop_id = ?", [$shop_id])['count'] ?? 0,
+        'average_rating' => $db->fetch("SELECT AVG(rating) as avg FROM reviews WHERE shop_id = ? AND status = 'approved'", [$shop_id])['avg'] ?: 0
+    ];
+} catch (Exception $e) {
+    error_log("Dashboard stats error: " . $e->getMessage());
+    $stats = [
+        'total_jobs' => 0,
+        'active_jobs' => 0,
+        'total_applications' => 0,
+        'pending_applications' => 0,
+        'total_reviews' => 0,
+        'average_rating' => 0
+    ];
+}
 
 // 最新の応募情報
-$recent_applications = $db->fetchAll(
-    "SELECT a.*, j.title as job_title, u.username, u.email, u.first_name, u.last_name
-     FROM applications a
-     JOIN jobs j ON a.job_id = j.id
-     JOIN users u ON a.user_id = u.id
-     WHERE j.shop_id = ?
-     ORDER BY a.applied_at DESC
-     LIMIT 5",
-    [$shop_id]
-);
+try {
+    $recent_applications = $db->fetchAll(
+        "SELECT a.*, j.title as job_title, u.username, u.email, u.first_name, u.last_name
+         FROM applications a
+         JOIN jobs j ON a.job_id = j.id
+         JOIN users u ON a.user_id = u.id
+         WHERE j.shop_id = ?
+         ORDER BY a.applied_at DESC
+         LIMIT 5",
+        [$shop_id]
+    );
+} catch (Exception $e) {
+    error_log("Dashboard recent applications error: " . $e->getMessage());
+    $recent_applications = [];
+}
 
 // 最新の口コミ
-$recent_reviews = $db->fetchAll(
-    "SELECT r.*, u.username, u.first_name, u.last_name
-     FROM reviews r
-     LEFT JOIN users u ON r.user_id = u.id
-     WHERE r.shop_id = ?
-     ORDER BY r.created_at DESC
-     LIMIT 5",
-    [$shop_id]
-);
+try {
+    $recent_reviews = $db->fetchAll(
+        "SELECT r.*, u.username, u.first_name, u.last_name
+         FROM reviews r
+         LEFT JOIN users u ON r.user_id = u.id
+         WHERE r.shop_id = ?
+         ORDER BY r.created_at DESC
+         LIMIT 5",
+        [$shop_id]
+    );
+} catch (Exception $e) {
+    error_log("Dashboard recent reviews error: " . $e->getMessage());
+    $recent_reviews = [];
+}
 
 // アクティブな求人
-$active_jobs = $db->fetchAll(
-    "SELECT j.*, COUNT(a.id) as application_count
-     FROM jobs j
-     LEFT JOIN applications a ON j.id = a.job_id
-     WHERE j.shop_id = ? AND j.status = 'active'
-     GROUP BY j.id
-     ORDER BY j.created_at DESC
-     LIMIT 5",
-    [$shop_id]
-);
+try {
+    $active_jobs = $db->fetchAll(
+        "SELECT j.*, COUNT(a.id) as application_count
+         FROM jobs j
+         LEFT JOIN applications a ON j.id = a.job_id
+         WHERE j.shop_id = ? AND j.status = 'active'
+         GROUP BY j.id
+         ORDER BY j.created_at DESC
+         LIMIT 5",
+        [$shop_id]
+    );
+} catch (Exception $e) {
+    error_log("Dashboard active jobs error: " . $e->getMessage());
+    $active_jobs = [];
+}
 
 ob_start();
 ?>

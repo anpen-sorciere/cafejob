@@ -1,4 +1,13 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once '../config/config.php';
+require_once '../config/database.php';
+require_once '../includes/functions.php';
+
+$db = new Database();
 $page_title = '店舗ログイン';
 $page_description = '店舗管理者のログインを行います。';
 
@@ -34,11 +43,11 @@ if ($_POST && isset($_POST['login'])) {
             
             // 住所確認が必要な場合は確認ページにリダイレクト
             if ($shop_admin['shop_status'] === 'verification_pending') {
-                header('Location: /cafejob/shop_admin/verify_address.php');
+                header('Location: ../shop_admin/verify_address.php');
                 exit;
             }
             
-            header('Location: ?page=shop_dashboard');
+            header('Location: ../shop_admin/dashboard.php');
             exit;
         } else {
             $errors[] = 'メールアドレスまたはパスワードが正しくありません';
