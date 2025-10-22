@@ -18,9 +18,10 @@ if ($is_production) {
     define('DEBUG_MODE', true);
     define('LOG_LEVEL', 'DEBUG');
     
-    // Google Cloud Vision API設定
-    define('GOOGLE_CLOUD_API_KEY', 'YOUR_GOOGLE_CLOUD_API_KEY');
+    // 無料のローカル画像検証（サーバー不要）
     define('ENABLE_IMAGE_VALIDATION', true);
+    define('ENABLE_FILENAME_VALIDATION', true);
+    define('ENABLE_MANUAL_MONITORING', true);
 } else {
     // 開発環境設定（XAMPP）
     define('DB_HOST', 'localhost');
@@ -31,9 +32,10 @@ if ($is_production) {
     define('DEBUG_MODE', true);
     define('LOG_LEVEL', 'INFO');
     
-    // Google Cloud Vision API設定
-    define('GOOGLE_CLOUD_API_KEY', 'YOUR_GOOGLE_CLOUD_API_KEY');
+    // 無料のローカル画像検証（サーバー不要）
     define('ENABLE_IMAGE_VALIDATION', true);
+    define('ENABLE_FILENAME_VALIDATION', true);
+    define('ENABLE_MANUAL_MONITORING', true);
 }
 
 // 共通設定
