@@ -55,6 +55,7 @@ if ($application_id) {
             $room = $existing_room;
             $room['job_title'] = $application['job_title'];
             $room['application_status'] = $application['application_status'];
+            $room_id = $room['id']; // room_idを設定
         } else {
             // チャットルームを作成
             $db->query("
@@ -77,6 +78,9 @@ if ($application_id) {
                 JOIN jobs j ON a.job_id = j.id
                 WHERE cr.id = ?
             ", [$room_id]);
+            
+            // room_idを確実に設定
+            $room_id = $room['id'];
         }
     } catch (Exception $e) {
         error_log("User chat room auto-creation error: " . $e->getMessage());
@@ -112,6 +116,10 @@ if ($application_id) {
 
 // メッセージ送信処理
 if ($_POST['action'] ?? '' === 'send_message') {
+    error_log("User chat - Message send attempt started");
+    error_log("User chat - room_id: " . ($room_id ?? 'null'));
+    error_log("User chat - user_id: " . $user_id);
+    
     $message = trim($_POST['message'] ?? '');
     $message_type = 'text';
     $file_path = null;
@@ -162,11 +170,16 @@ if ($_POST['action'] ?? '' === 'send_message') {
     
     if (!empty($message)) {
         try {
+            error_log("User chat - Attempting to insert message: " . $message);
+            error_log("User chat - Parameters: room_id=$room_id, user_id=$user_id, message_type=$message_type, file_path=" . ($file_path ?? 'null'));
+            
             // メッセージを送信
             $db->query("
                 INSERT INTO chat_messages (room_id, sender_type, sender_id, message, message_type, file_path, created_at)
                 VALUES (?, 'user', ?, ?, ?, ?, NOW())
             ", [$room_id, $user_id, $message, $message_type, $file_path]);
+            
+            error_log("User chat - Message inserted successfully");
             
             // ルームの更新時間を更新
             $db->query("
@@ -186,12 +199,15 @@ if ($_POST['action'] ?? '' === 'send_message') {
             exit;
             
         } catch (Exception $e) {
-            $_SESSION['error_message'] = 'メッセージの送信に失敗しました。';
+            error_log("User message send error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            $_SESSION['error_message'] = 'メッセージの送信に失敗しました: ' . $e->getMessage();
         }
     }
 }
 
 // メッセージ一覧を取得
+error_log("User chat - Fetching messages for room_id: " . $room_id);
 $messages = $db->fetchAll("
     SELECT 
         cm.*,
@@ -203,6 +219,7 @@ $messages = $db->fetchAll("
     WHERE cm.room_id = ?
     ORDER BY cm.created_at ASC
 ", [$room_id]);
+error_log("User chat - Found " . count($messages) . " messages");
 
 // 未読メッセージを既読にマーク
 $db->query("
