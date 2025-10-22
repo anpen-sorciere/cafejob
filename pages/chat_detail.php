@@ -71,6 +71,20 @@ if ($_POST['action'] ?? '' === 'send_message') {
             $file_path = $upload_dir . $file_name;
             
             if (move_uploaded_file($_FILES['image']['tmp_name'], $file_path)) {
+                // 画像内容検証
+                if (ENABLE_IMAGE_VALIDATION) {
+                    require_once 'includes/image_validator.php';
+                    $validator = new ImageContentValidator(GOOGLE_CLOUD_API_KEY);
+                    
+                    if (!$validator->isImageAppropriate($file_path)) {
+                        // 不適切な画像の場合は削除
+                        unlink($file_path);
+                        $_SESSION['error_message'] = '不適切な画像が検出されました。適切な画像を送信してください。';
+                        header('Location: ?page=chat_detail&room_id=' . $room_id);
+                        exit;
+                    }
+                }
+                
                 $message_type = 'image';
                 if (empty($message)) {
                     $message = '[画像を送信しました]';

@@ -17,6 +17,10 @@ if ($is_production) {
     define('SITE_URL', 'https://purplelion51.sakura.ne.jp/cafejob');
     define('DEBUG_MODE', true);
     define('LOG_LEVEL', 'DEBUG');
+    
+    // Google Cloud Vision API設定
+    define('GOOGLE_CLOUD_API_KEY', 'YOUR_GOOGLE_CLOUD_API_KEY');
+    define('ENABLE_IMAGE_VALIDATION', true);
 } else {
     // 開発環境設定（XAMPP）
     define('DB_HOST', 'localhost');
@@ -26,6 +30,10 @@ if ($is_production) {
     define('SITE_URL', 'http://localhost/cafejob');
     define('DEBUG_MODE', true);
     define('LOG_LEVEL', 'INFO');
+    
+    // Google Cloud Vision API設定
+    define('GOOGLE_CLOUD_API_KEY', 'YOUR_GOOGLE_CLOUD_API_KEY');
+    define('ENABLE_IMAGE_VALIDATION', true);
 }
 
 // 共通設定
