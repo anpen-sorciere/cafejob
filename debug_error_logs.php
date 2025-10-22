@@ -25,9 +25,9 @@ echo "Session Status: " . session_status() . "<br>";
 
 echo "<h2>ファイル存在確認</h2>";
 $files_to_check = [
-    '../config/config.php',
-    '../config/database.php',
-    '../includes/functions.php',
+    'config/config.php',
+    'config/database.php',
+    'includes/functions.php',
     'pages/shop_login.php',
     'shop_admin/dashboard.php'
 ];
@@ -38,8 +38,8 @@ foreach ($files_to_check as $file) {
 
 echo "<h2>データベース接続テスト</h2>";
 try {
-    require_once '../config/config.php';
-    require_once '../config/database.php';
+    require_once 'config/config.php';
+    require_once 'config/database.php';
     $db = new Database();
     echo "データベース接続: 成功<br>";
 } catch (Exception $e) {
@@ -48,7 +48,7 @@ try {
 
 echo "<h2>関数テスト</h2>";
 try {
-    require_once '../includes/functions.php';
+    require_once 'includes/functions.php';
     echo "functions.php読み込み: 成功<br>";
     
     if (function_exists('is_shop_admin')) {

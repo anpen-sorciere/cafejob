@@ -17,13 +17,13 @@ try {
     }
     
     echo "<h2>2. ファイル読み込み</h2>";
-    require_once '../config/config.php';
+    require_once 'config/config.php';
     echo "config.php読み込み: 成功<br>";
     
-    require_once '../config/database.php';
+    require_once 'config/database.php';
     echo "database.php読み込み: 成功<br>";
     
-    require_once '../includes/functions.php';
+    require_once 'includes/functions.php';
     echo "functions.php読み込み: 成功<br>";
     
     echo "<h2>3. データベース接続</h2>";
