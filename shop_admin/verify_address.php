@@ -24,9 +24,9 @@ try {
     custom_error_log('verify_address.php - require_shop_admin() completed');
 
     // 住所確認が必要でない場合はダッシュボードにリダイレクト
-    if ($_SESSION['shop_status'] !== 'verification_pending') {
+    if ($_SESSION['shop_status'] !== 'verification_pending' && !isset($_SESSION['address_verification_pending'])) {
         custom_error_log('verify_address.php - Shop status is not verification_pending, redirecting to dashboard');
-        header('Location: ../?page=shop_dashboard');
+        header('Location: dashboard.php');
         exit;
     }
 
@@ -47,25 +47,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
     
     if (empty($input_code)) {
         $error_message = '確認コードを入力してください。';
-    } elseif (strlen($input_code) !== 6 || !is_numeric($input_code)) {
-        $error_message = '確認コードは6桁の数字で入力してください。';
     } else {
-        // 店舗の確認コードを取得
-        $shop = $db->fetch("SELECT verification_code FROM shops WHERE id = ?", [$shop_id]);
+        // 住所変更の確認コードをチェック
+        $address_change = $db->fetch(
+            "SELECT * FROM shop_address_changes 
+             WHERE shop_id = ? AND verification_code = ? AND status = 'pending' 
+             ORDER BY created_at DESC LIMIT 1",
+            [$shop_id, $input_code]
+        );
         
-        if ($shop && $shop['verification_code'] === $input_code) {
-            // 確認コードが正しい場合、店舗ステータスをactiveに更新
+        if ($address_change) {
+            // 住所変更を承認
             $db->query(
-                "UPDATE shops SET status = 'active', verification_verified_at = NOW() WHERE id = ?",
-                [$shop_id]
+                "UPDATE shop_address_changes SET status = 'verified', verified_at = NOW() WHERE id = ?",
+                [$address_change['id']]
             );
             
-            $_SESSION['shop_status'] = 'active';
-            $_SESSION['success_message'] = '住所確認が完了しました。店舗がアクティブになりました。';
-            header('Location: ../?page=shop_dashboard');
+            // 店舗の住所を新しい住所に更新
+            $db->query(
+                "UPDATE shops SET 
+                 postal_code = ?, prefecture_id = ?, address = ?, 
+                 address_verification_status = 'verified', address_verification_locked_at = NULL
+                 WHERE id = ?",
+                [$address_change['new_postal_code'], $address_change['new_prefecture_id'], 
+                 $address_change['new_address'], $shop_id]
+            );
+            
+            // セッションをクリア
+            unset($_SESSION['address_verification_pending']);
+            
+            $_SESSION['success_message'] = '住所確認が完了しました。新しい住所が有効になりました。';
+            header('Location: shop_info.php');
             exit;
         } else {
-            $error_message = '確認コードが正しくありません。郵便に記載された6桁の数字を正確に入力してください。';
+            // 従来の店舗登録時の確認コードもチェック
+            $shop = $db->fetch("SELECT verification_code FROM shops WHERE id = ?", [$shop_id]);
+            
+            if ($shop && $shop['verification_code'] === $input_code) {
+                // 確認コードが正しい場合、店舗ステータスをactiveに更新
+                $db->query(
+                    "UPDATE shops SET status = 'active', verification_verified_at = NOW() WHERE id = ?",
+                    [$shop_id]
+                );
+                
+                $_SESSION['shop_status'] = 'active';
+                $_SESSION['success_message'] = '住所確認が完了しました。店舗がアクティブになりました。';
+                header('Location: dashboard.php');
+                exit;
+            } else {
+                $error_message = '確認コードが正しくありません。郵便に記載されたコードを正確に入力してください。';
+            }
         }
     }
 }
@@ -79,6 +110,17 @@ $shop_info = $db->fetch(
      WHERE s.id = ?", 
     [$shop_id]
 );
+
+// 住所変更情報を取得
+$address_change_info = null;
+if (isset($_SESSION['address_verification_pending'])) {
+    $address_change_info = $db->fetch(
+        "SELECT * FROM shop_address_changes 
+         WHERE shop_id = ? AND status = 'pending' 
+         ORDER BY created_at DESC LIMIT 1",
+        [$shop_id]
+    );
+}
 
 // 完全な住所を構築
 $full_address = '';
@@ -130,15 +172,59 @@ ob_start();
                         </h2>
                     </div>
                     <div class="card-body p-5">
-                        <div class="alert alert-info">
-                            <h5 class="alert-heading">
-                                <i class="fas fa-info-circle me-2"></i>住所確認について
-                            </h5>
-                            <p class="mb-0">
-                                店舗登録時にご入力いただいた住所に、6桁の確認コードを記載した郵便を送信いたしました。
-                                郵便が届きましたら、下記フォームに確認コードを入力してください。
-                            </p>
-                        </div>
+                        <?php if (isset($error_message)): ?>
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error_message); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['success_message'])): ?>
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($address_change_info): ?>
+                            <!-- 住所変更時の確認 -->
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-map-marker-alt me-2"></i>住所変更の確認
+                                </h5>
+                                <p class="mb-3">店舗の住所が変更されました。新しい住所に郵便を送信しましたので、確認コードを入力してください。</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted">変更前の住所</h6>
+                                        <p class="mb-2">
+                                            〒<?php echo substr($address_change_info['old_postal_code'], 0, 3) . '-' . substr($address_change_info['old_postal_code'], 3); ?><br>
+                                            <?php echo htmlspecialchars($address_change_info['old_address']); ?>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">変更後の住所</h6>
+                                        <p class="mb-2">
+                                            〒<?php echo substr($address_change_info['new_postal_code'], 0, 3) . '-' . substr($address_change_info['new_postal_code'], 3); ?><br>
+                                            <?php echo htmlspecialchars($address_change_info['new_address']); ?>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-warning mt-3">
+                                    <strong>確認コード:</strong> <?php echo htmlspecialchars($address_change_info['verification_code']); ?>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <!-- 通常の住所確認 -->
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-info-circle me-2"></i>住所確認について
+                                </h5>
+                                <p class="mb-0">
+                                    店舗登録時にご入力いただいた住所に、6桁の確認コードを記載した郵便を送信いたしました。
+                                    郵便が届きましたら、下記フォームに確認コードを入力してください。
+                                </p>
+                            </div>
+                        <?php endif; ?>
 
                         <div class="mb-4">
                             <h6 class="text-muted">送信先住所</h6>

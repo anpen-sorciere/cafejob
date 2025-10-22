@@ -74,18 +74,70 @@ if ($_POST && isset($_POST['update_shop'])) {
             // 完全な住所を構築（市区町村名 + 詳細住所）
             $full_address = $city_name . $address;
             
-            $db->query(
-                "UPDATE shops SET name = ?, description = ?, postal_code = ?, address = ?, 
-                                prefecture_id = ?, city_id = NULL, phone = ?, email = ?, website = ?, 
-                                opening_hours = ?, concept_type = ?, uniform_type = ?, updated_at = NOW() 
-                 WHERE id = ?",
-                [$name, $description, $postal_code_padded, $full_address, $prefecture_id, 
-                 $phone, $email, $website, $opening_hours, $concept_type, $uniform_type, $shop_id]
-            );
+            // 住所変更の検知
+            $address_changed = false;
+            $old_address_data = [
+                'postal_code' => $shop_info['postal_code'],
+                'prefecture_id' => $shop_info['prefecture_id'],
+                'city_name' => $shop_info['city_name'],
+                'address' => $shop_info['address']
+            ];
             
-            $_SESSION['success_message'] = '店舗情報を更新しました。';
-            header('Location: shop_info.php');
-            exit;
+            $new_address_data = [
+                'postal_code' => $postal_code_padded,
+                'prefecture_id' => $prefecture_id,
+                'city_name' => $city_name,
+                'address' => $full_address
+            ];
+            
+            // 住所が変更されたかチェック
+            if ($old_address_data['postal_code'] !== $new_address_data['postal_code'] ||
+                $old_address_data['prefecture_id'] !== $new_address_data['prefecture_id'] ||
+                $old_address_data['city_name'] !== $new_address_data['city_name'] ||
+                $old_address_data['address'] !== $new_address_data['address']) {
+                $address_changed = true;
+            }
+            
+            if ($address_changed) {
+                // 住所変更履歴を記録
+                $verification_code = strtoupper(substr(md5(uniqid()), 0, 8));
+                
+                $db->query(
+                    "INSERT INTO shop_address_changes 
+                     (shop_id, old_postal_code, old_prefecture_id, old_city_name, old_address,
+                      new_postal_code, new_prefecture_id, new_city_name, new_address, verification_code, verification_sent_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+                    [$shop_id, $old_address_data['postal_code'], $old_address_data['prefecture_id'], 
+                     $old_address_data['city_name'], $old_address_data['address'],
+                     $new_address_data['postal_code'], $new_address_data['prefecture_id'],
+                     $new_address_data['city_name'], $new_address_data['address'], $verification_code]
+                );
+                
+                // 店舗の住所確認状態をロックに変更
+                $db->query(
+                    "UPDATE shops SET address_verification_status = 'locked', address_verification_locked_at = NOW() WHERE id = ?",
+                    [$shop_id]
+                );
+                
+                $_SESSION['success_message'] = '住所が変更されました。郵便による住所確認が必要です。確認コード: ' . $verification_code;
+                $_SESSION['address_verification_pending'] = true;
+                header('Location: verify_address.php');
+                exit;
+            } else {
+                // 住所変更がない場合は通常の更新
+                $db->query(
+                    "UPDATE shops SET name = ?, description = ?, postal_code = ?, address = ?, 
+                                    prefecture_id = ?, city_id = NULL, phone = ?, email = ?, website = ?, 
+                                    opening_hours = ?, concept_type = ?, uniform_type = ?, updated_at = NOW() 
+                     WHERE id = ?",
+                    [$name, $description, $postal_code_padded, $full_address, $prefecture_id, 
+                     $phone, $email, $website, $opening_hours, $concept_type, $uniform_type, $shop_id]
+                );
+                
+                $_SESSION['success_message'] = '店舗情報を更新しました。';
+                header('Location: shop_info.php');
+                exit;
+            }
             
         } catch (Exception $e) {
             $errors[] = '店舗情報更新中にエラーが発生しました: ' . $e->getMessage();
@@ -178,6 +230,18 @@ ob_start();
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <?php echo htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($shop_info['address_verification_status'] === 'locked'): ?>
+                            <div class="alert alert-warning">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-lock me-2"></i>住所確認待ち
+                                </h5>
+                                <p class="mb-3">店舗の住所が変更されました。郵便による住所確認が完了するまで、一部機能が制限されます。</p>
+                                <a href="verify_address.php" class="btn btn-warning">
+                                    <i class="fas fa-mail-bulk me-1"></i>住所確認ページへ
+                                </a>
                             </div>
                         <?php endif; ?>
 
