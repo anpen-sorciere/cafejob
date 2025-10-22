@@ -39,3 +39,4 @@ echo "Session: " . (session_status() === PHP_SESSION_ACTIVE ? 'ACTIVE' : 'INACTI
 
 
 
+

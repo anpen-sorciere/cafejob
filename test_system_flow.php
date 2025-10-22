@@ -117,3 +117,4 @@ echo "<p><a href='?page=shop_login'>店舗ログインテスト</a></p>";
 echo "<p><a href='?page=register'>ユーザー登録テスト</a></p>";
 echo "<p><a href='?page=login'>ユーザーログインテスト</a></p>";
 ?>
+

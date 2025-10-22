@@ -51,3 +51,4 @@ CREATE INDEX idx_chat_messages_room ON chat_messages(room_id);
 CREATE INDEX idx_chat_messages_created ON chat_messages(created_at);
 CREATE INDEX idx_chat_notifications_recipient ON chat_notifications(recipient_type, recipient_id);
 CREATE INDEX idx_chat_notifications_unread ON chat_notifications(is_read);
+

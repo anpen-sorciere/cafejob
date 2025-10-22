@@ -68,3 +68,4 @@ try {
     echo json_encode(['success' => false, 'error' => '削除処理中にエラーが発生しました: ' . $e->getMessage()]);
 }
 ?>
+

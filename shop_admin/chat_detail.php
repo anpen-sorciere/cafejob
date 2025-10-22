@@ -173,14 +173,25 @@ ob_start();
                 </div>
             </div>
 
-            <!-- チャットエリア -->
-            <div class="card">
-                <div class="card-header">
+            <!-- もえなび！スタイルのチャットエリア -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-comment-dots me-2"></i>メッセージ
-                        </h5>
-                        <span class="badge bg-<?php echo $room['application_status'] === 'accepted' ? 'success' : ($room['application_status'] === 'pending' ? 'warning' : 'secondary'); ?>">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-comment-dots me-2"></i>メッセージ
+                                </h5>
+                                <small class="text-white-50">
+                                    <?php echo htmlspecialchars($room['last_name'] . ' ' . $room['first_name']); ?> (@<?php echo htmlspecialchars($room['user_name']); ?>)
+                                </small>
+                            </div>
+                        </div>
+                        <span class="badge bg-light text-primary">
                             <?php echo $room['application_status'] === 'accepted' ? '採用' : ($room['application_status'] === 'pending' ? '審査中' : '不採用'); ?>
                         </span>
                     </div>
@@ -196,29 +207,95 @@ ob_start();
                     <?php else: ?>
                         <?php foreach ($messages as $message): ?>
                             <div class="message-item mb-3 <?php echo $message['sender_type'] === 'shop_admin' ? 'text-end' : 'text-start'; ?>">
-                                <div class="d-inline-block">
-                                    <div class="message-bubble <?php echo $message['sender_type'] === 'shop_admin' ? 'bg-primary text-white' : 'bg-light'; ?>" style="max-width: 70%; padding: 10px 15px; border-radius: 18px;">
+                                <div class="d-flex align-items-start <?php echo $message['sender_type'] === 'shop_admin' ? 'justify-content-end' : 'justify-content-start'; ?>">
+                                    <?php if ($message['sender_type'] === 'user'): ?>
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                             style="width: 32px; height: 32px; font-size: 0.8em;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <div class="message-bubble <?php echo $message['sender_type'] === 'shop_admin' ? 'bg-primary text-white' : 'bg-light border'; ?>" 
+                                         style="max-width: 70%; padding: 12px 16px; border-radius: 18px; position: relative;">
+                                        
+                                        <?php if ($message['message_type'] === 'image' && $message['file_path']): ?>
+                                            <div class="message-image mb-2">
+                                                <img src="<?php echo htmlspecialchars($message['file_path']); ?>" 
+                                                     alt="送信された画像" 
+                                                     class="img-fluid rounded" 
+                                                     style="max-width: 200px; max-height: 200px; cursor: pointer;"
+                                                     onclick="openImageModal('<?php echo htmlspecialchars($message['file_path']); ?>')">
+                                            </div>
+                                        <?php endif; ?>
+                                        
                                         <div class="message-text"><?php echo nl2br(htmlspecialchars($message['message'])); ?></div>
-                                        <div class="message-meta mt-1" style="font-size: 0.8em; opacity: 0.7;">
-                                            <?php echo $message['sender_type'] === 'shop_admin' ? $message['shop_admin_name'] : $message['user_name']; ?>
-                                            <span class="ms-2"><?php echo date('m/d H:i', strtotime($message['created_at'])); ?></span>
+                                        
+                                        <div class="message-meta mt-2" style="font-size: 0.75em; opacity: 0.8;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold">
+                                                    <?php echo $message['sender_type'] === 'shop_admin' ? $message['shop_admin_name'] : $message['user_name']; ?>
+                                                </span>
+                                                <span><?php echo date('m/d H:i', strtotime($message['created_at'])); ?></span>
+                                            </div>
                                         </div>
                                     </div>
+                                    
+                                    <?php if ($message['sender_type'] === 'shop_admin'): ?>
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center ms-2" 
+                                             style="width: 32px; height: 32px; font-size: 0.8em;">
+                                            <i class="fas fa-store"></i>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
                 
-                <!-- メッセージ送信フォーム -->
-                <div class="card-footer">
-                    <form method="POST" id="message-form">
+                <!-- もえなび！スタイルのメッセージ送信フォーム -->
+                <div class="card-footer bg-light">
+                    <form method="POST" id="message-form" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="send_message">
+                        
+                        <!-- 画像アップロード -->
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center">
+                                <label for="image-upload" class="btn btn-outline-secondary btn-sm me-2">
+                                    <i class="fas fa-image me-1"></i>画像を選択
+                                </label>
+                                <input type="file" class="form-control form-control-sm d-none" name="image" id="image-upload" accept="image/*">
+                                <small class="text-muted">JPG, PNG, GIF（最大5MB）</small>
+                            </div>
+                            <div id="image-preview" class="mt-2" style="display: none;">
+                                <img id="preview-img" src="" alt="プレビュー" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="clearImagePreview()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- メッセージ入力 -->
                         <div class="input-group">
-                            <textarea class="form-control" name="message" placeholder="メッセージを入力してください..." rows="2" required></textarea>
-                            <button class="btn btn-primary" type="submit">
+                            <textarea class="form-control" name="message" placeholder="メッセージを入力してください..." rows="2" style="resize: none;"></textarea>
+                            <button class="btn btn-primary" type="submit" id="send-btn">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
+                        </div>
+                        
+                        <!-- 送信オプション -->
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                メッセージまたは画像を送信できます
+                            </small>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-success" onclick="sendQuickMessage('面接のご連絡をいたします。')">
+                                    <i class="fas fa-calendar me-1"></i>面接連絡
+                                </button>
+                                <button type="button" class="btn btn-outline-info" onclick="sendQuickMessage('ありがとうございます。')">
+                                    <i class="fas fa-thumbs-up me-1"></i>ありがとう
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -227,18 +304,100 @@ ob_start();
     </div>
 </div>
 
+<!-- 画像拡大表示モーダル -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">画像を表示</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="拡大画像" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
+/* もえなび！スタイルのチャット */
 .message-bubble {
     word-wrap: break-word;
     word-break: break-word;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #chat-messages {
     scroll-behavior: smooth;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 .message-item:last-child {
     margin-bottom: 0 !important;
+}
+
+.message-image img {
+    transition: transform 0.2s;
+    border-radius: 8px;
+}
+
+.message-image img:hover {
+    transform: scale(1.05);
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-1px);
+}
+
+/* アニメーション効果 */
+.message-item {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 85% !important;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* 送信ボタンのホバー効果 */
+#send-btn:hover {
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+
+/* クイックメッセージボタン */
+.btn-outline-success:hover,
+.btn-outline-info:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
 }
 </style>
 
@@ -249,25 +408,90 @@ function scrollToBottom() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// ページ読み込み時に最下部にスクロール
+// 画像拡大表示
+function openImageModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    imageModal.show();
+}
+
+// 画像プレビュー機能
+function showImagePreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('preview-img').src = e.target.result;
+        document.getElementById('image-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
+
+// 画像プレビューをクリア
+function clearImagePreview() {
+    document.getElementById('image-upload').value = '';
+    document.getElementById('image-preview').style.display = 'none';
+}
+
+// クイックメッセージ送信
+function sendQuickMessage(message) {
+    const textarea = document.querySelector('textarea[name="message"]');
+    textarea.value = message;
+    textarea.focus();
+}
+
+// ページ読み込み時の処理
 document.addEventListener('DOMContentLoaded', function() {
     scrollToBottom();
-});
-
-// メッセージ送信時の処理
-document.getElementById('message-form').addEventListener('submit', function(e) {
-    const messageTextarea = this.querySelector('textarea[name="message"]');
-    const message = messageTextarea.value.trim();
     
-    if (message === '') {
-        e.preventDefault();
-        return;
-    }
+    // 画像アップロードの処理
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // ファイルサイズチェック
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                alert('ファイルサイズが大きすぎます。5MB以下の画像を選択してください。');
+                this.value = '';
+                return;
+            }
+            
+            // ファイル形式チェック
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('対応していないファイル形式です。JPG、PNG、GIF形式の画像を選択してください。');
+                this.value = '';
+                return;
+            }
+            
+            showImagePreview(file);
+        }
+    });
     
-    // 送信ボタンを無効化
-    const submitBtn = this.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    // メッセージ送信時の処理
+    document.getElementById('message-form').addEventListener('submit', function(e) {
+        const messageTextarea = this.querySelector('textarea[name="message"]');
+        const imageUpload = this.querySelector('input[name="image"]');
+        const message = messageTextarea.value.trim();
+        const hasImage = imageUpload.files.length > 0;
+        
+        if (message === '' && !hasImage) {
+            e.preventDefault();
+            alert('メッセージまたは画像を入力してください。');
+            return;
+        }
+        
+        // 送信ボタンを無効化
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 送信中...';
+    });
+    
+    // Enterキーで送信（Shift+Enterで改行）
+    document.querySelector('textarea[name="message"]').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('message-form').dispatchEvent(new Event('submit'));
+        }
+    });
 });
 </script>
 

@@ -163,97 +163,130 @@ ob_start();
                     </div>
                 <?php endif; ?>
 
+                <!-- もえなび！スタイルの応募詳細 -->
                 <div class="row">
                     <!-- 応募者情報 -->
                     <div class="col-lg-6 mb-4">
-                        <div class="card">
+                        <div class="card shadow-sm">
                             <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-user me-2"></i>応募者情報
-                                </h5>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0 text-white">
+                                            <i class="fas fa-user me-2"></i>応募者情報
+                                        </h5>
+                                        <small class="text-white-50">
+                                            <?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?>
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-sm-4">
-                                        <strong>お名前</strong>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4">
-                                        <strong>ユーザー名</strong>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        @<?php echo htmlspecialchars($application['username']); ?>
+                                <div class="info-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle text-primary me-3" style="width: 20px;"></i>
+                                        <div class="flex-grow-1">
+                                            <strong>お名前</strong>
+                                            <div class="text-muted"><?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4">
-                                        <strong>メールアドレス</strong>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <a href="mailto:<?php echo htmlspecialchars($application['email']); ?>" class="text-decoration-none">
-                                            <i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($application['email']); ?>
-                                        </a>
+                                
+                                <div class="info-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-at text-primary me-3" style="width: 20px;"></i>
+                                        <div class="flex-grow-1">
+                                            <strong>ユーザー名</strong>
+                                            <div class="text-muted">@<?php echo htmlspecialchars($application['username']); ?></div>
+                                        </div>
                                     </div>
                                 </div>
+                                
+                                <div class="info-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-envelope text-primary me-3" style="width: 20px;"></i>
+                                        <div class="flex-grow-1">
+                                            <strong>メールアドレス</strong>
+                                            <div>
+                                                <a href="mailto:<?php echo htmlspecialchars($application['email']); ?>" class="text-decoration-none">
+                                                    <?php echo htmlspecialchars($application['email']); ?>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <?php if (!empty($application['phone'])): ?>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-4">
-                                            <strong>電話番号</strong>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <a href="tel:<?php echo htmlspecialchars($application['phone']); ?>" class="text-decoration-none">
-                                                <i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($application['phone']); ?>
-                                            </a>
+                                    <div class="info-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-phone text-primary me-3" style="width: 20px;"></i>
+                                            <div class="flex-grow-1">
+                                                <strong>電話番号</strong>
+                                                <div>
+                                                    <a href="tel:<?php echo htmlspecialchars($application['phone']); ?>" class="text-decoration-none">
+                                                        <?php echo htmlspecialchars($application['phone']); ?>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endif; ?>
+                                
                                 <?php if (!empty($application['birth_date'])): ?>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-4">
-                                            <strong>生年月日</strong>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <?php echo date('Y年m月d日', strtotime($application['birth_date'])); ?>
+                                    <div class="info-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-birthday-cake text-primary me-3" style="width: 20px;"></i>
+                                            <div class="flex-grow-1">
+                                                <strong>生年月日</strong>
+                                                <div class="text-muted"><?php echo date('Y年m月d日', strtotime($application['birth_date'])); ?></div>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endif; ?>
+                                
                                 <?php if (!empty($application['gender'])): ?>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-4">
-                                            <strong>性別</strong>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <?php echo htmlspecialchars($application['gender']); ?>
+                                    <div class="info-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-venus-mars text-primary me-3" style="width: 20px;"></i>
+                                            <div class="flex-grow-1">
+                                                <strong>性別</strong>
+                                                <div class="text-muted"><?php echo htmlspecialchars($application['gender']); ?></div>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endif; ?>
+                                
                                 <?php if (!empty($application['prefecture_name']) || !empty($application['city_name']) || !empty($application['address'])): ?>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-4">
-                                            <strong>住所</strong>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <?php 
-                                            $address_parts = array_filter([
-                                                $application['prefecture_name'],
-                                                $application['city_name'],
-                                                $application['address']
-                                            ]);
-                                            echo htmlspecialchars(implode('', $address_parts));
-                                            ?>
+                                    <div class="info-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-map-marker-alt text-primary me-3" style="width: 20px;"></i>
+                                            <div class="flex-grow-1">
+                                                <strong>住所</strong>
+                                                <div class="text-muted">
+                                                    <?php 
+                                                    $address_parts = array_filter([
+                                                        $application['prefecture_name'],
+                                                        $application['city_name'],
+                                                        $application['address']
+                                                    ]);
+                                                    echo htmlspecialchars(implode('', $address_parts));
+                                                    ?>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endif; ?>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4">
-                                        <strong>登録日</strong>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <?php echo date('Y年m月d日', strtotime($application['user_created_at'])); ?>
+                                
+                                <div class="info-item">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-calendar-plus text-primary me-3" style="width: 20px;"></i>
+                                        <div class="flex-grow-1">
+                                            <strong>登録日</strong>
+                                            <div class="text-muted"><?php echo date('Y年m月d日', strtotime($application['user_created_at'])); ?></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -349,6 +382,117 @@ ob_start();
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+    /* もえなび！スタイルの応募詳細画面 */
+    .card-header.bg-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    }
+    
+    .card-header.bg-success {
+        background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+    }
+    
+    .card-header.bg-info {
+        background: linear-gradient(135deg, #17a2b8, #117a8b) !important;
+    }
+    
+    .card-header.bg-warning {
+        background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+        color: #000 !important;
+    }
+    
+    .info-item {
+        padding: 0.75rem;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .info-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0056b3, #004085);
+        transform: translateY(-1px);
+    }
+    
+    .badge {
+        font-size: 0.9em;
+        padding: 0.6em 1em;
+    }
+    
+    /* アニメーション効果 */
+    .card {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+        .card-header .d-flex {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .card-header .bg-white {
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-item .d-flex {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .info-item i {
+            margin-bottom: 0.5rem;
+        }
+    }
+    
+    /* ステータス管理セクション */
+    .form-select:focus,
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    /* アクションボタン */
+    .btn-outline-secondary:hover {
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    /* リンクスタイル */
+    a.text-decoration-none:hover {
+        text-decoration: underline !important;
+    }
+    </style>
 </body>
 </html>
 

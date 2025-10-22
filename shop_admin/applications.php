@@ -226,87 +226,96 @@ ob_start();
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="row">
-                        <?php foreach ($applications as $application): ?>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card h-100">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0"><?php echo htmlspecialchars($application['job_title']); ?></h6>
-                                        <span class="badge bg-<?php 
-                                            echo $application['status'] === 'pending' ? 'warning' : 
-                                                ($application['status'] === 'reviewed' ? 'info' : 
-                                                    ($application['status'] === 'interview' ? 'primary' : 
-                                                        ($application['status'] === 'accepted' ? 'success' : 'danger'))); 
-                                        ?>">
-                                            <?php 
-                                            $status_labels = [
-                                                'pending' => '未読',
-                                                'reviewed' => '読了',
-                                                'interview' => '面接',
-                                                'accepted' => '採用',
-                                                'rejected' => '不採用'
-                                            ];
-                                            echo $status_labels[$application['status']] ?? $application['status'];
-                                            ?>
-                                        </span>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row mb-3">
-                                            <div class="col-sm-4">
-                                                <strong>応募者</strong>
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?>
-                                                <br>
-                                                <small class="text-muted">@<?php echo htmlspecialchars($application['username']); ?></small>
+                    <!-- もえなび！スタイルの応募一覧 -->
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>応募一覧
+                                <span class="badge bg-light text-primary ms-2"><?php echo count($applications); ?>件</span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <?php foreach ($applications as $index => $application): ?>
+                                <div class="border-bottom p-3 application-item" data-application-id="<?php echo $application['id']; ?>">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="me-3">
+                                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1 fw-bold">
+                                                        <?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?>
+                                                        <span class="badge bg-<?php 
+                                                            echo $application['status'] === 'pending' ? 'warning' : 
+                                                                ($application['status'] === 'reviewed' ? 'info' : 
+                                                                    ($application['status'] === 'interview' ? 'primary' : 
+                                                                        ($application['status'] === 'accepted' ? 'success' : 'danger'))); 
+                                                        ?> ms-2">
+                                                            <?php 
+                                                            $status_labels = [
+                                                                'pending' => '未読',
+                                                                'reviewed' => '読了',
+                                                                'interview' => '面接',
+                                                                'accepted' => '採用',
+                                                                'rejected' => '不採用'
+                                                            ];
+                                                            echo $status_labels[$application['status']] ?? $application['status'];
+                                                            ?>
+                                                        </span>
+                                                    </h6>
+                                                    <p class="mb-1 text-muted small">
+                                                        <i class="fas fa-briefcase me-1"></i>
+                                                        <?php echo htmlspecialchars($application['job_title']); ?>
+                                                    </p>
+                                                    <p class="mb-0 text-muted small">
+                                                        <i class="fas fa-envelope me-1"></i>
+                                                        <?php echo htmlspecialchars($application['email']); ?>
+                                                        <?php if (!empty($application['phone'])): ?>
+                                                            <span class="ms-3">
+                                                                <i class="fas fa-phone me-1"></i>
+                                                                <?php echo htmlspecialchars($application['phone']); ?>
+                                                            </span>
+                                                        <?php endif; ?>
+                                                    </p>
+                                                    <?php if (!empty($application['message'])): ?>
+                                                        <div class="mt-2">
+                                                            <p class="mb-0 small text-truncate" style="max-width: 500px;">
+                                                                <i class="fas fa-comment me-1"></i>
+                                                                <?php echo htmlspecialchars($application['message']); ?>
+                                                            </p>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-sm-4">
-                                                <strong>連絡先</strong>
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($application['email']); ?>
-                                                <?php if (!empty($application['phone'])): ?>
-                                                    <br><i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($application['phone']); ?>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                        <?php if (!empty($application['message'])): ?>
-                                            <div class="row mb-3">
-                                                <div class="col-sm-4">
-                                                    <strong>メッセージ</strong>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($application['message'])); ?></p>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                        <div class="row mb-3">
-                                            <div class="col-sm-4">
-                                                <strong>応募日時</strong>
-                                            </div>
-                                            <div class="col-sm-8">
+                                        <div class="col-md-4 text-end">
+                                            <div class="mb-2">
                                                 <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
                                                     <?php echo date('Y年m月d日 H:i', strtotime($application['applied_at'])); ?>
                                                 </small>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-outline-primary btn-sm" 
-                                                    data-bs-toggle="modal" data-bs-target="#statusModal<?php echo $application['id']; ?>">
-                                                <i class="fas fa-edit me-1"></i>ステータス更新
-                                            </button>
-                                            <a href="application_detail.php?id=<?php echo $application['id']; ?>" 
-                                               class="btn btn-outline-info btn-sm">
-                                                <i class="fas fa-eye me-1"></i>詳細
-                                            </a>
+                                            <div class="d-flex gap-2 justify-content-end">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" 
+                                                        data-bs-toggle="modal" data-bs-target="#statusModal<?php echo $application['id']; ?>">
+                                                    <i class="fas fa-edit me-1"></i>ステータス更新
+                                                </button>
+                                                <a href="application_detail.php?id=<?php echo $application['id']; ?>" 
+                                                   class="btn btn-outline-info btn-sm">
+                                                    <i class="fas fa-eye me-1"></i>詳細
+                                                </a>
+                                                <a href="chat_detail.php?application_id=<?php echo $application['id']; ?>" 
+                                                   class="btn btn-success btn-sm">
+                                                    <i class="fas fa-comments me-1"></i>チャット
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
                             <!-- ステータス更新モーダル -->
                             <div class="modal fade" id="statusModal<?php echo $application['id']; ?>" tabindex="-1">
@@ -356,6 +365,105 @@ ob_start();
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+    /* もえなび！スタイルの応募管理画面 */
+    .application-item {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .application-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+    
+    .application-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .application-item .bg-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    }
+    
+    .card-header.bg-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    }
+    
+    .badge {
+        font-size: 0.75em;
+        padding: 0.5em 0.75em;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+        .application-item .row {
+            flex-direction: column;
+        }
+        
+        .application-item .col-md-4 {
+            text-align: left !important;
+            margin-top: 1rem;
+        }
+        
+        .application-item .d-flex.gap-2 {
+            flex-wrap: wrap;
+        }
+        
+        .application-item .btn-sm {
+            margin-bottom: 0.5rem;
+        }
+    }
+    
+    /* アニメーション効果 */
+    .application-item {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* ステータス別の色分け */
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    
+    .badge.bg-info {
+        background-color: #17a2b8 !important;
+    }
+    
+    .badge.bg-primary {
+        background-color: #007bff !important;
+    }
+    
+    .badge.bg-success {
+        background-color: #28a745 !important;
+    }
+    
+    .badge.bg-danger {
+        background-color: #dc3545 !important;
+    }
+    </style>
 </body>
 </html>
 
