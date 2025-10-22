@@ -4,45 +4,50 @@ $page_description = '店舗管理者のログインを行います。';
 
 // ログイン処理
 if ($_POST && isset($_POST['login'])) {
-    $email = sanitize_input($_POST['email']);
-    $password = $_POST['password'];
-    
-    $errors = [];
-    
-    if (empty($email)) $errors[] = 'メールアドレスを入力してください';
-    if (empty($password)) $errors[] = 'パスワードを入力してください';
-    
-    if (empty($errors)) {
-        $shop_admin = $db->fetch(
-            "SELECT sa.*, s.name as shop_name, s.status as shop_status, s.verification_code
-             FROM shop_admins sa
-             JOIN shops s ON sa.shop_id = s.id
-             WHERE sa.email = ? AND sa.status = 'active'",
-            [$email]
-        );
+    try {
+        $email = sanitize_input($_POST['email']);
+        $password = $_POST['password'];
         
-        if ($shop_admin && verify_password($password, $shop_admin['password_hash'])) {
-            $_SESSION['shop_admin_id'] = $shop_admin['id'];
-            $_SESSION['shop_admin_email'] = $shop_admin['email'];
-            $_SESSION['shop_admin_username'] = $shop_admin['username'];
-            $_SESSION['shop_id'] = $shop_admin['shop_id'];
-            $_SESSION['shop_name'] = $shop_admin['shop_name'];
-            $_SESSION['shop_status'] = $shop_admin['shop_status'];
-            $_SESSION['verification_code'] = $shop_admin['verification_code'];
+        $errors = [];
+        
+        if (empty($email)) $errors[] = 'メールアドレスを入力してください';
+        if (empty($password)) $errors[] = 'パスワードを入力してください';
+        
+        if (empty($errors)) {
+            $shop_admin = $db->fetch(
+                "SELECT sa.*, s.name as shop_name, s.status as shop_status, s.verification_code
+                 FROM shop_admins sa
+                 JOIN shops s ON sa.shop_id = s.id
+                 WHERE sa.email = ? AND sa.status = 'active'",
+                [$email]
+            );
             
-            $_SESSION['success_message'] = 'ログインしました。';
-            
-            // 住所確認が必要な場合は確認ページにリダイレクト
-            if ($shop_admin['shop_status'] === 'verification_pending') {
-                header('Location: ../shop_admin/verify_address.php');
+            if ($shop_admin && verify_password($password, $shop_admin['password_hash'])) {
+                $_SESSION['shop_admin_id'] = $shop_admin['id'];
+                $_SESSION['shop_admin_email'] = $shop_admin['email'];
+                $_SESSION['shop_admin_username'] = $shop_admin['username'];
+                $_SESSION['shop_id'] = $shop_admin['shop_id'];
+                $_SESSION['shop_name'] = $shop_admin['shop_name'];
+                $_SESSION['shop_status'] = $shop_admin['shop_status'];
+                $_SESSION['verification_code'] = $shop_admin['verification_code'];
+                
+                $_SESSION['success_message'] = 'ログインしました。';
+                
+                // 住所確認が必要な場合は確認ページにリダイレクト
+                if ($shop_admin['shop_status'] === 'verification_pending') {
+                    header('Location: ../shop_admin/verify_address.php');
+                    exit;
+                }
+                
+                header('Location: ../shop_admin/dashboard.php');
                 exit;
+            } else {
+                $errors[] = 'メールアドレスまたはパスワードが正しくありません';
             }
-            
-            header('Location: ../shop_admin/dashboard.php');
-            exit;
-        } else {
-            $errors[] = 'メールアドレスまたはパスワードが正しくありません';
         }
+    } catch (Exception $e) {
+        error_log("Shop login error: " . $e->getMessage());
+        $errors[] = 'ログイン処理中にエラーが発生しました。しばらくしてから再度お試しください。';
     }
 }
 
