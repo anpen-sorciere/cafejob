@@ -1,5 +1,7 @@
 <?php
+// cafejob専用セッションを開始
 if (session_status() === PHP_SESSION_NONE) {
+    session_name('cafejob_session');
     session_start();
 }
 

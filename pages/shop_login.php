@@ -1,4 +1,10 @@
 <?php
+// cafejob専用セッションを開始
+if (session_status() === PHP_SESSION_NONE) {
+    session_name('cafejob_session');
+    session_start();
+}
+
 $page_title = '店舗ログイン';
 $page_description = '店舗管理者のログインを行います。';
 
