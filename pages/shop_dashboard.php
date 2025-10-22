@@ -1,14 +1,42 @@
 <?php
-$page_title = '店舗ダッシュボード';
-$page_description = '店舗管理者のダッシュボードです。';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once '../config/config.php';
+require_once '../config/database.php';
+require_once '../includes/functions.php';
 
 // 店舗管理者認証チェック
-if (!isset($_SESSION['shop_admin_id'])) {
-    header('Location: ?page=shop_login');
+if (!is_shop_admin()) {
+    header('Location: ?page=shop_admin_login');
     exit;
 }
 
+// 住所確認が必要な場合は確認ページにリダイレクト
+if ($_SESSION['shop_status'] === 'verification_pending') {
+    header('Location: shop_admin/verify_address.php');
+    exit;
+}
+
+// 住所変更がロックされている場合は確認ページにリダイレクト
+$db = new Database();
 $shop_id = $_SESSION['shop_id'];
+
+$locked_address_change = $db->fetch(
+    "SELECT id FROM shop_address_changes 
+     WHERE shop_id = ? AND status = 'pending' AND is_locked = TRUE 
+     ORDER BY created_at DESC LIMIT 1",
+    [$shop_id]
+);
+
+if ($locked_address_change && basename($_SERVER['PHP_SELF']) !== 'verify_address.php') {
+    $_SESSION['address_verification_pending'] = true;
+    header('Location: shop_admin/verify_address.php');
+    exit;
+}
+
+$page_title = '店舗ダッシュボード';
 
 // 統計データの取得
 $stats = [
@@ -47,7 +75,7 @@ ob_start();
                     <i class="fas fa-store me-2"></i><?php echo htmlspecialchars($_SESSION['shop_name']); ?> ダッシュボード
                 </h1>
                 <div>
-                    <a href="?page=shop_logout" class="btn btn-outline-danger">
+                    <a href="shop_admin/logout.php" class="btn btn-outline-danger">
                         <i class="fas fa-sign-out-alt me-1"></i>ログアウト
                     </a>
                 </div>
@@ -165,7 +193,7 @@ ob_start();
                             </a>
                         </div>
                         <div class="col-md-3 mb-2">
-                            <a href="?page=shop_profile" class="btn btn-outline-info w-100">
+                            <a href="shop_admin/shop_info.php" class="btn btn-outline-info w-100">
                                 <i class="fas fa-store me-1"></i>店舗情報編集
                             </a>
                         </div>
@@ -289,5 +317,74 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-include 'includes/layout.php';
 ?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($page_title); ?> - カフェJob</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="shop_admin/dashboard.php">
+                <i class="fas fa-coffee me-2"></i>カフェJob
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="shop_admin/dashboard.php">
+                            <i class="fas fa-tachometer-alt me-1"></i>ダッシュボード
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop_admin/jobs.php">
+                            <i class="fas fa-briefcase me-1"></i>求人管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop_admin/applications.php">
+                            <i class="fas fa-file-alt me-1"></i>応募管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop_admin/chat.php">
+                            <i class="fas fa-comments me-1"></i>チャット
+                            <?php 
+                            $total_unread = get_unread_message_count(null, 'shop_admin');
+                            if ($total_unread > 0): 
+                            ?>
+                                <span class="badge bg-danger ms-1"><?php echo $total_unread; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop_admin/shop_info.php">
+                            <i class="fas fa-store me-1"></i>店舗情報
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop_admin/logout.php">
+                            <i class="fas fa-sign-out-alt me-1"></i>ログアウト
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <?php echo $content; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
