@@ -474,75 +474,28 @@ ob_start();
     </style>
     
     <script>
-    // モーダルの問題を修正
+    // シンプルなモーダル制御
     document.addEventListener('DOMContentLoaded', function() {
-        // Bootstrapが読み込まれているかチェック
-        if (typeof bootstrap === 'undefined') {
-            console.error('Bootstrap is not loaded');
-            return;
-        }
-        
-        // モーダルインスタンスを保存するオブジェクト
-        const modalInstances = {};
-        
-        // モーダルのイベントハンドラーを追加
-        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(trigger) {
-            trigger.addEventListener('click', function(e) {
+        // モーダルボタンのクリックイベント
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(button) {
+            button.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
-                
                 const targetId = this.getAttribute('data-bs-target');
-                const modal = document.querySelector(targetId);
+                const modalElement = document.querySelector(targetId);
                 
-                if (modal) {
-                    // 既存のモーダルインスタンスがあれば破棄
-                    if (modalInstances[targetId]) {
-                        modalInstances[targetId].dispose();
+                if (modalElement && typeof bootstrap !== 'undefined') {
+                    // 既存のモーダルインスタンスを破棄
+                    const existingModal = bootstrap.Modal.getInstance(modalElement);
+                    if (existingModal) {
+                        existingModal.dispose();
                     }
                     
-                    try {
-                        // 新しいモーダルインスタンスを作成
-                        modalInstances[targetId] = new bootstrap.Modal(modal, {
-                            backdrop: 'static',
-                            keyboard: false,
-                            focus: true
-                        });
-                        
-                        // モーダルを表示
-                        modalInstances[targetId].show();
-                        
-                        // モーダルが表示された時の処理
-                        modal.addEventListener('shown.bs.modal', function() {
-                            // フォーカスを最初の入力フィールドに
-                            const firstInput = modal.querySelector('input, select, textarea');
-                            if (firstInput) {
-                                firstInput.focus();
-                            }
-                        }, { once: true });
-                        
-                    } catch (error) {
-                        console.error('Error opening modal:', error);
-                    }
-                } else {
-                    console.error('Modal not found:', targetId);
-                }
-            });
-        });
-        
-        // モーダルが閉じられた時の処理
-        document.querySelectorAll('.modal').forEach(function(modal) {
-            modal.addEventListener('hidden.bs.modal', function() {
-                // フォームをリセット
-                const form = this.querySelector('form');
-                if (form) {
-                    form.reset();
-                }
-                
-                // モーダルインスタンスを破棄
-                const modalId = '#' + this.id;
-                if (modalInstances[modalId]) {
-                    modalInstances[modalId].dispose();
-                    delete modalInstances[modalId];
+                    // 新しいモーダルインスタンスを作成して表示
+                    const modal = new bootstrap.Modal(modalElement, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    modal.show();
                 }
             });
         });
@@ -554,15 +507,6 @@ ob_start();
                 if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>処理中...';
-                }
-            });
-        });
-        
-        // ページ離脱時のクリーンアップ
-        window.addEventListener('beforeunload', function() {
-            Object.values(modalInstances).forEach(function(instance) {
-                if (instance) {
-                    instance.dispose();
                 }
             });
         });

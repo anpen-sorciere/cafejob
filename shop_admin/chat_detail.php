@@ -56,7 +56,7 @@ if ($application_id) {
             $room['application_status'] = $application['application_status'];
         } else {
             // チャットルームを作成
-            $db->query("
+            $stmt = $db->query("
                 INSERT INTO chat_rooms (shop_id, user_id, application_id, created_at, updated_at) 
                 VALUES (?, ?, ?, NOW(), NOW())
             ", [$shop_id, $application['user_id'], $application_id]);
@@ -225,6 +225,14 @@ ob_start();
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
+            <!-- エラーメッセージ -->
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
             <!-- ヘッダー -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
