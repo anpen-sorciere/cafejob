@@ -29,6 +29,9 @@ $db = new Database();
 // application_idが指定されている場合（応募管理画面から直接アクセス）
 if ($application_id) {
     try {
+        // デバッグ用：パラメータをログに記録
+        error_log("Chat detail - application_id: $application_id, shop_id: $shop_id");
+        
         // 応募情報を取得
         $application = $db->fetch("
             SELECT a.id, a.user_id, j.title as job_title, a.status as application_status
@@ -38,6 +41,7 @@ if ($application_id) {
         ", [$application_id, $shop_id]);
         
         if (!$application) {
+            error_log("Application not found for chat - application_id: $application_id, shop_id: $shop_id");
             $_SESSION['error_message'] = '応募が見つかりません。';
             header('Location: applications.php');
             exit;
@@ -56,14 +60,17 @@ if ($application_id) {
             $room = $existing_room;
             $room['job_title'] = $application['job_title'];
             $room['application_status'] = $application['application_status'];
+            error_log("Using existing chat room: " . json_encode($room));
         } else {
             // チャットルームを作成
+            error_log("Creating new chat room for application_id: $application_id");
             $stmt = $db->query("
                 INSERT INTO chat_rooms (shop_id, user_id, application_id, created_at, updated_at) 
                 VALUES (?, ?, ?, NOW(), NOW())
             ", [$shop_id, $application['user_id'], $application_id]);
             
             $room_id = $db->lastInsertId();
+            error_log("Created chat room with id: $room_id");
             
             // 作成したルームの情報を取得
             $room = $db->fetch("
@@ -80,10 +87,16 @@ if ($application_id) {
                 JOIN jobs j ON a.job_id = j.id
                 WHERE cr.id = ?
             ", [$room_id]);
+            
+            if (!$room) {
+                error_log("Failed to retrieve created chat room");
+                throw new Exception("チャットルームの作成後に情報の取得に失敗しました");
+            }
         }
     } catch (Exception $e) {
         error_log("Chat room auto-creation error: " . $e->getMessage());
-        $_SESSION['error_message'] = 'チャットルームの作成に失敗しました。';
+        error_log("Stack trace: " . $e->getTraceAsString());
+        $_SESSION['error_message'] = 'チャットルームの作成に失敗しました: ' . $e->getMessage();
         header('Location: applications.php');
         exit;
     }

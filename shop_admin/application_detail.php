@@ -6,7 +6,7 @@ require_once 'includes.php';
 
 // 店舗管理者認証チェック
 if (!is_shop_admin()) {
-    header('Location: ../?page=shop_admin_login');
+    header('Location: ../?page=shop_login');
     exit;
 }
 
@@ -34,22 +34,34 @@ if (!$application_id) {
 // 応募詳細の取得（エラーハンドリング付き）
 $application = null;
 try {
-        $application = $db->fetch(
-            "SELECT a.*, j.title as job_title, j.description as job_description, j.id as job_id,
-                    u.username, u.email, u.phone, u.first_name, u.last_name, u.created_at as user_created_at,
-                    u.birth_date, u.gender, u.prefecture_id, u.city_id, u.address,
-                    p.name as prefecture_name, c.name as city_name
-             FROM applications a
-             JOIN jobs j ON a.job_id = j.id
-             JOIN users u ON a.user_id = u.id
-             LEFT JOIN prefectures p ON u.prefecture_id = p.id
-             LEFT JOIN cities c ON u.city_id = c.id
-             WHERE a.id = ? AND j.shop_id = ?",
-            [$application_id, $shop_id]
-        );
+    // デバッグ用：パラメータをログに記録
+    error_log("Application detail query - application_id: $application_id, shop_id: $shop_id");
+    
+    $application = $db->fetch(
+        "SELECT a.*, j.title as job_title, j.description as job_description, j.id as job_id,
+                u.username, u.email, u.phone, u.first_name, u.last_name, u.created_at as user_created_at,
+                u.birth_date, u.gender, u.prefecture_id, u.city_id, u.address,
+                p.name as prefecture_name, c.name as city_name
+         FROM applications a
+         JOIN jobs j ON a.job_id = j.id
+         JOIN users u ON a.user_id = u.id
+         LEFT JOIN prefectures p ON u.prefecture_id = p.id
+         LEFT JOIN cities c ON u.city_id = c.id
+         WHERE a.id = ? AND j.shop_id = ?",
+        [$application_id, $shop_id]
+    );
+    
+    // デバッグ用：結果をログに記録
+    if ($application) {
+        error_log("Application found: " . json_encode($application));
+    } else {
+        error_log("No application found for id: $application_id, shop_id: $shop_id");
+    }
+    
 } catch (Exception $e) {
     error_log("Application detail query error: " . $e->getMessage());
-    $_SESSION['error_message'] = '応募情報の取得に失敗しました。';
+    error_log("Stack trace: " . $e->getTraceAsString());
+    $_SESSION['error_message'] = '応募情報の取得に失敗しました: ' . $e->getMessage();
     header('Location: applications.php');
     exit;
 }
