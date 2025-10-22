@@ -14,7 +14,7 @@ try {
     echo "チャット・BBS機能の初期化を開始します...\n\n";
     
     // SQLファイルを読み込み
-    $sql_file = __DIR__ . '/06_chat_tables.sql';
+    $sql_file = __DIR__ . '/database/06_chat_tables.sql';
     if (!file_exists($sql_file)) {
         throw new Exception("SQLファイルが見つかりません: $sql_file");
     }
