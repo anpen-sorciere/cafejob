@@ -22,6 +22,8 @@ $shop_id = $_SESSION['shop_id'];
 $shop_admin_id = $_SESSION['shop_admin_id'];
 $room_id = $_GET['room_id'] ?? null;
 $application_id = $_GET['application_id'] ?? null;
+
+// データベース接続を確実に取得
 $db = new Database();
 
 // application_idが指定されている場合（応募管理画面から直接アクセス）

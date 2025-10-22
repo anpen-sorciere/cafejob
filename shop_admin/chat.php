@@ -20,6 +20,8 @@ if (!is_shop_admin()) {
 
 $shop_id = $_SESSION['shop_id'];
 $shop_admin_id = $_SESSION['shop_admin_id'];
+
+// データベース接続を確実に取得
 $db = new Database();
 
 // チャットルーム一覧を取得（エラーハンドリング付き）

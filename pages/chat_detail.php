@@ -21,6 +21,8 @@ if (!is_logged_in()) {
 $user_id = $_SESSION['user_id'];
 $room_id = $_GET['room_id'] ?? null;
 $application_id = $_GET['application_id'] ?? null;
+
+// データベース接続を確実に取得
 $db = new Database();
 
 // application_idが指定されている場合（応募画面から直接アクセス）

@@ -20,6 +20,9 @@ $page_title = '応募詳細';
 $shop_id = $_SESSION['shop_id'];
 $shop_name = $_SESSION['shop_name'];
 
+// データベース接続を確実に取得
+$db = new Database();
+
 // 応募IDの取得
 $application_id = (int)($_GET['id'] ?? 0);
 

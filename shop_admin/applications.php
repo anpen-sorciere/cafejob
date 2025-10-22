@@ -104,32 +104,6 @@ ob_start();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .navbar {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-    }
-    
-    .card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.95);
-    }
-    
-    .card-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 15px 15px 0 0 !important;
-        border: none;
-    }
-    
     .application-item {
         transition: all 0.3s ease;
         border-radius: 10px;
@@ -137,7 +111,7 @@ ob_start();
     }
     
     .application-item:hover {
-        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        background-color: #f8f9fa;
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
@@ -149,7 +123,7 @@ ob_start();
     }
     
     .info-item:hover {
-        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        background-color: #f8f9fa;
         transform: translateX(5px);
     }
     
@@ -306,10 +280,10 @@ ob_start();
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0 text-white">
+                    <h1 class="h3 mb-0">
                         <i class="fas fa-file-alt me-2"></i>応募管理
                     </h1>
-                    <div class="text-white small">
+                    <div class="text-muted small">
                         <i class="fas fa-info-circle me-1"></i>
                         総応募数: <span class="fw-bold"><?php echo count($applications); ?></span>
                     </div>
