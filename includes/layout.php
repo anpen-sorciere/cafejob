@@ -53,6 +53,14 @@
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($page == 'chat') ? 'active' : ''; ?>" href="?page=chat">
                             <i class="fas fa-comments me-1"></i>チャット
+                            <?php if (is_logged_in()): ?>
+                                <?php 
+                                $unread_count = get_unread_message_count($_SESSION['user_id'], 'user');
+                                if ($unread_count > 0): 
+                                ?>
+                                    <span class="badge bg-danger ms-1"><?php echo $unread_count; ?></span>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </a>
                     </li>
                     <li class="nav-item">

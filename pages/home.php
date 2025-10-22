@@ -60,6 +60,12 @@ try {
     $popular_shops = [];
 }
 
+// ログインユーザーの未読メッセージ数
+$unread_message_count = 0;
+if (is_logged_in()) {
+    $unread_message_count = get_unread_message_count($_SESSION['user_id'], 'user');
+}
+
 // 最新の求人情報
 $latest_jobs = [];
 try {
@@ -105,6 +111,12 @@ ob_start();
                     <a href="?page=shops" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-store me-2"></i>お店を探す
                     </a>
+                    <?php if (is_logged_in() && $unread_message_count > 0): ?>
+                        <a href="?page=chat" class="btn btn-warning btn-lg">
+                            <i class="fas fa-comments me-2"></i>未読メッセージ
+                            <span class="badge bg-danger ms-2"><?php echo $unread_message_count; ?></span>
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="col-lg-6 text-center">

@@ -61,6 +61,9 @@ $applications = $db->fetchAll(
     $params
 );
 
+// 各応募の未読メッセージ数を取得
+$unread_counts = get_unread_messages_by_application(null, 'shop_admin');
+
 // 店舗の求人一覧（フィルター用）
 $shop_jobs = $db->fetchAll(
     "SELECT id, title FROM jobs WHERE shop_id = ? ORDER BY title",
@@ -267,6 +270,12 @@ ob_start();
                 </a>
                 <a class="nav-link" href="chat.php">
                     <i class="fas fa-comments me-1"></i>チャット
+                    <?php 
+                    $total_unread = get_unread_message_count(null, 'shop_admin');
+                    if ($total_unread > 0): 
+                    ?>
+                        <span class="badge bg-danger ms-1"><?php echo $total_unread; ?></span>
+                    <?php endif; ?>
                 </a>
                 <a class="nav-link" href="logout.php">
                     <i class="fas fa-sign-out-alt me-1"></i>ログアウト
@@ -441,6 +450,9 @@ ob_start();
                                                 <a href="chat_detail.php?application_id=<?php echo $application['id']; ?>" 
                                                    class="btn btn-success btn-sm">
                                                     <i class="fas fa-comments me-1"></i>チャット
+                                                    <?php if (isset($unread_counts[$application['id']]) && $unread_counts[$application['id']] > 0): ?>
+                                                        <span class="badge bg-danger ms-1"><?php echo $unread_counts[$application['id']]; ?></span>
+                                                    <?php endif; ?>
                                                 </a>
                                             </div>
                                         </div>

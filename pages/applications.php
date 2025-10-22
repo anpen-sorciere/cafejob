@@ -20,6 +20,9 @@ $applications = $db->fetchAll(
     [$_SESSION['user_id']]
 );
 
+// 各応募の未読メッセージ数を取得
+$unread_counts = get_unread_messages_by_application($_SESSION['user_id'], 'user');
+
 ob_start();
 ?>
 
@@ -111,6 +114,9 @@ ob_start();
                                         <a href="?page=chat_detail&application_id=<?php echo $application['id']; ?>" 
                                            class="btn btn-success btn-sm">
                                             <i class="fas fa-comments me-1"></i>チャット
+                                            <?php if (isset($unread_counts[$application['id']]) && $unread_counts[$application['id']] > 0): ?>
+                                                <span class="badge bg-danger ms-1"><?php echo $unread_counts[$application['id']]; ?></span>
+                                            <?php endif; ?>
                                         </a>
                                         <?php if ($application['status'] == 'pending'): ?>
                                             <button class="btn btn-outline-danger btn-sm cancel-application" 

@@ -245,4 +245,80 @@ function get_shop_admin_shop_id() {
 function get_shop_admin_shop_name() {
     return $_SESSION['shop_name'] ?? null;
 }
+
+// 未読メッセージ数取得関数
+function get_unread_message_count($user_id = null, $user_type = 'user') {
+    global $db;
+    
+    try {
+        if ($user_type === 'user') {
+            // ユーザー側の未読メッセージ数（店舗管理者からのメッセージ）
+            $count = $db->fetch("
+                SELECT COUNT(*) as count
+                FROM chat_messages cm
+                JOIN chat_rooms cr ON cm.room_id = cr.id
+                WHERE cr.user_id = ? AND cm.sender_type = 'shop_admin' AND cm.is_read = FALSE
+            ", [$user_id]);
+        } else {
+            // 店舗管理者側の未読メッセージ数（ユーザーからのメッセージ）
+            $shop_id = get_shop_admin_shop_id();
+            $count = $db->fetch("
+                SELECT COUNT(*) as count
+                FROM chat_messages cm
+                JOIN chat_rooms cr ON cm.room_id = cr.id
+                WHERE cr.shop_id = ? AND cm.sender_type = 'user' AND cm.is_read = FALSE
+            ", [$shop_id]);
+        }
+        
+        return $count['count'] ?? 0;
+    } catch (Exception $e) {
+        error_log("get_unread_message_count error: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// 応募ごとの未読メッセージ数取得関数
+function get_unread_messages_by_application($user_id = null, $user_type = 'user') {
+    global $db;
+    
+    try {
+        if ($user_type === 'user') {
+            // ユーザー側：応募ごとの未読メッセージ数
+            $results = $db->fetchAll("
+                SELECT 
+                    cr.application_id,
+                    COUNT(cm.id) as unread_count
+                FROM chat_rooms cr
+                LEFT JOIN chat_messages cm ON cr.id = cm.room_id AND cm.sender_type = 'shop_admin' AND cm.is_read = FALSE
+                WHERE cr.user_id = ?
+                GROUP BY cr.application_id
+                HAVING unread_count > 0
+            ", [$user_id]);
+        } else {
+            // 店舗管理者側：応募ごとの未読メッセージ数
+            $shop_id = get_shop_admin_shop_id();
+            $results = $db->fetchAll("
+                SELECT 
+                    cr.application_id,
+                    COUNT(cm.id) as unread_count
+                FROM chat_rooms cr
+                LEFT JOIN chat_messages cm ON cr.id = cm.room_id AND cm.sender_type = 'user' AND cm.is_read = FALSE
+                WHERE cr.shop_id = ?
+                GROUP BY cr.application_id
+                HAVING unread_count > 0
+            ", [$shop_id]);
+        }
+        
+        // 配列をapplication_idをキーとした連想配列に変換
+        $unread_counts = [];
+        foreach ($results as $result) {
+            $unread_counts[$result['application_id']] = $result['unread_count'];
+        }
+        
+        return $unread_counts;
+    } catch (Exception $e) {
+        error_log("get_unread_messages_by_application error: " . $e->getMessage());
+        return [];
+    }
+}
 ?>
