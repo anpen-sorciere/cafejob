@@ -22,25 +22,39 @@ $shop_id = $_SESSION['shop_id'];
 $shop_admin_id = $_SESSION['shop_admin_id'];
 $db = new Database();
 
-// チャットルーム一覧を取得
-$chat_rooms = $db->fetchAll("
-    SELECT 
-        cr.*,
-        u.username as user_name,
-        u.first_name,
-        u.last_name,
-        j.title as job_title,
-        a.status as application_status,
-        (SELECT COUNT(*) FROM chat_messages cm WHERE cm.room_id = cr.id AND cm.sender_type = 'user' AND cm.is_read = FALSE) as unread_count,
-        (SELECT cm.message FROM chat_messages cm WHERE cm.room_id = cr.id ORDER BY cm.created_at DESC LIMIT 1) as last_message,
-        (SELECT cm.created_at FROM chat_messages cm WHERE cm.room_id = cr.id ORDER BY cm.created_at DESC LIMIT 1) as last_message_time
-    FROM chat_rooms cr
-    JOIN users u ON cr.user_id = u.id
-    JOIN applications a ON cr.application_id = a.id
-    JOIN jobs j ON a.job_id = j.id
-    WHERE cr.shop_id = ?
-    ORDER BY cr.updated_at DESC
-", [$shop_id]);
+// チャットルーム一覧を取得（エラーハンドリング付き）
+$chat_rooms = [];
+try {
+    // テーブルの存在確認
+    $table_exists = $db->fetch("SHOW TABLES LIKE 'chat_rooms'");
+    if (!$table_exists) {
+        // テーブルが存在しない場合は空配列を返す
+        $chat_rooms = [];
+    } else {
+        $chat_rooms = $db->fetchAll("
+            SELECT 
+                cr.*,
+                u.username as user_name,
+                u.first_name,
+                u.last_name,
+                j.title as job_title,
+                a.status as application_status,
+                (SELECT COUNT(*) FROM chat_messages cm WHERE cm.room_id = cr.id AND cm.sender_type = 'user' AND cm.is_read = FALSE) as unread_count,
+                (SELECT cm.message FROM chat_messages cm WHERE cm.room_id = cr.id ORDER BY cm.created_at DESC LIMIT 1) as last_message,
+                (SELECT cm.created_at FROM chat_messages cm WHERE cm.room_id = cr.id ORDER BY cm.created_at DESC LIMIT 1) as last_message_time
+            FROM chat_rooms cr
+            JOIN users u ON cr.user_id = u.id
+            JOIN applications a ON cr.application_id = a.id
+            JOIN jobs j ON a.job_id = j.id
+            WHERE cr.shop_id = ?
+            ORDER BY cr.updated_at DESC
+        ", [$shop_id]);
+    }
+} catch (Exception $e) {
+    // エラーが発生した場合は空配列を返す
+    $chat_rooms = [];
+    error_log("Chat rooms query error: " . $e->getMessage());
+}
 
 $page_title = 'チャット管理';
 ob_start();

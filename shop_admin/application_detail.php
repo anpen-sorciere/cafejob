@@ -28,22 +28,31 @@ if (!$application_id) {
     exit;
 }
 
-// 応募詳細の取得
-$application = $db->fetch(
-    "SELECT a.*, j.title as job_title, j.description as job_description, j.id as job_id,
-            u.username, u.email, u.phone, u.first_name, u.last_name, u.created_at as user_created_at,
-            u.birth_date, u.gender, u.prefecture_id, u.city_id, u.address,
-            p.name as prefecture_name, c.name as city_name
-     FROM applications a
-     JOIN jobs j ON a.job_id = j.id
-     JOIN users u ON a.user_id = u.id
-     LEFT JOIN prefectures p ON u.prefecture_id = p.id
-     LEFT JOIN cities c ON u.city_id = c.id
-     WHERE a.id = ? AND j.shop_id = ?",
-    [$application_id, $shop_id]
-);
+// 応募詳細の取得（エラーハンドリング付き）
+$application = null;
+try {
+    $application = $db->fetch(
+        "SELECT a.*, j.title as job_title, j.description as job_description, j.id as job_id,
+                u.username, u.email, u.phone, u.first_name, u.last_name, u.created_at as user_created_at,
+                u.birth_date, u.gender, u.prefecture_id, u.city_id, u.address,
+                p.name as prefecture_name, c.name as city_name
+         FROM applications a
+         JOIN jobs j ON a.job_id = j.id
+         JOIN users u ON a.user_id = u.id
+         LEFT JOIN prefectures p ON u.prefecture_id = p.id
+         LEFT JOIN cities c ON u.city_id = c.id
+         WHERE a.id = ? AND j.shop_id = ?",
+        [$application_id, $shop_id]
+    );
+} catch (Exception $e) {
+    error_log("Application detail query error: " . $e->getMessage());
+    $_SESSION['error_message'] = '応募情報の取得に失敗しました。';
+    header('Location: applications.php');
+    exit;
+}
 
 if (!$application) {
+    $_SESSION['error_message'] = '応募が見つかりません。';
     header('Location: applications.php');
     exit;
 }

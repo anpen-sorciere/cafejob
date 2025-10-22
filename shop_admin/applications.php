@@ -67,6 +67,91 @@ $shop_jobs = $db->fetchAll(
     [$shop_id]
 );
 
+// チャットルーム作成処理
+if ($_POST && isset($_POST['create_chat_room'])) {
+    $application_id = (int)$_POST['application_id'];
+    
+    try {
+        // 自分の店舗の応募かチェック
+        $application = $db->fetch(
+            "SELECT a.id, a.user_id FROM applications a 
+             JOIN jobs j ON a.job_id = j.id 
+             WHERE a.id = ? AND j.shop_id = ?",
+            [$application_id, $shop_id]
+        );
+        
+        if ($application) {
+            // 既存のチャットルームをチェック
+            $existing_room = $db->fetch(
+                "SELECT id FROM chat_rooms WHERE application_id = ?",
+                [$application_id]
+            );
+            
+            if (!$existing_room) {
+                // チャットルームを作成
+                $db->query(
+                    "INSERT INTO chat_rooms (shop_id, user_id, application_id, created_at, updated_at) 
+                     VALUES (?, ?, ?, NOW(), NOW())",
+                    [$shop_id, $application['user_id'], $application_id]
+                );
+                $_SESSION['success_message'] = 'チャットルームを作成しました。';
+            } else {
+                $_SESSION['success_message'] = 'チャットルームは既に存在します。';
+            }
+        }
+    } catch (Exception $e) {
+        $_SESSION['error_message'] = 'チャットルームの作成に失敗しました。';
+        error_log("Chat room creation error: " . $e->getMessage());
+    }
+    
+    header('Location: applications.php?' . http_build_query($_GET));
+    exit;
+}
+
+// 一括チャットルーム作成処理
+if ($_POST && isset($_POST['create_all_chat_rooms'])) {
+    $created_count = 0;
+    $existing_count = 0;
+    
+    try {
+        // 自分の店舗のすべての応募を取得
+        $all_applications = $db->fetchAll(
+            "SELECT a.id, a.user_id FROM applications a 
+             JOIN jobs j ON a.job_id = j.id 
+             WHERE j.shop_id = ?",
+            [$shop_id]
+        );
+        
+        foreach ($all_applications as $application) {
+            // 既存のチャットルームをチェック
+            $existing_room = $db->fetch(
+                "SELECT id FROM chat_rooms WHERE application_id = ?",
+                [$application['id']]
+            );
+            
+            if (!$existing_room) {
+                // チャットルームを作成
+                $db->query(
+                    "INSERT INTO chat_rooms (shop_id, user_id, application_id, created_at, updated_at) 
+                     VALUES (?, ?, ?, NOW(), NOW())",
+                    [$shop_id, $application['user_id'], $application['id']]
+                );
+                $created_count++;
+            } else {
+                $existing_count++;
+            }
+        }
+        
+        $_SESSION['success_message'] = "チャットルーム作成完了: 新規作成 {$created_count}件, 既存 {$existing_count}件";
+    } catch (Exception $e) {
+        $_SESSION['error_message'] = '一括チャットルーム作成に失敗しました。';
+        error_log("Bulk chat room creation error: " . $e->getMessage());
+    }
+    
+    header('Location: applications.php?' . http_build_query($_GET));
+    exit;
+}
+
 // 応募ステータス更新処理
 if ($_POST && isset($_POST['update_status'])) {
     $application_id = (int)$_POST['application_id'];
@@ -160,15 +245,31 @@ ob_start();
                     <h1 class="h3 mb-0">
                         <i class="fas fa-file-alt me-2"></i>応募管理
                     </h1>
-                    <div class="text-muted small">
-                        <i class="fas fa-info-circle me-1"></i>
-                        総応募数: <span class="fw-bold"><?php echo count($applications); ?></span>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            総応募数: <span class="fw-bold"><?php echo count($applications); ?></span>
+                        </div>
+                        <?php if (!empty($applications)): ?>
+                            <form method="POST" class="d-inline" onsubmit="return confirm('すべての応募に対してチャットルームを作成しますか？')">
+                                <button type="submit" name="create_all_chat_rooms" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-comments me-1"></i>全チャット作成
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <?php if (isset($_SESSION['success_message'])): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <?php echo htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['error_message'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 <?php endif; ?>
@@ -308,10 +409,16 @@ ob_start();
                                                    class="btn btn-outline-info btn-sm">
                                                     <i class="fas fa-eye me-1"></i>詳細
                                                 </a>
+                                                <form method="POST" class="d-inline" onsubmit="return confirm('チャットルームを作成しますか？')">
+                                                    <input type="hidden" name="application_id" value="<?php echo $application['id']; ?>">
+                                                    <button type="submit" name="create_chat_room" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-comments me-1"></i>チャット作成
+                                                    </button>
+                                                </form>
                                                 <a href="chat.php" 
-                                                   class="btn btn-success btn-sm"
+                                                   class="btn btn-outline-success btn-sm"
                                                    title="チャットルーム一覧を表示">
-                                                    <i class="fas fa-comments me-1"></i>チャット
+                                                    <i class="fas fa-list me-1"></i>チャット一覧
                                                 </a>
                                             </div>
                                         </div>
@@ -475,6 +582,9 @@ ob_start();
             return;
         }
         
+        // モーダルインスタンスを保存するオブジェクト
+        const modalInstances = {};
+        
         // モーダルのイベントハンドラーを追加
         document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(trigger) {
             trigger.addEventListener('click', function(e) {
@@ -485,12 +595,31 @@ ob_start();
                 const modal = document.querySelector(targetId);
                 
                 if (modal) {
+                    // 既存のモーダルインスタンスがあれば破棄
+                    if (modalInstances[targetId]) {
+                        modalInstances[targetId].dispose();
+                    }
+                    
                     try {
-                        const bsModal = new bootstrap.Modal(modal, {
+                        // 新しいモーダルインスタンスを作成
+                        modalInstances[targetId] = new bootstrap.Modal(modal, {
                             backdrop: 'static',
-                            keyboard: false
+                            keyboard: false,
+                            focus: true
                         });
-                        bsModal.show();
+                        
+                        // モーダルを表示
+                        modalInstances[targetId].show();
+                        
+                        // モーダルが表示された時の処理
+                        modal.addEventListener('shown.bs.modal', function() {
+                            // フォーカスを最初の入力フィールドに
+                            const firstInput = modal.querySelector('input, select, textarea');
+                            if (firstInput) {
+                                firstInput.focus();
+                            }
+                        }, { once: true });
+                        
                     } catch (error) {
                         console.error('Error opening modal:', error);
                     }
@@ -508,6 +637,13 @@ ob_start();
                 if (form) {
                     form.reset();
                 }
+                
+                // モーダルインスタンスを破棄
+                const modalId = '#' + this.id;
+                if (modalInstances[modalId]) {
+                    modalInstances[modalId].dispose();
+                    delete modalInstances[modalId];
+                }
             });
         });
         
@@ -518,6 +654,15 @@ ob_start();
                 if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>処理中...';
+                }
+            });
+        });
+        
+        // ページ離脱時のクリーンアップ
+        window.addEventListener('beforeunload', function() {
+            Object.values(modalInstances).forEach(function(instance) {
+                if (instance) {
+                    instance.dispose();
                 }
             });
         });
