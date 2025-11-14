@@ -1,0 +1,13 @@
+{
+  // 自動で編集を承認するフォルダを指定
+  "autoConfirmEdits": [
+    "app/Http/Controllers/",
+    "resources/views/",
+    "routes/",
+    "database/migrations/",
+    "database/seeders/"
+  ],
+
+  // コメント（任意）: AIが変更提案した際に自動で「Accept」
+  "description": "Cursor AI can auto-apply edits in these safe folders."
+}
