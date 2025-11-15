@@ -1,18 +1,42 @@
-/node_modules
-/public/build
+# 依存ファイル
+/vendor/
+/node_modules/
+
+# Laravel 環境ファイル
+.env
+.env.*
+!.env.example
+
+# Laravel storage (ログ・キャッシュ類)
+/storage/*.key
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+
+# Laravel Mix / Vite
 /public/hot
 /public/storage
-/storage/*.key
-/vendor
-.env
-.env.backup
-.env.production
+/public/build
+
+# IDE / エディタ
+/.idea
+/.vscode
+/.fleet
+
+# テスト・ツール
 .phpunit.result.cache
+/.php-cs-fixer.cache
+
+# OS 系
+.DS_Store
+Thumbs.db
+
+# NPM / Yarn ログ
+npm-debug.log
+yarn-error.log
+
+# その他ツール系
 Homestead.json
 Homestead.yaml
 auth.json
-npm-debug.log
-yarn-error.log
-/.fleet
-/.idea
-/.vscode
