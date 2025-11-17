@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('title', 'システム管理者ログイン')
-@section('description', 'cafejob(仮)システム管理者パネルにログインしてください。')
+@section('description', 'カフェコレ（CafeColle）システム管理者パネルにログインしてください。')
 
 @section('content')
 <div class="container py-5">
@@ -11,7 +11,7 @@
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <h2 class="fw-bold mb-3">
-                            <i class="fas fa-user-shield me-2 text-danger"></i>cafejob(仮)システム管理者ログイン
+                            <i class="fas fa-user-shield me-2 text-danger"></i>カフェコレ（CafeColle）システム管理者ログイン
                         </h2>
                         <p class="text-muted">システム管理者パネルにログインしてください</p>
                     </div>

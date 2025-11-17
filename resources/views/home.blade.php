@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-12 text-center mb-5">
-                <h1 class="hero-title mb-3">カフェJob</h1>
+                <h1 class="hero-title mb-3">カフェコレ（CafeColle）</h1>
                 <h2 class="hero-subtitle-large mb-4">コンカフェ専門の求人・集客サイト</h2>
                 <p class="hero-description mb-4">
                     全国のコンカフェ・メンズコンカフェから「働きたい」「楽しみたい」<br>

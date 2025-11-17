@@ -7,7 +7,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="{{ route('shop-admin.dashboard') }}">
-            <i class="fas fa-coffee me-2"></i>カフェJob
+            <i class="fas fa-coffee me-2"></i>カフェコレ（CafeColle）
         </a>
         <div class="navbar-nav ms-auto">
             <a class="nav-link" href="{{ route('shop-admin.jobs.index') }}">

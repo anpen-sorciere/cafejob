@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('title', 'ログイン')
-@section('description', 'カフェJobにログインして求人情報を確認・応募できます。')
+@section('description', 'カフェコレ（CafeColle）にログインして求人情報を確認・応募できます。')
 
 @section('content')
 <div class="container py-5">
@@ -13,7 +13,7 @@
                         <h2 class="fw-bold mb-3">
                             <i class="fas fa-sign-in-alt me-2 text-primary"></i>ログイン
                         </h2>
-                        <p class="text-muted">カフェJobにログインして求人情報を確認・応募できます</p>
+                        <p class="text-muted">カフェコレ（CafeColle）にログインして求人情報を確認・応募できます</p>
                     </div>
 
                     @if(session('status'))

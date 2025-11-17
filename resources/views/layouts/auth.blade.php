@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'ログイン') - カフェJob</title>
+    <title>@yield('title', 'ログイン') - カフェコレ（CafeColle）</title>
     <meta name="description" content="@yield('description', 'コンカフェ専門の求人・集客サイト。全国のコンカフェ・メンズコンカフェから働きたい・楽しみたいお店を検索できます。')">
     
     <!-- Bootstrap CSS -->
@@ -21,7 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <i class="fas fa-coffee me-2"></i>カフェJob
+                <i class="fas fa-coffee me-2"></i>カフェコレ（CafeColle）
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="{{ route('home') }}">

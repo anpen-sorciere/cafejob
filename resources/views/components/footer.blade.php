@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-4 mb-4">
                 <h5 class="fw-bold mb-3">
-                    <i class="fas fa-coffee me-2"></i>カフェJob
+                    <i class="fas fa-coffee me-2"></i>カフェコレ（CafeColle）
                 </h5>
                 <p class="text-muted">
                     全国のコンカフェ・メンズコンカフェから「働きたい」「楽しみたい」お店のエリアから検索できるコンカフェ専門のポータルサイトです。
@@ -51,7 +51,7 @@
         
         <div class="row">
             <div class="col-md-12 text-center">
-                <p class="text-muted mb-0">&copy; {{ date('Y') }} カフェJob. All rights reserved.</p>
+                <p class="text-muted mb-0">&copy; {{ date('Y') }} カフェコレ（CafeColle）. All rights reserved.</p>
             </div>
         </div>
     </div>

@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'cafejob(仮)システム管理者ダッシュボード')
+@section('title', 'カフェコレ（CafeColle）システム管理者ダッシュボード')
 
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
             <h1 class="h3 mb-4">
-                <i class="fas fa-shield-alt me-2"></i>cafejob(仮)システム管理者ダッシュボード
+                <i class="fas fa-shield-alt me-2"></i>カフェコレ（CafeColle）システム管理者ダッシュボード
             </h1>
         </div>
     </div>
