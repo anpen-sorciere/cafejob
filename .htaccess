@@ -7,7 +7,7 @@
     # publicディレクトリが存在する場合のみリダイレクト
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/cafejob/public/
+    RewriteCond %{REQUEST_URI} !^/cafecolle/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
 
