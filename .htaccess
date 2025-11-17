@@ -2,15 +2,24 @@
 # プロジェクトルートに配置してください
 # マルチドメイン設定: ドメインルート（cafecolle.jp）が /cafecolle フォルダーを指す
 
+# DirectoryIndexの設定（403エラー対策）
+DirectoryIndex index.php index.html
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # publicディレクトリが存在する場合のみリダイレクト
-    # マルチドメイン設定では、REQUEST_URIは / から始まる
+    # publicディレクトリが既にリクエストされている場合はスキップ
+    RewriteCond %{REQUEST_URI} ^/public/
+    RewriteRule ^ - [L]
+    
+    # すべてのリクエストをpublicディレクトリにリダイレクト
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
+    
+    # ルートアクセス時もpublic/index.phpにリダイレクト
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteRule ^ public/index.php [L]
 </IfModule>
 
 # .envファイルの保護
