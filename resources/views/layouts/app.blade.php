@@ -22,10 +22,11 @@
     <!-- Header -->
     <header class="cc-header">
         <div class="cc-header-inner cc-container">
-            <div class="navbar-brand">
-                <a href="{{ route('home') }}" class="fw-bold text-decoration-none" style="color: var(--cc-color-accent);">
+            <div class="navbar-brand m-0">
+                <a href="{{ url('/') }}" class="fw-bold text-decoration-none" style="color: var(--cc-color-accent); font-size: 20px;">
                     カフェコレ
                 </a>
+                <div class="small text-muted">コンカフェ専門の求人・集客サイト</div>
             </div>
             <nav class="cc-header-nav d-none d-md-flex gap-2">
                 <a href="{{ route('jobs.index') }}">求人を探す</a>
