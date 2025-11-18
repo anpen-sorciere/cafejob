@@ -35,27 +35,41 @@
         </header>
     @else
         <header class="site-header">
-            <div class="container header-inner">
-                {{-- 左側：ブランドロゴ＋キャッチコピー --}}
-                <div class="header-brand">
-                    <a href="{{ url('/') }}" class="header-logo">
-                        <span class="logo-mark">カフェコレ</span>
-                        <span class="logo-badge">beta</span>
-                    </a>
-                    <p class="header-tagline">
-                        コンカフェ専門の<span>求人・集客サイト</span>
-                    </p>
+            <div class="header-inner">
+                {{-- 上段：ロゴ ＋ 店舗向けボタン --}}
+                <div class="header-top">
+                    <div class="header-brand">
+                        <a href="{{ url('/') }}" class="header-logo">
+                            <span class="logo-mark">カフェコレ</span>
+                            <span class="logo-badge">BETA</span>
+                        </a>
+                        <p class="header-tagline">
+                            コンカフェ専門の<span>求人・集客サイト</span>
+                        </p>
+                    </div>
+
+                    <div class="header-shop-actions">
+                        <a href="{{ route('regist.create') }}" class="btn-shop-owner">
+                            掲載申し込み
+                        </a>
+                        <a href="{{ route('shop-admin.login') }}" class="btn-shop-login">
+                            店舗ログイン
+                        </a>
+                    </div>
                 </div>
 
-                {{-- 右側：グローバルナビ --}}
-                <nav class="header-nav">
-                    <ul class="header-menu">
-                        <li><a href="{{ route('jobs.index') }}">求人を探す</a></li>
-                        <li><a href="{{ route('shops.index') }}">お店を探す</a></li>
-                        @if(config('feature_flags.keep', false))
-                        <li><a href="{{ route('favorites.index') }}">キープ</a></li>
-                        @endif
-                    </ul>
+                {{-- 下段：メニュー ＋ 会員向けボタン --}}
+                <div class="header-bottom">
+                    <nav class="header-nav">
+                        <ul class="header-menu">
+                            <li><a href="{{ route('jobs.index') }}">求人を探す</a></li>
+                            <li><a href="{{ route('shops.index') }}">お店を探す</a></li>
+                            @if(config('feature_flags.keep', false))
+                            <li><a href="{{ route('favorites.index') }}">キープ</a></li>
+                            @endif
+                        </ul>
+                    </nav>
+
                     <div class="header-actions">
                         @guest
                             <a href="{{ route('login') }}" class="btn-header-outline">ログイン</a>
@@ -70,12 +84,7 @@
                             </form>
                         @endguest
                     </div>
-                    {{-- ★ 店舗オーナー向けボタン --}}
-                    <div class="header-shop-actions">
-                        <a href="{{ route('regist.create') }}" class="btn-shop-owner">掲載申し込み</a>
-                        <a href="{{ route('shop-admin.login') }}" class="btn-shop-login">店舗ログイン</a>
-                    </div>
-                </nav>
+                </div>
             </div>
         </header>
     @endif

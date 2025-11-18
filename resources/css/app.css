@@ -55,7 +55,7 @@ body {
 }
 
 /* =========================
-   Header
+   Header layout
    ========================= */
 .site-header {
   position: sticky;
@@ -67,13 +67,22 @@ body {
 }
 
 .header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 上段：ロゴ ＋ 店舗ボタン */
+.header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0;
+  gap: 16px;
 }
 
-/* ブランドブロック */
 .header-brand {
   display: flex;
   flex-direction: column;
@@ -86,7 +95,7 @@ body {
   text-decoration: none;
 }
 
-/* カフェコレ本体：ピンクのピル型ロゴにする */
+/* ピル型ロゴ */
 .logo-mark {
   position: relative;
   display: inline-flex;
@@ -100,14 +109,11 @@ body {
   font-weight: 700;
   letter-spacing: .08em;
 }
-
-/* ロゴ内の小アイコン（擬似要素でカップ） */
 .logo-mark::before {
   content: "☕";
   font-size: 0.9rem;
 }
 
-/* BETAバッジを小さく横に添える */
 .logo-badge {
   font-size: 0.7rem;
   padding: 3px 8px;
@@ -119,22 +125,56 @@ body {
   text-transform: uppercase;
 }
 
-/* キャッチコピー */
 .header-tagline {
   margin: 2px 0 0;
   font-size: 0.8rem;
   color: #777;
 }
-
 .header-tagline span {
   font-weight: 600;
 }
 
-/* ナビゲーション */
+/* 店舗オーナー向けボタン（右上） */
+.header-shop-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-shop-owner,
+.btn-shop-login {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid #ffd1e6;
+  background: #fff7fb;
+  color: #ff4b9e;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn-shop-owner:hover,
+.btn-shop-login:hover {
+  background: #ffe6f3;
+  box-shadow: 0 3px 8px rgba(255, 105, 180, 0.25);
+  transform: translateY(-1px);
+}
+
+/* 下段：メニュー ＋ 会員ボタン */
+.header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 18px;
 }
 
 .header-menu {
@@ -153,7 +193,6 @@ body {
   position: relative;
   padding-bottom: 2px;
 }
-
 .header-menu a::after {
   content: "";
   position: absolute;
@@ -165,12 +204,11 @@ body {
   background: #ff4b9e;
   transition: width 0.15s ease-out;
 }
-
 .header-menu a:hover::after {
   width: 100%;
 }
 
-/* ログイン／会員登録ボタン */
+/* 会員向けボタン */
 .header-actions {
   display: flex;
   align-items: center;
@@ -198,7 +236,6 @@ body {
   color: #ff4b9e;
   background: #fff;
 }
-
 .btn-header-outline:hover {
   background: #ffe9f4;
 }
@@ -208,69 +245,58 @@ body {
   color: #fff;
   box-shadow: 0 4px 10px rgba(255, 75, 158, 0.35);
 }
-
 .btn-header-main:hover {
   background: #ff2f8a;
   box-shadow: 0 6px 14px rgba(255, 75, 158, 0.45);
 }
 
 /* =========================
-   店舗オーナー向けヘッダーボタン
+   SP レイアウト調整
    ========================= */
-.header-shop-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 14px;
-}
-
-.btn-shop-owner,
-.btn-shop-login {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  border-radius: 999px;
-  border: 1px solid #ffd1e6;
-  background: #fff7fb;
-  color: #ff4b9e;
-  text-decoration: none;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
-}
-
-.btn-shop-owner:hover,
-.btn-shop-login:hover {
-  background: #ffe6f3;
-  box-shadow: 0 3px 8px rgba(255, 105, 180, 0.25);
-}
-
-/* スマホ用調整 */
 @media (max-width: 768px) {
   .header-inner {
-    padding: 10px 0;
-    gap: 12px;
+    padding: 10px 12px;
+    gap: 6px;
   }
 
-  .header-nav {
-    gap: 10px;
+  .header-top,
+  .header-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .header-shop-actions {
+    order: 2;              /* ロゴの下に来るように */
+  }
+
+  .header-bottom {
+    gap: 8px;
   }
 
   .header-menu {
-    display: none; /* 当面は非表示。ハンバーガーメニュー実装時に変更 */
+    gap: 12px;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
   }
 
-  .header-actions .btn-header-outline {
-    display: none; /* スマホでは会員登録ボタンを優先 */
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
   }
 
-  .logo-mark {
-    font-size: 1.1rem;
+  .btn-header-outline,
+  .btn-header-main {
+    min-width: auto;
+    padding-inline: 10px;
+    font-size: 0.8rem;
   }
 
-  /* スマホは折り返し回避のため非表示に（必要なら変更可） */
-  .header-shop-actions {
-    display: none;
+  .btn-shop-owner,
+  .btn-shop-login {
+    font-size: 0.75rem;
+    padding-inline: 8px;
   }
 }
 
