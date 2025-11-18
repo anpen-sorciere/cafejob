@@ -31,13 +31,24 @@ class ShopAdminLoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $shopAdmin = ShopAdmin::where('username', $request->username)
-            ->where('status', 'active')
+        // メールアドレスまたはユーザー名で検索
+        $shopAdmin = ShopAdmin::where(function($query) use ($request) {
+                $query->where('email', $request->username)
+                      ->orWhere('username', $request->username);
+            })
             ->first();
 
         if (!$shopAdmin) {
             throw ValidationException::withMessages([
                 'username' => ['認証情報が正しくありません。'],
+            ]);
+        }
+
+        // 審査中（pending）でもログイン可能（郵便での実店舗確認は将来実装）
+        // statusがinactiveの場合のみログイン不可
+        if ($shopAdmin->status === 'inactive') {
+            throw ValidationException::withMessages([
+                'username' => ['このアカウントは無効化されています。'],
             ]);
         }
 

@@ -37,19 +37,20 @@
                     <form method="POST" action="{{ route('shop-admin.login') }}">
                         @csrf
 
-                        <!-- Username -->
+                        <!-- Email -->
                         <div class="mb-3">
                             <label for="username" class="form-label fw-bold">
-                                <i class="fas fa-user me-1"></i>ユーザー名
+                                <i class="fas fa-envelope me-1"></i>メールアドレス
                             </label>
-                            <input type="text" 
+                            <input type="email" 
                                    class="form-control form-control-lg @error('username') is-invalid @enderror" 
                                    id="username" 
                                    name="username" 
                                    value="{{ old('username') }}" 
                                    required 
                                    autofocus
-                                   placeholder="ユーザー名を入力">
+                                   autocomplete="email"
+                                   placeholder="メールアドレスを入力">
                             @error('username')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
