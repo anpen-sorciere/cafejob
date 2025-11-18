@@ -339,6 +339,175 @@
     </div>
 </div>
 
+<!-- ① はじめてガイド ダイジェスト -->
+<section class="section section-guide-preview py-6">
+    <div class="container">
+        <div class="guide-preview-card card p-4">
+            <h2 class="guide-preview-title mb-2">はじめてのカフェコレガイド</h2>
+            <p class="text-muted mb-3">
+                コンカフェのお仕事が初めての方向けに、
+                お店選びのポイントや応募〜勤務開始までの流れをまとめました。
+                「どんなお店を選べばいいか不安」という方は、まずはこちらからどうぞ。
+            </p>
+            <a href="{{ route('guide') }}" class="btn btn-main">
+                ガイドを読む
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ② 特集（少なめでOK） -->
+<section class="section section-feature">
+    <div class="cc-container">
+        <h2>コンカフェ特集</h2>
+        <div class="feature-list">
+            {{-- TODO: 特集データを追加 --}}
+            <article class="feature-card">
+                <img src="{{ asset('assets/images/CafeColle_NoImage.png') }}" alt="特集1">
+                <div class="card-body">
+                    <h3>特集タイトル1</h3>
+                    <p>特集の説明文が入ります。</p>
+                </div>
+            </article>
+            <article class="feature-card">
+                <img src="{{ asset('assets/images/CafeColle_NoImage.png') }}" alt="特集2">
+                <div class="card-body">
+                    <h3>特集タイトル2</h3>
+                    <p>特集の説明文が入ります。</p>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ③ 新着求人 -->
+<section class="section section-new-jobs">
+    <div class="cc-container">
+        <h2>新着のアルバイト</h2>
+        <div class="job-list">
+            @if($latest_jobs->isEmpty())
+                <div class="text-center py-4">
+                    <p class="text-muted">まだ求人情報がありません</p>
+                </div>
+            @else
+                @foreach($latest_jobs->take(6) as $job)
+                    <div class="cc-job-card mb-3">
+                        <div>
+                            <img src="{{ $job->shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                                 class="cc-job-thumb" 
+                                 alt="{{ $job->shop->name }}"
+                                 loading="lazy">
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="cc-job-title mb-1">
+                                <a href="{{ route('jobs.show', $job->id) }}" class="text-decoration-none" style="color: inherit;">
+                                    {{ $job->title }}
+                                </a>
+                            </div>
+                            <div class="cc-job-meta mb-2">
+                                {{ $job->shop->name }} ｜ 
+                                {{ $job->shop->prefecture->name ?? '' }}{{ $job->shop->city->name ?? '' }}
+                                @if($job->salary_min)
+                                    ｜ 時給 {{ number_format($job->salary_min) }}円〜
+                                    @if($job->salary_max)
+                                        {{ number_format($job->salary_max) }}円
+                                    @endif
+                                @endif
+                            </div>
+                            @if($job->shop->concept_type)
+                                <div class="mb-2">
+                                    <span class="cc-tag">{{ $job->shop->concept_type }}</span>
+                                </div>
+                            @endif
+                            <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-primary btn-sm">
+                                詳細を見る
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+                <div class="text-center mt-4">
+                    <a href="{{ route('jobs.index') }}" class="btn btn-outline-primary">
+                        すべての求人を見る <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            @endif
+        </div>
+    </div>
+</section>
+
+<!-- ④ お役立ち情報（コラム） -->
+<section class="section section-columns">
+    <div class="cc-container">
+        <h2>コンカフェバイトお役立ち情報</h2>
+        <div class="column-list">
+            <article class="column-card">
+                <h3>① 初めてのコンカフェバイト完全ガイド</h3>
+                <p>コンカフェってどんな仕事？どんな子が向いてる？仕事内容と必要なスキル、働く前に知っておくべき注意点、初心者が失敗しないお店選びを解説します。</p>
+                <div class="meta">
+                    <i class="fas fa-book me-1"></i>完全ガイド
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>② コンカフェの給与体系を分かりやすく解説</h3>
+                <p>時給とインセンティブ（バック）の仕組み、よくある給与モデル例、体験入店の日給の注意点、稼ぎたい人がチェックすべきポイントを詳しく説明します。</p>
+                <div class="meta">
+                    <i class="fas fa-yen-sign me-1"></i>給与・待遇
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>③ コンカフェでよくある質問（Q&A）</h3>
+                <p>未経験でも大丈夫？見た目に自信がなくても働ける？お酒が飲めないとダメ？チェキやSNSは必須？身バレの対策は？よくある質問に答えます。</p>
+                <div class="meta">
+                    <i class="fas fa-question-circle me-1"></i>Q&A
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>④ 面談で聞くべき5つの質問</h3>
+                <p>お店の世界観について、給与・バックのルール、研修と教育体制、なぜ以前の子は辞めた？トラブルが起きたときの対応。面談で確認すべきポイントをまとめました。</p>
+                <div class="meta">
+                    <i class="fas fa-comments me-1"></i>面談・面接
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>⑤ コンカフェの危険ラインと安全ライン</h3>
+                <p>この店舗は避けたほうがいいサイン、安全なお店の特徴、迷ったときの判断基準、安心して働くためのセルフチェック。安全に働くための見極め方を解説します。</p>
+                <div class="meta">
+                    <i class="fas fa-shield-alt me-1"></i>安全対策
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>⑥ 体験入店で見るべきポイント</h3>
+                <p>店内の雰囲気は自分に合う？キャスト同士の空気感、教え方が丁寧かどうか、実際の接客を見て分かること、断っても大丈夫？体験入店で確認すべきことをまとめました。</p>
+                <div class="meta">
+                    <i class="fas fa-eye me-1"></i>体験入店
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>⑦ SNSの使い方と身バレ対策</h3>
+                <p>キャストのSNSは何を投稿する？写真・名前の安全ライン、バレを防ぐための設定、SNSでファンを増やすコツ。プライバシーを守りながらSNSを活用する方法を解説します。</p>
+                <div class="meta">
+                    <i class="fas fa-lock me-1"></i>プライバシー
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+            <article class="column-card">
+                <h3>⑧ コンカフェで"長く楽しく働く"コツ</h3>
+                <p>無理しない働き方、スタッフや客層との相性、スケジュール管理、メンタルケア、長続きする子の共通点。長く続けるためのコツと心構えをまとめました。</p>
+                <div class="meta">
+                    <i class="fas fa-heart me-1"></i>働き方
+                </div>
+                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
+            </article>
+        </div>
+    </div>
+</section>
+
 <!-- CTA セクション -->
 <section class="py-5 mb-4" style="background-color: var(--cc-color-main);">
     <div class="cc-container text-center">

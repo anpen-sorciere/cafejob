@@ -295,6 +295,359 @@ body {
 }
 
 /* ============================
+   セクション共通スタイル
+   ============================ */
+.section {
+  margin-bottom: 48px;
+}
+
+/* ============================
+   はじめてガイド ダイジェスト（TOP用）
+   ============================ */
+.section-guide-preview {
+  background: #fff7fb;
+}
+
+.guide-preview-card {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 18px;
+  border: 1px solid #ffe0ef;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.10);
+}
+
+.guide-preview-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cc-color-accent);
+}
+
+/* ============================
+   ガイド用ボタン（btn-main）
+   ============================ */
+.btn-main,
+.btn.btn-main {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 22px;
+  border-radius: 999px;
+  background: #ff4b9e;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255, 75, 158, 0.35);
+  transition: background-color 0.16s ease-out, box-shadow 0.16s ease-out;
+}
+
+.btn-main:hover,
+.btn.btn-main:hover {
+  background: #ff2f8a;
+  box-shadow: 0 4px 12px rgba(255, 75, 158, 0.45);
+  color: #fff;
+}
+
+.section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cc-color-text);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.section > p {
+  text-align: center;
+  color: var(--cc-color-muted);
+  margin-bottom: 24px;
+}
+
+/* ============================
+   はじめてガイド
+   ============================ */
+.section-guide .guide-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.guide-point {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--cc-color-border);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
+  transition:
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+.guide-point:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 105, 180, 0.15);
+}
+
+.guide-point h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cc-color-accent);
+  margin-bottom: 12px;
+}
+
+.guide-point p {
+  font-size: 0.9rem;
+  color: var(--cc-color-muted);
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+/* ============================
+   特集セクション
+   ============================ */
+.section-feature .feature-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.feature-card {
+  background-color: #FFFFFF;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--cc-color-border);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.12);
+  transition:
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 105, 180, 0.18);
+}
+
+.feature-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.feature-card .card-body {
+  padding: 16px;
+}
+
+.feature-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cc-color-text);
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--cc-color-muted);
+  margin-bottom: 0;
+}
+
+/* ============================
+   新着求人セクション
+   ============================ */
+.section-new-jobs {
+  background-color: var(--cc-color-bg);
+  padding: 40px 0;
+  border-radius: 16px;
+}
+
+.section-new-jobs .job-list {
+  margin-top: 24px;
+}
+
+/* ============================
+   お役立ち情報（コラム）
+   ============================ */
+.section-columns .column-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.column-card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--cc-color-border);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
+  transition:
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+.column-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 105, 180, 0.15);
+}
+
+.column-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cc-color-text);
+  margin-bottom: 12px;
+}
+
+.column-card p {
+  font-size: 0.9rem;
+  color: var(--cc-color-muted);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.column-card .meta {
+  font-size: 0.8rem;
+  color: var(--cc-color-accent);
+  margin-bottom: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background-color: rgba(255, 143, 177, 0.1);
+  border-radius: 12px;
+}
+
+.column-card a {
+  color: var(--cc-color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.column-card a:hover {
+  text-decoration: underline;
+}
+
+/* ============================
+   /guide ページ全体
+   ============================ */
+.guide-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ヒーロー部分 */
+.guide-hero {
+  border-radius: 18px;
+  background: #fff7fb;
+  border: 1px solid #ffe0ef;
+}
+
+.guide-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cc-color-accent);
+}
+
+/* セクション共通カード */
+.guide-section {
+  border-radius: 18px;
+  border: 1px solid #ffe0ef;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
+}
+
+/* セクションタイトル */
+.guide-section .section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cc-color-accent);
+}
+
+.guide-section .section-title::before {
+  content: "📌";
+  font-size: 1.1rem;
+}
+
+/* 柔らかい小カード（POINT用） */
+.card-soft {
+  border-radius: 14px;
+  background: #fffafd;
+  border: 1px solid #ffe6f3;
+}
+
+/* STEPリスト */
+.step-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.step-list li {
+  margin-bottom: 16px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.step-list li::before {
+  content: counter(step-counter);
+  counter-increment: step-counter;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--cc-color-accent);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.step-list {
+  counter-reset: step-counter;
+}
+
+/* チェックリスト */
+.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+.checklist li {
+  margin-bottom: 8px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.checklist li::before {
+  content: "✔ ";
+  color: #ff4b9e;
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+}
+
+/* Q&A 用 */
+.qa-list dt {
+  font-weight: 600;
+  margin-top: 12px;
+  color: var(--cc-color-text);
+}
+
+.qa-list dd {
+  margin-left: 0;
+  margin-bottom: 8px;
+  color: #666;
+  padding-left: 20px;
+}
+
+/* ============================
    スマホ用の微調整
    ============================ */
 @media (max-width: 768px) {
@@ -311,5 +664,27 @@ body {
   .cc-job-card .btn-sm {
     width: 100%;
     justify-content: center;
+  }
+
+  .section-guide .guide-points,
+  .section-feature .feature-list,
+  .section-columns .column-list {
+    grid-template-columns: 1fr;
+  }
+
+  .section h2 {
+    font-size: 1.3rem;
+  }
+
+  .guide-page {
+    padding: 0 12px;
+  }
+
+  .guide-hero {
+    padding: 24px !important;
+  }
+
+  .guide-title {
+    font-size: 1.5rem;
   }
 }

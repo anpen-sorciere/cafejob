@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\Route;
 // ホーム
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// はじめてガイド
+Route::view('/guide', 'pages.guide')->name('guide');
+
 // 求人関連
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
