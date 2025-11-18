@@ -480,19 +480,23 @@
                 </div>
                 <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
             </article>
-            <article class="column-card">
-                <h3>⑥ 体験入店って本当に必要？安全性から考える</h3>
-                <p>
-                    体験入店を行っていないお店も少なくありません。
-                    その日だけ来てすぐにいなくなる人が店内のすべてのエリアに立ち入ることは、
-                    個人情報保護や防犯の観点から大きなリスクになる場合があります。
-                    契約を結んでから勤務を始めるスタイルなど、「安全性を重視したお店選び」の考え方を解説します。
-                </p>
-                <div class="meta">
-                    <i class="fas fa-shield-alt me-1"></i>体験入店
-                </div>
-                <a href="{{ route('columns.show') }}">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
+            <a href="{{ route('columns.taiken_safety') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>⑥ 体験入店って本当に必要？安全性から考える</h3>
+                    <p>
+                        体験入店を行っていないお店も少なくありません。
+                        その日だけ来てすぐにいなくなる人が店内のすべてのエリアに立ち入ることは、
+                        個人情報保護や防犯の観点から大きなリスクになる場合があります。
+                        契約を結んでから勤務を始めるスタイルなど、「安全性を重視したお店選び」の考え方を解説します。
+                    </p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-shield-alt me-1"></i>体験入店
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
             <article class="column-card">
                 <h3>⑦ SNSの使い方と身バレ対策</h3>
                 <p>キャストのSNSは何を投稿する？写真・名前の安全ライン、バレを防ぐための設定、SNSでファンを増やすコツ。プライバシーを守りながらSNSを活用する方法を解説します。</p>

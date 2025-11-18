@@ -54,7 +54,174 @@ body {
   margin: 0 auto;
 }
 
-/* ヘッダー */
+/* =========================
+   Header
+   ========================= */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 248, 252, 0.95);
+  border-bottom: 1px solid #ffe0ef;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+}
+
+/* ブランドブロック */
+.header-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: #ff4b9e;
+}
+
+.logo-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #ffe0ef;
+  color: #ff4b9e;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.header-tagline {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #777;
+}
+
+.header-tagline span {
+  font-weight: 600;
+}
+
+/* ナビゲーション */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-menu a {
+  font-size: 0.9rem;
+  color: #555;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.header-menu a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: #ff4b9e;
+  transition: width 0.15s ease-out;
+}
+
+.header-menu a:hover::after {
+  width: 100%;
+}
+
+/* ログイン／会員登録ボタン */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-header-outline,
+.btn-header-main {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.12s ease-out, color 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+.btn-header-outline {
+  border-color: #ffb6d5;
+  color: #ff4b9e;
+  background: #fff;
+}
+
+.btn-header-outline:hover {
+  background: #ffe9f4;
+}
+
+.btn-header-main {
+  background: #ff4b9e;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(255, 75, 158, 0.35);
+}
+
+.btn-header-main:hover {
+  background: #ff2f8a;
+  box-shadow: 0 6px 14px rgba(255, 75, 158, 0.45);
+}
+
+/* スマホ用調整 */
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 10px 0;
+    gap: 12px;
+  }
+
+  .header-nav {
+    gap: 10px;
+  }
+
+  .header-menu {
+    display: none; /* 当面は非表示。ハンバーガーメニュー実装時に変更 */
+  }
+
+  .header-actions .btn-header-outline {
+    display: none; /* スマホでは会員登録ボタンを優先 */
+  }
+
+  .logo-mark {
+    font-size: 1.1rem;
+  }
+}
+
+/* 既存のヘッダー（後方互換性のため残す） */
 .cc-header {
   background-color: #FFFFFF;
   border-bottom: 1px solid var(--cc-color-border);
@@ -528,6 +695,47 @@ body {
   text-decoration: underline;
 }
 
+/* コラムカードリンク用スタイル */
+.column-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.column-card-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.column-card-link:hover .column-card {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 105, 180, 0.15);
+}
+
+.helper-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.helper-card-footer .tag {
+  font-size: 0.8rem;
+  color: var(--cc-color-accent);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background-color: rgba(255, 143, 177, 0.1);
+  border-radius: 12px;
+}
+
+.helper-card-footer .more {
+  font-size: 0.9rem;
+  color: var(--cc-color-accent);
+  font-weight: 500;
+}
+
 /* ============================
    /guide ページ全体
    ============================ */
@@ -645,6 +853,42 @@ body {
   margin-bottom: 8px;
   color: #666;
   padding-left: 20px;
+}
+
+/* ============================
+   コラムページ用スタイル
+   ============================ */
+.column-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.column-article {
+  border-radius: 18px;
+  border: 1px solid #ffe0ef;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.10);
+  background: #fff;
+}
+
+.column-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.column-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.column-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .column-page {
+    padding: 0 12px;
+  }
 }
 
 /* ============================
