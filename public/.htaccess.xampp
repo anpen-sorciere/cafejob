@@ -4,7 +4,7 @@
     </IfModule>
 
     RewriteEngine On
-    RewriteBase /
+    RewriteBase /cafecolle/public/
 
     # Content Security Policy (CSP) ヘッダー
     # eval()の使用を許可（Bootstrapなどのライブラリで必要）
@@ -12,10 +12,9 @@
         Header set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https:;"
     </IfModule>
 
-    # HTTPからHTTPSへのリダイレクト
-    # 注意: XAMPP環境で動作確認する場合は、この2行をコメントアウトしてください
-    RewriteCond %{HTTPS} off
-    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    # HTTPからHTTPSへのリダイレクト（XAMPP環境ではコメントアウト）
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -31,3 +30,4 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
