@@ -11,28 +11,51 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
+    <!-- Custom CSS (Vite経由) -->
+    @vite(['resources/css/app.css'])
+    <!-- 既存のカスタムCSS（必要に応じて） -->
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
     
     @stack('styles')
 </head>
-<body class="auth-background">
-    <!-- シンプルなナビゲーションバー -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <i class="fas fa-coffee me-2"></i>カフェコレ（CafeColle）
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="{{ route('home') }}">
-                    <i class="fas fa-home me-1"></i>トップページ
+<body style="background-color: var(--cc-color-bg);">
+    <!-- ヘッダー -->
+    <header class="site-header">
+        <div class="container header-inner">
+            {{-- 左側：ブランドロゴ＋キャッチコピー --}}
+            <div class="header-brand">
+                <a href="{{ url('/') }}" class="header-logo">
+                    <span class="logo-mark">カフェコレ</span>
+                    <span class="logo-badge">beta</span>
                 </a>
+                <p class="header-tagline">
+                    コンカフェ専門の<span>求人・集客サイト</span>
+                </p>
             </div>
+
+            {{-- 右側：グローバルナビ --}}
+            <nav class="header-nav">
+                <ul class="header-menu">
+                    <li><a href="{{ route('jobs.index') }}">求人を探す</a></li>
+                    <li><a href="{{ route('shops.index') }}">お店を探す</a></li>
+                    @if(config('feature_flags.keep', false))
+                    <li><a href="{{ route('favorites.index') }}">キープ</a></li>
+                    @endif
+                </ul>
+                <div class="header-actions">
+                    @guest
+                        <a href="{{ route('login') }}" class="btn-header-outline">ログイン</a>
+                        <a href="{{ route('register') }}" class="btn-header-main">無料会員登録</a>
+                    @else
+                        <a href="{{ route('profile.edit') }}" class="btn-header-outline">マイページ</a>
+                    @endguest
+                </div>
+            </nav>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="main-content" style="padding-top: 0; min-height: calc(100vh - 200px);">
+    <main style="padding-top: 0; min-height: calc(100vh - 200px);">
         @if(session('success'))
             <div class="container mt-4">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

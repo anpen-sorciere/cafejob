@@ -856,6 +856,141 @@ body {
 }
 
 /* ============================
+   認証ページ用スタイル
+   ============================ */
+.auth-card {
+  border-radius: 18px;
+  border: 1px solid #ffe0ef;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.10);
+  background: #fff;
+}
+
+.auth-card .card-body {
+  padding: 2.5rem;
+}
+
+.auth-card h2 {
+  color: #ff4b9e;
+  font-size: 1.5rem;
+}
+
+.auth-card .text-primary {
+  color: #ff4b9e !important;
+}
+
+.auth-card .form-label {
+  color: #555;
+  font-weight: 600;
+}
+
+.auth-card .form-control {
+  border: 1px solid #ffe0ef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.auth-card .form-control:focus {
+  border-color: #ff4b9e;
+  box-shadow: 0 0 0 0.2rem rgba(255, 75, 158, 0.15);
+}
+
+.auth-card .form-control-lg {
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+}
+
+.auth-card .btn-primary {
+  background: #ff4b9e;
+  border-color: #ff4b9e;
+  border-radius: 999px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(255, 75, 158, 0.35);
+  transition: background-color 0.16s ease-out, box-shadow 0.16s ease-out;
+}
+
+.auth-card .btn-primary:hover {
+  background: #ff2f8a;
+  border-color: #ff2f8a;
+  box-shadow: 0 6px 14px rgba(255, 75, 158, 0.45);
+}
+
+.auth-card .btn-outline-primary {
+  border-color: #ffb6d5;
+  color: #ff4b9e;
+  border-radius: 999px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: background-color 0.16s ease-out, border-color 0.16s ease-out;
+}
+
+.auth-card .btn-outline-primary:hover {
+  background: #ffe9f4;
+  border-color: #ff4b9e;
+  color: #ff4b9e;
+}
+
+.auth-card .form-check-input:checked {
+  background-color: #ff4b9e;
+  border-color: #ff4b9e;
+}
+
+.auth-card .form-check-input:focus {
+  border-color: #ff4b9e;
+  box-shadow: 0 0 0 0.2rem rgba(255, 75, 158, 0.15);
+}
+
+.auth-card a {
+  color: #ff4b9e;
+  text-decoration: none;
+  transition: color 0.15s ease-out;
+}
+
+.auth-card a:hover {
+  color: #ff2f8a;
+  text-decoration: underline;
+}
+
+.auth-card hr {
+  border-color: #ffe0ef;
+  opacity: 1;
+}
+
+.auth-card .alert {
+  border-radius: 12px;
+  border: none;
+}
+
+.auth-card .alert-info {
+  background-color: rgba(255, 143, 177, 0.1);
+  color: #ff4b9e;
+  border-left: 4px solid #ff4b9e;
+}
+
+.auth-card .alert-danger {
+  background-color: rgba(255, 75, 158, 0.1);
+  color: #d63384;
+  border-left: 4px solid #ff4b9e;
+}
+
+.auth-card .alert-success {
+  background-color: rgba(255, 143, 177, 0.1);
+  color: #198754;
+  border-left: 4px solid #198754;
+}
+
+@media (max-width: 768px) {
+  .auth-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .auth-card h2 {
+    font-size: 1.3rem;
+  }
+}
+
+/* ============================
    コラムページ用スタイル
    ============================ */
 .column-page {
