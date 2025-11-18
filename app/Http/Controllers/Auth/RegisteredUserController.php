@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $genders = GenderMst::orderBy('id')->get();
+        $genders = GenderMst::whereIn('id', [1, 2])->orderBy('id')->get();
         return view('auth.register', compact('genders'));
     }
 
@@ -39,13 +39,13 @@ class RegisteredUserController extends Controller
             'first_name' => ['nullable', 'string', 'max:50'],
             'last_name' => ['nullable', 'string', 'max:50'],
             'birth_date' => ['required', 'date', 'before:' . now()->subYears(16)->format('Y-m-d')],
-            'gender_id' => ['required', 'integer', 'exists:gender_mst,id'],
+            'gender_id' => ['required', 'integer', 'in:1,2'],
         ], [
             'birth_date.required' => '生年月日を入力してください。',
             'birth_date.date' => '有効な日付を入力してください。',
             'birth_date.before' => '16歳以上である必要があります。',
             'gender_id.required' => '性別を選択してください。',
-            'gender_id.exists' => '選択された性別は無効です。',
+            'gender_id.in' => '性別は女性または男性を選択してください。',
         ]);
 
         try {
