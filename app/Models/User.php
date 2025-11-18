@@ -19,7 +19,8 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'email',
-        'password_hash',
+        'password', // ミューテータでpassword_hashに変換される
+        'password_hash', // 直接設定する場合用
         'first_name',
         'last_name',
         'phone',
