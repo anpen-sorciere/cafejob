@@ -29,25 +29,60 @@ class ShopRegisterController extends Controller
      */
     public function store(Request $request)
     {
+        // 厳格なバリデーション
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'postal_code' => ['required', 'string', 'max:10'],
-            'address' => ['required', 'string'],
+            // 店舗基本情報
+            'name' => ['required', 'string', 'max:100', 'unique:shops,name'],
+            'description' => ['required', 'string', 'min:20', 'max:2000'],
+            'concept_type' => ['required', 'string', 'in:maid,butler,idol,cosplay,other'],
+            'uniform_type' => ['nullable', 'string', 'max:50'],
+            'opening_hours' => ['required', 'string', 'max:500'],
+            
+            // 住所情報（厳格な形式チェック）
+            'postal_code' => ['required', 'string', 'regex:/^\d{3}-?\d{4}$/'],
             'prefecture_id' => ['required', 'integer', 'exists:prefectures,id'],
-            'city_name' => ['required', 'string'],
-            'phone' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'email', 'max:255'],
-            'website' => ['nullable', 'url', 'max:255'],
-            'opening_hours' => ['nullable', 'string'],
-            'concept_type' => ['required', 'string'],
-            'uniform_type' => ['nullable', 'string'],
-            'admin_last_name' => ['required', 'string', 'max:50'],
-            'admin_first_name' => ['required', 'string', 'max:50'],
-            'admin_email' => ['required', 'email', 'max:255', 'unique:shop_admins,email'],
+            'city_name' => ['required', 'string', 'max:50'],
+            'address' => ['required', 'string', 'max:200'],
+            
+            // 連絡先情報
+            'phone' => ['required', 'string', 'regex:/^0\d{1,4}-\d{1,4}-\d{4}$|^0\d{9,10}$/', 'max:20'],
+            'email' => ['required', 'email', 'max:100', 'unique:shops,email'],
+            'website' => ['nullable', 'url', 'max:200', 'regex:/^https?:\/\//'],
+            
+            // 管理者情報
+            'admin_last_name' => ['required', 'string', 'max:50', 'regex:/^[ァ-ヶー一-龠々]+$/u'],
+            'admin_first_name' => ['required', 'string', 'max:50', 'regex:/^[ァ-ヶー一-龠々]+$/u'],
+            'admin_email' => ['required', 'email', 'max:255', 'unique:shop_admins,email', 'different:email'],
             'admin_email_confirm' => ['required', 'email', 'same:admin_email'],
-            'admin_password' => ['required', 'string', 'min:8', 'confirmed'],
+            'admin_password' => ['required', 'string', 'min:8', 'max:255', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
+            'admin_phone' => ['required', 'string', 'regex:/^0\d{1,4}-\d{1,4}-\d{4}$|^0\d{9,10}$/', 'max:20'],
+            
+            // 代表者情報
+            'representative_name' => ['required', 'string', 'max:100'],
+            'representative_position' => ['required', 'string', 'max:50'],
+            
+            // 審査用情報
+            'business_type' => ['required', 'string', 'in:individual,corporation'],
+            'corporation_name' => ['nullable', 'required_if:business_type,corporation', 'string', 'max:200'],
+            'corporation_number' => ['nullable', 'required_if:business_type,corporation', 'string', 'max:50'],
+            
+            // 利用規約・同意
             'terms' => ['required', 'accepted'],
+        ], [
+            'name.unique' => 'この店舗名は既に登録されています。',
+            'name.max' => '店舗名は100文字以内で入力してください。',
+            'description.min' => '店舗説明は20文字以上で入力してください。',
+            'description.max' => '店舗説明は2000文字以内で入力してください。',
+            'postal_code.regex' => '郵便番号は正しい形式で入力してください（例：123-4567）。',
+            'phone.regex' => '電話番号は正しい形式で入力してください（例：03-1234-5678）。',
+            'email.unique' => 'このメールアドレスは既に登録されています。',
+            'admin_email.unique' => 'この管理者メールアドレスは既に登録されています。',
+            'admin_email.different' => '管理者メールアドレスは店舗メールアドレスと異なるものを入力してください。',
+            'admin_password.regex' => 'パスワードは英大文字、英小文字、数字を含む8文字以上で入力してください。',
+            'admin_last_name.regex' => '管理者姓は全角カタカナまたは漢字で入力してください。',
+            'admin_first_name.regex' => '管理者名は全角カタカナまたは漢字で入力してください。',
+            'website.regex' => 'ウェブサイトURLはhttp://またはhttps://で始まる必要があります。',
+            'terms.accepted' => '利用規約への同意が必要です。',
         ]);
 
         try {
@@ -60,8 +95,8 @@ class ShopRegisterController extends Controller
             $postalCode = str_pad(str_replace('-', '', $request->postal_code), 7, '0', STR_PAD_LEFT);
             $fullAddress = $request->city_name . $request->address;
 
-            // 店舗作成
-            $shop = Shop::create([
+            // 店舗作成（審査用情報も含む）
+            $shopData = [
                 'name' => $request->name,
                 'description' => $request->description,
                 'postal_code' => $postalCode,
@@ -77,16 +112,41 @@ class ShopRegisterController extends Controller
                 'status' => 'verification_pending',
                 'verification_code' => $verificationCode,
                 'verification_sent_at' => now(),
-            ]);
+            ];
+            
+            // 審査用情報（JSONとして保存するか、別テーブルに保存）
+            // 現在のスキーマに存在しない場合は、後でマイグレーションで追加
+            // とりあえず、job_featuresカラムにJSONとして保存（一時的な対応）
+            $verificationData = [
+                'representative_name' => $request->representative_name,
+                'representative_position' => $request->representative_position,
+                'business_type' => $request->business_type,
+                'corporation_name' => $request->corporation_name,
+                'corporation_number' => $request->corporation_number,
+            ];
+            $shopData['job_features'] = json_encode($verificationData);
+            
+            $shop = Shop::create($shopData);
 
             // 店舗管理者作成
             $adminUsername = $request->admin_last_name . $request->admin_first_name;
-            ShopAdmin::create([
+            $adminData = [
                 'shop_id' => $shop->id,
                 'username' => $adminUsername,
                 'email' => $request->admin_email,
                 'password_hash' => Hash::make($request->admin_password),
                 'status' => 'active',
+            ];
+            
+            // 管理者電話番号（現在のスキーマに存在しない場合は、後でマイグレーションで追加）
+            // とりあえず、usernameに含める（一時的な対応）
+            // 実際には、shop_adminsテーブルにphoneカラムを追加する必要がある
+            ShopAdmin::create($adminData);
+            
+            // 管理者電話番号をログに記録（後でマイグレーションで追加するまで）
+            \Log::info('Shop registration - Admin phone', [
+                'shop_id' => $shop->id,
+                'admin_phone' => $request->admin_phone,
             ]);
 
             DB::commit();
