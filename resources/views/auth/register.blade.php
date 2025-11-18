@@ -70,23 +70,6 @@
                         </div>
 
                         <div class="row">
-                            <!-- First Name -->
-                            <div class="col-md-6 mb-3">
-                                <label for="first_name" class="form-label fw-bold">
-                                    <i class="fas fa-user me-1"></i>名
-                                </label>
-                                <input type="text" 
-                                       class="form-control @error('first_name') is-invalid @enderror" 
-                                       id="first_name" 
-                                       name="first_name" 
-                                       value="{{ old('first_name') }}" 
-                                       autocomplete="given-name"
-                                       placeholder="名を入力">
-                                @error('first_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
                             <!-- Last Name -->
                             <div class="col-md-6 mb-3">
                                 <label for="last_name" class="form-label fw-bold">
@@ -100,6 +83,23 @@
                                        autocomplete="family-name"
                                        placeholder="姓を入力">
                                 @error('last_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- First Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label fw-bold">
+                                    <i class="fas fa-user me-1"></i>名
+                                </label>
+                                <input type="text" 
+                                       class="form-control @error('first_name') is-invalid @enderror" 
+                                       id="first_name" 
+                                       name="first_name" 
+                                       value="{{ old('first_name') }}" 
+                                       autocomplete="given-name"
+                                       placeholder="名を入力">
+                                @error('first_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
