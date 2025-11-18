@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:shop_admin');
+    }
+
     /**
      * 求人一覧を表示
      */
@@ -36,7 +41,15 @@ class JobController extends Controller
      */
     public function create()
     {
-        return view('shop-admin.jobs.create');
+        $shopAdmin = Auth::guard('shop_admin')->user();
+        $shop = $shopAdmin->shop;
+        
+        if (!$shop) {
+            return redirect()->route('shop-admin.dashboard')
+                ->with('error', '店舗情報が見つかりませんでした。');
+        }
+        
+        return view('shop-admin.jobs.create', compact('shop'));
     }
 
     /**
