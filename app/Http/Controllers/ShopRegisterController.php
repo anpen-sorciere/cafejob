@@ -17,6 +17,10 @@ class ShopRegisterController extends Controller
     public function create()
     {
         $prefectures = Prefecture::orderBy('id')->get();
+        // registルートの場合はregist/createビューを使用
+        if (request()->routeIs('regist.*')) {
+            return view('regist.create', compact('prefectures'));
+        }
         return view('shop-register.create', compact('prefectures'));
     }
 
@@ -43,6 +47,7 @@ class ShopRegisterController extends Controller
             'admin_email' => ['required', 'email', 'max:255', 'unique:shop_admins,email'],
             'admin_email_confirm' => ['required', 'email', 'same:admin_email'],
             'admin_password' => ['required', 'string', 'min:8', 'confirmed'],
+            'terms' => ['required', 'accepted'],
         ]);
 
         try {
@@ -86,7 +91,9 @@ class ShopRegisterController extends Controller
 
             DB::commit();
 
-            return redirect()->route('shop-admin.login')
+            // registルートの場合はregistルートにリダイレクト
+            $redirectRoute = request()->routeIs('regist.*') ? 'regist.create' : 'shop-admin.login';
+            return redirect()->route($redirectRoute)
                 ->with('success', '店舗登録が完了しました。住所確認のため、入力された住所に6桁の確認コード（' . $verificationCode . '）を記載した郵便を送信いたします。');
         } catch (\Exception $e) {
             DB::rollBack();

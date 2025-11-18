@@ -127,9 +127,13 @@ Route::prefix('admin')->group(function () {
     });
 });
 
-// 店舗登録
+// 店舗登録（旧URL）
 Route::get('/shop-register', [App\Http\Controllers\ShopRegisterController::class, 'create'])->name('shop-register.create');
 Route::post('/shop-register', [App\Http\Controllers\ShopRegisterController::class, 'store'])->name('shop-register.store');
+
+// 求人申し込み（新URL）
+Route::get('/regist', [App\Http\Controllers\ShopRegisterController::class, 'create'])->name('regist.create');
+Route::post('/regist', [App\Http\Controllers\ShopRegisterController::class, 'store'])->name('regist.store');
 
 // 店舗情報掲載者向けLP
 Route::get('/regist/lp_customer_1', function () {
