@@ -11,6 +11,9 @@ class ShopAdmin extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'shop_admins';
+    
+    // updated_atカラムが存在しないため無効化
+    const UPDATED_AT = null;
 
     protected $fillable = [
         'shop_id',

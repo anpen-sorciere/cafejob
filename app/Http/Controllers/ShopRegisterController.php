@@ -113,24 +113,24 @@ class ShopRegisterController extends Controller
                 'opening_hours' => $request->opening_hours,
                 'concept_type' => $request->concept_type,
                 'uniform_type' => $request->uniform_type,
-                'status' => 'verification_pending',
-                'verification_code' => $verificationCode,
-                'verification_sent_at' => now(),
+                'status' => 'pending', // verification_pendingは存在しない可能性があるため、pendingに変更
             ];
             
-            // 審査用情報（JSONとして保存するか、別テーブルに保存）
-            // 現在のスキーマに存在しない場合は、後でマイグレーションで追加
-            // とりあえず、job_featuresカラムにJSONとして保存（一時的な対応）
+            $shop = Shop::create($shopData);
+            
+            // 審査用情報と確認コードをログに記録（後でマイグレーションで別テーブルに保存する予定）
             $verificationData = [
+                'verification_code' => $verificationCode,
                 'representative_name' => $request->representative_name,
                 'representative_position' => $request->representative_position,
                 'business_type' => $request->business_type,
                 'corporation_name' => $request->corporation_name,
                 'corporation_number' => $request->corporation_number,
             ];
-            $shopData['job_features'] = json_encode($verificationData);
-            
-            $shop = Shop::create($shopData);
+            \Log::info('Shop registration - Verification data', [
+                'shop_id' => $shop->id,
+                'verification_data' => $verificationData,
+            ]);
 
             // 店舗管理者作成
             $adminUsername = $request->admin_last_name . $request->admin_first_name;
@@ -158,7 +158,7 @@ class ShopRegisterController extends Controller
             // registルートの場合はregistルートにリダイレクト
             $redirectRoute = request()->routeIs('regist.*') ? 'regist.create' : 'shop-admin.login';
             return redirect()->route($redirectRoute)
-                ->with('success', '店舗登録が完了しました。住所確認のため、入力された住所に6桁の確認コード（' . $verificationCode . '）を記載した郵便を送信いたします。');
+                ->with('success', '店舗登録が完了しました。審査完了まで数営業日かかる場合があります。');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', '登録中にエラーが発生しました: ' . $e->getMessage());
