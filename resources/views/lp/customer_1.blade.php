@@ -173,7 +173,7 @@
         <h2 class="h4 mb-3">貴店の魅力を、まだ見ぬお客様とキャストへ</h2>
         <p class="mb-4">まずはカフェコレのサービス内容を詳しくご確認ください。専門スタッフが親身になってサポートいたします。</p>
 
-        <a href="/contact/store" class="btn btn-primary btn-lg">
+        <a href="{{ route('regist.create') }}" class="btn btn-primary btn-lg">
             資料請求・掲載について相談する
         </a>
     </div>
