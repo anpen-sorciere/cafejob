@@ -19,14 +19,17 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'email',
-        'password',
+        'password_hash',
         'first_name',
         'last_name',
         'phone',
         'birth_date',
         'gender',
-        'profile_image_1',
-        'profile_image_2',
+        'prefecture_id',
+        'city_id',
+        'address',
+        'postal_code',
+        'profile_image',
         'status',
     ];
 
@@ -36,8 +39,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password_hash',
     ];
 
     /**
@@ -48,10 +50,33 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
             'birth_date' => 'date',
         ];
+    }
+
+    /**
+     * Laravelの認証システムとの互換性のため、passwordアクセサを追加
+     */
+    public function getPasswordAttribute()
+    {
+        return $this->password_hash;
+    }
+
+    /**
+     * Laravelの認証システムとの互換性のため、passwordミューテータを追加
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password_hash'] = \Hash::make($value);
+    }
+
+    /**
+     * Get the password for authentication.
+     * Laravelの認証システムがpassword_hashカラムを使用できるようにする
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
     }
 
     /**

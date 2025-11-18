@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
             $user = User::create([
                 'username' => $request->username,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => $request->password, // ミューテータで自動的にpassword_hashにハッシュ化される
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'birth_date' => $request->birth_date,
