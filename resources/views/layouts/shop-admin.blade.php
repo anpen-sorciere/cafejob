@@ -8,49 +8,54 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS (Vite経由) -->
+    @vite(['resources/css/app.css'])
     <!-- Custom CSS -->
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
     
     @stack('styles')
 </head>
-<body>
+<body style="background-color: var(--cc-color-bg);">
     <!-- 店舗管理者ナビゲーション -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <nav class="navbar navbar-expand-lg shop-admin-navbar fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{{ route('shop-admin.dashboard') }}">
-                <i class="fas fa-coffee me-2"></i>カフェコレ（CafeColle）
+            <a class="navbar-brand fw-bold" href="{{ route('shop-admin.dashboard') }}" style="color: #fff; text-decoration: none;">
+                <span style="font-size: 1.1rem; font-weight: 700; letter-spacing: .08em;">カフェコレ</span>
+                <span style="font-size: 0.65rem; padding: 2px 6px; margin-left: 4px; border-radius: 999px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">BETA</span>
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('shop-admin.dashboard') ? 'active' : '' }}" href="{{ route('shop-admin.dashboard') }}">
+                        <a class="nav-link {{ request()->routeIs('shop-admin.dashboard') ? 'active' : '' }}" href="{{ route('shop-admin.dashboard') }}" style="color: rgba(255,255,255,0.9);">
                             <i class="fas fa-tachometer-alt me-1"></i>ダッシュボード
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('shop-admin.jobs.*') ? 'active' : '' }}" href="{{ route('shop-admin.jobs.index') }}">
+                        <a class="nav-link {{ request()->routeIs('shop-admin.jobs.*') ? 'active' : '' }}" href="{{ route('shop-admin.jobs.index') }}" style="color: rgba(255,255,255,0.9);">
                             <i class="fas fa-briefcase me-1"></i>求人管理
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('shop-admin.applications.*') ? 'active' : '' }}" href="{{ route('shop-admin.applications.index') }}">
+                        <a class="nav-link {{ request()->routeIs('shop-admin.applications.*') ? 'active' : '' }}" href="{{ route('shop-admin.applications.index') }}" style="color: rgba(255,255,255,0.9);">
                             <i class="fas fa-file-alt me-1"></i>応募管理
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('shop-admin.chat.*') ? 'active' : '' }}" href="{{ route('shop-admin.chat.index') }}">
+                        <a class="nav-link {{ request()->routeIs('shop-admin.chat.*') ? 'active' : '' }}" href="{{ route('shop-admin.chat.index') }}" style="color: rgba(255,255,255,0.9);">
                             <i class="fas fa-comments me-1"></i>チャット
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('shop-admin.cast-management.*') ? 'active' : '' }}" href="{{ route('shop-admin.cast-management.index') }}">
+                        <a class="nav-link {{ request()->routeIs('shop-admin.cast-management.*') ? 'active' : '' }}" href="{{ route('shop-admin.cast-management.index') }}" style="color: rgba(255,255,255,0.9);">
                             <i class="fas fa-users me-1"></i>キャスト管理
                         </a>
                     </li>
@@ -58,7 +63,7 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="color: rgba(255,255,255,0.9);">
                             <i class="fas fa-user-shield me-1"></i>{{ Auth::guard('shop_admin')->user()->username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -84,7 +89,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content" style="padding-top: 76px;">
+    <main class="main-content" style="padding-top: 76px; min-height: calc(100vh - 200px);">
         @if(session('success'))
             <div class="container mt-4">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

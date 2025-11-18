@@ -3,70 +3,72 @@
 @section('title', ($shop ? $shop->name : '店舗') . '店舗管理者ダッシュボード')
 
 @section('content')
-<div class="container-fluid py-4">
-    <div class="row">
+<div class="cc-container py-4">
+    <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-4">
-                <i class="fas fa-store me-2"></i>{{ $shop ? $shop->name : '店舗' }}店舗管理者ダッシュボード
+            <h1 class="h3 mb-4" style="color: var(--cc-color-text);">
+                <i class="fas fa-store me-2" style="color: var(--cc-color-accent);"></i>{{ $shop ? $shop->name : '店舗' }}店舗管理者ダッシュボード
             </h1>
         </div>
     </div>
 
     <!-- 統計カード -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-center">
+    <div class="row mb-4 g-3">
+        <div class="col-md-3 col-6">
+            <div class="cc-card text-center">
                 <div class="card-body">
-                    <h3 class="text-primary">{{ number_format($stats['total_jobs']) }}</h3>
-                    <p class="mb-0">総求人数</p>
+                    <h3 class="mb-2" style="color: var(--cc-color-accent); font-size: 2rem; font-weight: 700;">{{ number_format($stats['total_jobs']) }}</h3>
+                    <p class="mb-0" style="color: var(--cc-color-muted); font-size: 0.9rem;">総求人数</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-center">
+        <div class="col-md-3 col-6">
+            <div class="cc-card text-center">
                 <div class="card-body">
-                    <h3 class="text-success">{{ number_format($stats['active_jobs']) }}</h3>
-                    <p class="mb-0">公開中求人</p>
+                    <h3 class="mb-2" style="color: #198754; font-size: 2rem; font-weight: 700;">{{ number_format($stats['active_jobs']) }}</h3>
+                    <p class="mb-0" style="color: var(--cc-color-muted); font-size: 0.9rem;">公開中求人</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-center">
+        <div class="col-md-3 col-6">
+            <div class="cc-card text-center">
                 <div class="card-body">
-                    <h3 class="text-info">{{ number_format($stats['total_applications']) }}</h3>
-                    <p class="mb-0">総応募数</p>
+                    <h3 class="mb-2" style="color: var(--cc-color-accent); font-size: 2rem; font-weight: 700;">{{ number_format($stats['total_applications']) }}</h3>
+                    <p class="mb-0" style="color: var(--cc-color-muted); font-size: 0.9rem;">総応募数</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-center">
+        <div class="col-md-3 col-6">
+            <div class="cc-card text-center">
                 <div class="card-body">
-                    <h3 class="text-warning">{{ number_format($stats['pending_applications']) }}</h3>
-                    <p class="mb-0">審査中応募</p>
+                    <h3 class="mb-2" style="color: #ffc107; font-size: 2rem; font-weight: 700;">{{ number_format($stats['pending_applications']) }}</h3>
+                    <p class="mb-0" style="color: var(--cc-color-muted); font-size: 0.9rem;">審査中応募</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 最新の応募 -->
-    <div class="row mb-4">
+    <div class="row mb-4 g-4">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">最新の応募</h5>
+            <div class="cc-card">
+                <div class="card-header" style="background: transparent; border-bottom: 1px solid var(--cc-color-border); padding: 1rem 1.5rem;">
+                    <h5 class="mb-0" style="color: var(--cc-color-text); font-weight: 600;">
+                        <i class="fas fa-file-alt me-2" style="color: var(--cc-color-accent);"></i>最新の応募
+                    </h5>
                 </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                <div class="card-body" style="max-height: 400px; overflow-y: auto; padding: 1.5rem;">
                     @if($recentApplications->isEmpty())
-                        <p class="text-muted">応募情報がありません</p>
+                        <p class="text-muted mb-0">応募情報がありません</p>
                     @else
                         <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>求人</th>
-                                        <th>応募者</th>
-                                        <th>ステータス</th>
-                                        <th>応募日時</th>
+                                        <th style="color: var(--cc-color-text); font-weight: 600;">求人</th>
+                                        <th style="color: var(--cc-color-text); font-weight: 600;">応募者</th>
+                                        <th style="color: var(--cc-color-text); font-weight: 600;">ステータス</th>
+                                        <th style="color: var(--cc-color-text); font-weight: 600;">応募日時</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,15 +77,15 @@
                                             <td>{{ $application->job->title }}</td>
                                             <td>{{ $application->user->username }}</td>
                                             <td>
-                                                <span class="badge bg-{{ 
-                                                    $application->status == 'pending' ? 'warning' : 
-                                                    ($application->status == 'accepted' ? 'success' : 'danger') 
-                                                }}">
+                                                <span class="badge" style="background-color: {{ 
+                                                    $application->status == 'pending' ? '#ffc107' : 
+                                                    ($application->status == 'accepted' ? '#198754' : '#dc3545') 
+                                                }}; color: #fff;">
                                                     {{ $application->status == 'pending' ? '審査中' : 
                                                        ($application->status == 'accepted' ? '採用' : '不採用') }}
                                                 </span>
                                             </td>
-                                            <td>{{ $application->applied_at->setTimezone('Asia/Tokyo')->format('Y/m/d H:i') }}</td>
+                                            <td style="color: var(--cc-color-muted);">{{ $application->applied_at->setTimezone('Asia/Tokyo')->format('Y/m/d H:i') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -94,19 +96,25 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">自店舗の求人</h5>
+            <div class="cc-card">
+                <div class="card-header" style="background: transparent; border-bottom: 1px solid var(--cc-color-border); padding: 1rem 1.5rem;">
+                    <h5 class="mb-0" style="color: var(--cc-color-text); font-weight: 600;">
+                        <i class="fas fa-briefcase me-2" style="color: var(--cc-color-accent);"></i>自店舗の求人
+                    </h5>
                 </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                <div class="card-body" style="max-height: 400px; overflow-y: auto; padding: 1.5rem;">
                     @if($shopJobs->isEmpty())
-                        <p class="text-muted">求人情報がありません</p>
+                        <p class="text-muted mb-0">求人情報がありません</p>
                     @else
                         @foreach($shopJobs as $job)
-                            <div class="mb-3 pb-3 border-bottom">
-                                <h6 class="mb-1">{{ $job->title }}</h6>
-                                <small class="text-muted d-block">{{ $job->status == 'active' ? '公開中' : '非公開' }}</small>
-                                <small class="text-muted">{{ $job->created_at->format('Y/m/d') }}</small>
+                            <div class="mb-3 pb-3" style="border-bottom: 1px solid var(--cc-color-border);">
+                                <h6 class="mb-1" style="color: var(--cc-color-text); font-weight: 600;">{{ $job->title }}</h6>
+                                <small class="d-block mb-1" style="color: var(--cc-color-muted);">
+                                    <span class="badge" style="background-color: {{ $job->status == 'active' ? '#198754' : '#6c757d' }}; color: #fff; font-size: 0.75rem;">
+                                        {{ $job->status == 'active' ? '公開中' : '非公開' }}
+                                    </span>
+                                </small>
+                                <small style="color: var(--cc-color-muted);">{{ $job->created_at->format('Y/m/d') }}</small>
                             </div>
                         @endforeach
                     @endif
