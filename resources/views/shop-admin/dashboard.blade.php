@@ -48,6 +48,39 @@
         </div>
     </div>
 
+    <!-- クイックアクション -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="cc-card">
+                <div class="card-body">
+                    <h5 class="mb-3" style="color: var(--cc-color-text); font-weight: 600;">
+                        <i class="fas fa-bolt me-2" style="color: var(--cc-color-accent);"></i>クイックアクション
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="{{ route('shop-admin.shop-info') }}" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px;">
+                                <i class="fas fa-store"></i>
+                                <span>店舗情報を編集</span>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ route('shop-admin.jobs.create') }}" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px;">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>新しい求人を投稿</span>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ route('shop-admin.jobs.index') }}" class="btn btn-outline-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px;">
+                                <i class="fas fa-briefcase"></i>
+                                <span>求人を管理</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 最新の応募 -->
     <div class="row mb-4 g-4">
         <div class="col-md-8">

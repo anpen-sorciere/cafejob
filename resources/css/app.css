@@ -36,6 +36,18 @@ body {
   border-color: #FF6A9A;
 }
 
+.btn-outline-primary {
+  border-color: var(--cc-color-accent);
+  color: var(--cc-color-accent);
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--cc-color-accent);
+  border-color: var(--cc-color-accent);
+  color: #fff;
+}
+
 .text-primary {
   color: var(--cc-color-accent) !important;
 }
