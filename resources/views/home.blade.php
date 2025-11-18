@@ -443,46 +443,66 @@
     <div class="cc-container">
         <h2>コンカフェバイトお役立ち情報</h2>
         <div class="column-list">
-            <article class="column-card">
-                <h3>① 初めてのコンカフェバイト完全ガイド</h3>
-                <p>コンカフェってどんな仕事？どんな子が向いてる？仕事内容と必要なスキル、働く前に知っておくべき注意点、初心者が失敗しないお店選びを解説します。</p>
-                <div class="meta">
-                    <i class="fas fa-book me-1"></i>完全ガイド
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
-            <article class="column-card">
-                <h3>② コンカフェの給与体系を分かりやすく解説</h3>
-                <p>時給とインセンティブ（バック）の仕組み、よくある給与モデル例、体験入店の日給の注意点、稼ぎたい人がチェックすべきポイントを詳しく説明します。</p>
-                <div class="meta">
-                    <i class="fas fa-yen-sign me-1"></i>給与・待遇
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
-            <article class="column-card">
-                <h3>③ コンカフェでよくある質問（Q&A）</h3>
-                <p>未経験でも大丈夫？見た目に自信がなくても働ける？お酒が飲めないとダメ？チェキやSNSは必須？身バレの対策は？よくある質問に答えます。</p>
-                <div class="meta">
-                    <i class="fas fa-question-circle me-1"></i>Q&A
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
-            <article class="column-card">
-                <h3>④ 面談で聞くべき5つの質問</h3>
-                <p>お店の世界観について、給与・バックのルール、研修と教育体制、なぜ以前の子は辞めた？トラブルが起きたときの対応。面談で確認すべきポイントをまとめました。</p>
-                <div class="meta">
-                    <i class="fas fa-comments me-1"></i>面談・面接
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
-            <article class="column-card">
-                <h3>⑤ コンカフェの危険ラインと安全ライン</h3>
-                <p>この店舗は避けたほうがいいサイン、安全なお店の特徴、迷ったときの判断基準、安心して働くためのセルフチェック。安全に働くための見極め方を解説します。</p>
-                <div class="meta">
-                    <i class="fas fa-shield-alt me-1"></i>安全対策
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
+            <a href="{{ route('columns.beginner_guide') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>① 初めてのコンカフェバイト完全ガイド</h3>
+                    <p>コンカフェってどんな仕事？どんな子が向いてる？仕事内容と必要なスキル、働く前に知っておくべき注意点、初心者が失敗しないお店選びを解説します。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-book me-1"></i>完全ガイド
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
+            <a href="{{ route('columns.pay_system') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>② コンカフェの給与体系を分かりやすく解説</h3>
+                    <p>時給とインセンティブ（バック）の仕組み、よくある給与モデル例、体験入店の日給の注意点、稼ぎたい人がチェックすべきポイントを詳しく説明します。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-yen-sign me-1"></i>給与・待遇
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
+            <a href="{{ route('columns.faq') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>③ コンカフェでよくある質問（Q&A）</h3>
+                    <p>未経験でも大丈夫？見た目に自信がなくても働ける？お酒が飲めないとダメ？チェキやSNSは必須？身バレの対策は？よくある質問に答えます。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-question-circle me-1"></i>Q&A
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
+            <a href="{{ route('columns.interview_questions') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>④ 面談で聞くべき5つの質問</h3>
+                    <p>お店の世界観について、給与・バックのルール、研修と教育体制、なぜ以前の子は辞めた？トラブルが起きたときの対応。面談で確認すべきポイントをまとめました。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-comments me-1"></i>面談・面接
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
+            <a href="{{ route('columns.safety_lines') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>⑤ コンカフェの危険ラインと安全ライン</h3>
+                    <p>この店舗は避けたほうがいいサイン、安全なお店の特徴、迷ったときの判断基準、安心して働くためのセルフチェック。安全に働くための見極め方を解説します。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-shield-alt me-1"></i>安全対策
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
             <a href="{{ route('columns.taiken_safety') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
                 <article class="helper-card column-card">
                     <h3>⑥ 体験入店って本当に必要？安全性から考える</h3>
@@ -500,22 +520,30 @@
                     </div>
                 </article>
             </a>
-            <article class="column-card">
-                <h3>⑦ SNSの使い方と身バレ対策</h3>
-                <p>キャストのSNSは何を投稿する？写真・名前の安全ライン、バレを防ぐための設定、SNSでファンを増やすコツ。プライバシーを守りながらSNSを活用する方法を解説します。</p>
-                <div class="meta">
-                    <i class="fas fa-lock me-1"></i>プライバシー
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
-            <article class="column-card">
-                <h3>⑧ コンカフェで"長く楽しく働く"コツ</h3>
-                <p>無理しない働き方、スタッフや客層との相性、スケジュール管理、メンタルケア、長続きする子の共通点。長く続けるためのコツと心構えをまとめました。</p>
-                <div class="meta">
-                    <i class="fas fa-heart me-1"></i>働き方
-                </div>
-                <a href="#">続きを読む <i class="fas fa-arrow-right ms-1"></i></a>
-            </article>
+            <a href="{{ route('columns.sns_privacy') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>⑦ SNSの使い方と身バレ対策</h3>
+                    <p>キャストのSNSは何を投稿する？写真・名前の安全ライン、バレを防ぐための設定、SNSでファンを増やすコツ。プライバシーを守りながらSNSを活用する方法を解説します。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-lock me-1"></i>プライバシー
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
+            <a href="{{ route('columns.long_term_tips') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
+                <article class="helper-card column-card">
+                    <h3>⑧ コンカフェで"長く楽しく働く"コツ</h3>
+                    <p>無理しない働き方、スタッフや客層との相性、スケジュール管理、メンタルケア、長続きする子の共通点。長く続けるためのコツと心構えをまとめました。</p>
+                    <div class="helper-card-footer">
+                        <span class="tag meta">
+                            <i class="fas fa-heart me-1"></i>働き方
+                        </span>
+                        <span class="more">続きを読む →</span>
+                    </div>
+                </article>
+            </a>
         </div>
     </div>
 </section>
