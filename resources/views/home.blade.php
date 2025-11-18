@@ -126,16 +126,10 @@
                         <div class="cc-job-card position-relative mb-3">
                             <span class="cc-ranking-badge">No.{{ $index + 1 }}</span>
                             <div>
-                                @if($job->shop->image_url)
-                                    <img src="{{ $job->shop->image_url }}" 
-                                         class="cc-job-thumb" 
-                                         alt="{{ $job->shop->name }}"
-                                         loading="lazy">
-                                @else
-                                    <div class="cc-job-thumb d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-store fa-2x text-muted"></i>
-                                    </div>
-                                @endif
+                                <img src="{{ $job->shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                                     class="cc-job-thumb" 
+                                     alt="{{ $job->shop->name }}"
+                                     loading="lazy">
                             </div>
                             <div class="flex-grow-1">
                                 <div class="cc-job-title mb-1">
@@ -187,16 +181,10 @@
                         <div class="cc-job-card position-relative mb-3">
                             <span class="cc-ranking-badge">No.{{ $index + 1 }}</span>
                             <div>
-                                @if($shop->image_url)
-                                    <img src="{{ $shop->image_url }}" 
-                                         class="cc-job-thumb" 
-                                         alt="{{ $shop->name }}"
-                                         loading="lazy">
-                                @else
-                                    <div class="cc-job-thumb d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-store fa-2x text-muted"></i>
-                                    </div>
-                                @endif
+                                <img src="{{ $shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                                     class="cc-job-thumb" 
+                                     alt="{{ $shop->name }}"
+                                     loading="lazy">
                             </div>
                             <div class="flex-grow-1">
                                 <div class="cc-job-title mb-1">
@@ -251,16 +239,10 @@
                     @foreach($latest_jobs as $job)
                         <div class="cc-job-card mb-3">
                             <div>
-                                @if($job->shop->image_url)
-                                    <img src="{{ $job->shop->image_url }}" 
-                                         class="cc-job-thumb" 
-                                         alt="{{ $job->shop->name }}"
-                                         loading="lazy">
-                                @else
-                                    <div class="cc-job-thumb d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-store fa-2x text-muted"></i>
-                                    </div>
-                                @endif
+                                <img src="{{ $job->shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                                     class="cc-job-thumb" 
+                                     alt="{{ $job->shop->name }}"
+                                     loading="lazy">
                             </div>
                             <div class="flex-grow-1">
                                 <div class="cc-job-title mb-1">
@@ -306,16 +288,10 @@
                     @foreach($latest_shops as $shop)
                         <div class="cc-job-card mb-3">
                             <div>
-                                @if($shop->image_url)
-                                    <img src="{{ $shop->image_url }}" 
-                                         class="cc-job-thumb" 
-                                         alt="{{ $shop->name }}"
-                                         loading="lazy">
-                                @else
-                                    <div class="cc-job-thumb d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-store fa-2x text-muted"></i>
-                                    </div>
-                                @endif
+                                <img src="{{ $shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                                     class="cc-job-thumb" 
+                                     alt="{{ $shop->name }}"
+                                     loading="lazy">
                             </div>
                             <div class="flex-grow-1">
                                 <div class="cc-job-title mb-1">

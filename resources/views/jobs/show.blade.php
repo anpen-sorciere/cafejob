@@ -262,22 +262,11 @@
                         <i class="fas fa-store me-2"></i>店舗情報
                     </h5>
                 </div>
-                @if($job->shop->image_url)
-                    <img src="{{ $job->shop->image_url }}" 
-                         class="card-img-top" 
-                         alt="{{ $job->shop->name }}" 
-                         style="max-height: 300px; object-fit: cover;"
-                         loading="lazy">
-                @else
-                    {{-- 画像がない場合はプレースホルダー背景を表示 --}}
-                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
-                         style="min-height: 200px;">
-                        <div class="text-center">
-                            <i class="fas fa-store fa-3x text-muted mb-2"></i>
-                            <p class="text-muted small mb-0">画像がありません</p>
-                        </div>
-                    </div>
-                @endif
+                <img src="{{ $job->shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                     class="card-img-top" 
+                     alt="{{ $job->shop->name }}" 
+                     style="max-height: 300px; object-fit: cover;"
+                     loading="lazy">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">

@@ -144,10 +144,8 @@
                             @endif
                         </div>
                         <div class="col-md-4">
-                            @if($cast->shop->image_url)
-                                <img src="{{ $cast->shop->image_url }}" 
-                                     class="img-fluid rounded" alt="{{ $cast->shop->name }}">
-                            @endif
+                            <img src="{{ $cast->shop->image_url ?? asset('assets/images/CafeColle_NoImage.png') }}" 
+                                 class="img-fluid rounded" alt="{{ $cast->shop->name }}">
                         </div>
                     </div>
                 </div>
