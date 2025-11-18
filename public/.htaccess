@@ -6,6 +6,12 @@
     RewriteEngine On
     RewriteBase /
 
+    # Content Security Policy (CSP) ヘッダー
+    # eval()の使用を許可（Bootstrapなどのライブラリで必要）
+    <IfModule mod_headers.c>
+        Header set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https:;"
+    </IfModule>
+
     # HTTPからHTTPSへのリダイレクト
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]

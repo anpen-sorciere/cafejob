@@ -104,96 +104,67 @@
                     </a>
                 </div>
             @else
-                <div class="row">
+                <div>
                     @foreach($shops as $shop)
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100 shop-card-modern">
+                        <div class="cc-job-card">
+                            <div>
                                 @if($shop->image_url)
                                     <img src="{{ $shop->image_url }}" 
-                                         class="card-img-top" alt="{{ $shop->name }}"
-                                         style="height: 200px; object-fit: cover;"
+                                         class="cc-job-thumb" 
+                                         alt="{{ $shop->name }}"
                                          loading="lazy">
                                 @else
-                                    {{-- 画像がない場合はプレースホルダー背景を表示 --}}
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
-                                         style="height: 200px;">
-                                        <i class="fas fa-store fa-3x text-muted"></i>
+                                    <div class="cc-job-thumb d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-store fa-2x text-muted"></i>
                                     </div>
                                 @endif
-                                <div class="card-body d-flex flex-column">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="card-title mb-0">
-                                            <a href="{{ route('shops.show', $shop->id) }}" 
-                                               class="text-decoration-none">
-                                                {{ $shop->name }}
-                                            </a>
-                                        </h5>
-                                        <span class="badge badge-concept">
-                                            {{ $shop->concept_type }}
-                                        </span>
-                                    </div>
-                                    
-                                    <p class="card-text text-muted small mb-2">
-                                        <i class="fas fa-map-marker-alt me-1"></i>
-                                        {{ $shop->prefecture->name ?? '' }}{{ $shop->city->name ?? '' }}
-                                    </p>
-                                    
-                                    @if($shop->description)
-                                        <p class="card-text small">
-                                            {{ \Illuminate\Support\Str::limit($shop->description, 100) }}...
-                                        </p>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="cc-job-title">
+                                    <a href="{{ route('shops.show', $shop->id) }}" class="text-decoration-none" style="color: inherit;">
+                                        {{ $shop->name }}
+                                    </a>
+                                </div>
+                                <div class="cc-job-meta mb-2">
+                                    {{ $shop->prefecture->name ?? '' }}{{ $shop->city->name ?? '' }}
+                                    @if($shop->reviews_avg_rating)
+                                        / 評価 {{ number_format($shop->reviews_avg_rating, 1) }}
                                     @endif
-                                    
-                                    <div class="mt-auto">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <div class="d-flex gap-2">
-                                                @if($shop->reviews_avg_rating)
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="fas fa-star text-warning me-1"></i>
-                                                        <span class="small">{{ number_format($shop->reviews_avg_rating, 1) }}</span>
-                                                    </div>
-                                                @endif
-                                                @if($shop->jobs_count > 0)
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="fas fa-briefcase text-primary me-1"></i>
-                                                        <span class="small">{{ $shop->jobs_count }}件</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <small class="text-muted">
-                                                {{ $shop->created_at->diffForHumans() }}
-                                            </small>
-                                        </div>
-                                        
-                                        <div class="d-flex gap-2">
-                                            <a href="{{ route('shops.show', $shop->id) }}" 
-                                               class="btn btn-primary btn-sm flex-fill">
-                                                <i class="fas fa-eye me-1"></i>詳細を見る
-                                            </a>
-                                            @if(config('feature_flags.keep', false))
-                                                @auth
-                                                    @php
-                                                        $shop_is_kept = in_array($shop->id, $keptShopIds ?? [], true);
-                                                    @endphp
-                                                    <button type="button"
-                                                            class="btn btn-outline-danger btn-sm cj-keep-toggle flex-fill {{ $shop_is_kept ? 'cj-keep-active' : '' }}"
-                                                            data-target-type="shop"
-                                                            data-target-id="{{ $shop->id }}"
-                                                            data-kept="{{ $shop_is_kept ? '1' : '0' }}"
-                                                            aria-pressed="{{ $shop_is_kept ? 'true' : 'false' }}">
-                                                        <i class="{{ $shop_is_kept ? 'fas' : 'far' }} fa-heart me-1"></i>
-                                                        <span class="cj-keep-label">{{ $shop_is_kept ? 'キープ中' : 'キープ' }}</span>
-                                                    </button>
-                                                @else
-                                                    <button type="button"
-                                                            class="btn btn-outline-danger btn-sm flex-fill"
-                                                            onclick="cjRequireLoginModal()">
-                                                        <i class="far fa-heart me-1"></i>キープ
-                                                    </button>
-                                                @endauth
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @if($shop->jobs_count > 0)
+                                        / 求人 {{ $shop->jobs_count }}件
+                                    @endif
+                                </div>
+                                <div class="mb-2">
+                                    @if($shop->concept_type)
+                                        <span class="cc-tag">{{ $shop->concept_type }}</span>
+                                    @endif
+                                </div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <a href="{{ route('shops.show', $shop->id) }}" class="btn btn-primary btn-sm">
+                                        詳細を見る
+                                    </a>
+                                    @if(config('feature_flags.keep', false))
+                                        @auth
+                                            @php
+                                                $shop_is_kept = in_array($shop->id, $keptShopIds ?? [], true);
+                                            @endphp
+                                            <button type="button"
+                                                    class="btn btn-outline-danger btn-sm cj-keep-toggle {{ $shop_is_kept ? 'cj-keep-active' : '' }}"
+                                                    data-target-type="shop"
+                                                    data-target-id="{{ $shop->id }}"
+                                                    data-kept="{{ $shop_is_kept ? '1' : '0' }}"
+                                                    aria-pressed="{{ $shop_is_kept ? 'true' : 'false' }}">
+                                                <i class="{{ $shop_is_kept ? 'fas' : 'far' }} fa-heart me-1"></i>
+                                                <span class="cj-keep-label">{{ $shop_is_kept ? 'キープ中' : 'キープ' }}</span>
+                                            </button>
+                                        @else
+                                            <button type="button"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    onclick="cjRequireLoginModal()">
+                                                <i class="far fa-heart me-1"></i>キープ
+                                            </button>
+                                        @endauth
+                                    @endif
                                 </div>
                             </div>
                         </div>

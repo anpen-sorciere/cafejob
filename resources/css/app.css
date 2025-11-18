@@ -1,3 +1,154 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================
+   CafeColle（カフェコレ）カスタムデザイン
+   ============================================ */
+
+/* カラーパレットの定義 */
+:root {
+  --cc-color-main:    #F8C8D8; /* ブランドピンク */
+  --cc-color-accent:  #FF8FB1; /* アクセントピンク */
+  --cc-color-bg:      #FFF7FA; /* 薄いピンク背景 */
+  --cc-color-border:  #F0D7E2; /* 枠線 */
+  --cc-color-text:    #444444; /* メインテキスト */
+  --cc-color-muted:   #777777; /* 補足テキスト */
+}
+
+/* 全体背景と文字色のベース */
+body {
+  background-color: var(--cc-color-bg);
+  color: var(--cc-color-text);
+}
+
+/* Bootstrapのプライマリカラーをカフェコレ仕様に上書き */
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:visited {
+  background-color: var(--cc-color-accent);
+  border-color: var(--cc-color-accent);
+}
+
+.btn-primary:hover {
+  background-color: #FF6A9A; /* 少し濃いピンク */
+  border-color: #FF6A9A;
+}
+
+.text-primary {
+  color: var(--cc-color-accent) !important;
+}
+
+.bg-primary {
+  background-color: var(--cc-color-main) !important;
+}
+
+.border-primary {
+  border-color: var(--cc-color-main) !important;
+}
+
+/* 共通コンテナ（必要なら Blade の container と併用） */
+.cc-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ヘッダー */
+.cc-header {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--cc-color-border);
+}
+
+.cc-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+.cc-header-nav a {
+  color: var(--cc-color-text);
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.cc-header-nav a:hover {
+  background-color: var(--cc-color-main);
+}
+
+/* 検索カードなどに使う汎用カード */
+.cc-card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--cc-color-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* 求人・店舗一覧カード */
+.cc-job-card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--cc-color-border);
+  display: flex;
+  gap: 12px;
+}
+
+.cc-job-thumb {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  object-fit: cover;
+  background-color: var(--cc-color-main);
+}
+
+.cc-job-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.cc-job-meta {
+  font-size: 12px;
+  color: var(--cc-color-muted);
+}
+
+/* タグ */
+.cc-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background-color: var(--cc-color-bg);
+  border: 1px solid var(--cc-color-main);
+}
+
+/* フッター */
+.cc-footer {
+  border-top: 2px solid var(--cc-color-main);
+  background-color: #FFFFFF;
+  margin-top: 40px;
+}
+
+.cc-footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  font-size: 12px;
+  color: var(--cc-color-muted);
+}
+
+.cc-footer-links a {
+  color: var(--cc-color-muted);
+  margin-right: 12px;
+  text-decoration: none;
+}
+
+.cc-footer-links a:hover {
+  color: var(--cc-color-accent);
+}

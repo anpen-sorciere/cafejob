@@ -123,51 +123,42 @@
                     </a>
                 </div>
             @else
-                <div class="row">
+                <div>
                     @foreach($jobs as $job)
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100 job-card-modern">
+                        <div class="cc-job-card">
+                            <div>
                                 @if($job->shop->image_url)
                                     <img src="{{ $job->shop->image_url }}" 
-                                         class="card-img-top" alt="{{ $job->shop->name }}"
-                                         style="height: 200px; object-fit: cover;"
+                                         class="cc-job-thumb" 
+                                         alt="{{ $job->shop->name }}"
                                          loading="lazy">
                                 @else
-                                    {{-- 画像がない場合はプレースホルダー背景を表示 --}}
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
-                                         style="height: 200px;">
-                                        <i class="fas fa-store fa-3x text-muted"></i>
+                                    <div class="cc-job-thumb d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-store fa-2x text-muted"></i>
                                     </div>
                                 @endif
-                                <div class="card-body d-flex flex-column">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="card-title mb-0">
-                                            <a href="{{ route('jobs.show', $job->id) }}" 
-                                               class="text-decoration-none">
-                                                {{ $job->title }}
-                                            </a>
-                                        </h5>
-                                        <span class="badge badge-concept">
-                                            {{ $job->shop->concept_type }}
-                                        </span>
-                                    </div>
-                                    
-                                    <p class="card-text text-muted small mb-2">
-                                        <i class="fas fa-store me-1"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="cc-job-title">
+                                    <a href="{{ route('jobs.show', $job->id) }}" class="text-decoration-none" style="color: inherit;">
                                         {{ $job->shop->name }}
-                                    </p>
-                                    
-                                    <p class="card-text text-muted small mb-2">
-                                        <i class="fas fa-map-marker-alt me-1"></i>
-                                        {{ $job->shop->prefecture->name ?? '' }}{{ $job->shop->city->name ?? '' }}
-                                    </p>
-                                    
-                                    @if($job->description)
-                                        <p class="card-text small">
-                                            {{ \Illuminate\Support\Str::limit($job->description, 100) }}...
-                                        </p>
+                                    </a>
+                                </div>
+                                <div class="cc-job-meta mb-2">
+                                    {{ $job->shop->prefecture->name ?? '' }}{{ $job->shop->city->name ?? '' }} / 
+                                    @if($job->salary_min)
+                                        時給 {{ number_format($job->salary_min) }}円〜
+                                        @if($job->salary_max)
+                                            {{ number_format($job->salary_max) }}円
+                                        @endif
+                                    @else
+                                        給与要相談
                                     @endif
-                                    
+                                </div>
+                                <div class="mb-2">
+                                    @if($job->shop->concept_type)
+                                        <span class="cc-tag">{{ $job->shop->concept_type }}</span>
+                                    @endif
                                     @php
                                         $conditions = is_string($job->job_conditions) ? json_decode($job->job_conditions, true) : ($job->job_conditions ?? []);
                                         $conditionLabels = [
@@ -180,65 +171,41 @@
                                         ];
                                         $popularConditions = array_intersect($conditions, array_keys($conditionLabels));
                                     @endphp
-                                    <div class="mb-2">
-                                        @if($job->trial_visit_available)
-                                            <span class="badge bg-success text-white me-1 mb-1 small">
-                                                <i class="fas fa-door-open me-1"></i>体験入店可能
-                                            </span>
-                                        @endif
-                                        @if(!empty($popularConditions))
-                                            @foreach(array_slice($popularConditions, 0, 3) as $condition)
-                                                <span class="badge bg-info text-white me-1 mb-1 small">
-                                                    {{ $conditionLabels[$condition] }}
-                                                </span>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                    
-                                    <div class="mt-auto">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            @if($job->salary_min)
-                                                <span class="badge badge-salary">
-                                                    {{ number_format($job->salary_min) }}円〜
-                                                    @if($job->salary_max)
-                                                        {{ number_format($job->salary_max) }}円
-                                                    @endif
-                                                </span>
-                                            @endif
-                                            <small class="text-muted">
-                                                {{ $job->created_at->diffForHumans() }}
-                                            </small>
-                                        </div>
-                                        
-                                        <div class="d-flex gap-2">
-                                            <a href="{{ route('jobs.show', $job->id) }}" 
-                                               class="btn btn-primary btn-sm flex-fill">
-                                                <i class="fas fa-eye me-1"></i>詳細を見る
-                                            </a>
-                                            @if(config('feature_flags.keep', false))
-                                                @auth
-                                                    @php
-                                                        $job_is_kept = in_array($job->id, $keptJobIds ?? [], true);
-                                                    @endphp
-                                                    <button type="button"
-                                                            class="btn btn-outline-danger btn-sm cj-keep-toggle flex-fill {{ $job_is_kept ? 'cj-keep-active' : '' }}"
-                                                            data-target-type="job"
-                                                            data-target-id="{{ $job->id }}"
-                                                            data-kept="{{ $job_is_kept ? '1' : '0' }}"
-                                                            aria-pressed="{{ $job_is_kept ? 'true' : 'false' }}">
-                                                        <i class="{{ $job_is_kept ? 'fas' : 'far' }} fa-heart me-1"></i>
-                                                        <span class="cj-keep-label">{{ $job_is_kept ? 'キープ中' : 'キープ' }}</span>
-                                                    </button>
-                                                @else
-                                                    <button type="button"
-                                                            class="btn btn-outline-danger btn-sm flex-fill"
-                                                            onclick="cjRequireLoginModal()">
-                                                        <i class="far fa-heart me-1"></i>キープ
-                                                    </button>
-                                                @endauth
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @if($job->trial_visit_available)
+                                        <span class="cc-tag">体験入店可能</span>
+                                    @endif
+                                    @if(!empty($popularConditions))
+                                        @foreach(array_slice($popularConditions, 0, 3) as $condition)
+                                            <span class="cc-tag">{{ $conditionLabels[$condition] }}</span>
+                                        @endforeach
+                                    @endif
+                                </div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-primary btn-sm">
+                                        詳細を見る
+                                    </a>
+                                    @if(config('feature_flags.keep', false))
+                                        @auth
+                                            @php
+                                                $job_is_kept = in_array($job->id, $keptJobIds ?? [], true);
+                                            @endphp
+                                            <button type="button"
+                                                    class="btn btn-outline-danger btn-sm cj-keep-toggle {{ $job_is_kept ? 'cj-keep-active' : '' }}"
+                                                    data-target-type="job"
+                                                    data-target-id="{{ $job->id }}"
+                                                    data-kept="{{ $job_is_kept ? '1' : '0' }}"
+                                                    aria-pressed="{{ $job_is_kept ? 'true' : 'false' }}">
+                                                <i class="{{ $job_is_kept ? 'fas' : 'far' }} fa-heart me-1"></i>
+                                                <span class="cj-keep-label">{{ $job_is_kept ? 'キープ中' : 'キープ' }}</span>
+                                            </button>
+                                        @else
+                                            <button type="button"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    onclick="cjRequireLoginModal()">
+                                                <i class="far fa-heart me-1"></i>キープ
+                                            </button>
+                                        @endauth
+                                    @endif
                                 </div>
                             </div>
                         </div>
