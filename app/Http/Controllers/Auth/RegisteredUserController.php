@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\GenderMst;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $genders = GenderMst::orderBy('id')->get();
+        return view('auth.register', compact('genders'));
     }
 
     /**
@@ -37,10 +39,13 @@ class RegisteredUserController extends Controller
             'first_name' => ['nullable', 'string', 'max:50'],
             'last_name' => ['nullable', 'string', 'max:50'],
             'birth_date' => ['required', 'date', 'before:' . now()->subYears(16)->format('Y-m-d')],
+            'gender_id' => ['required', 'integer', 'exists:gender_mst,id'],
         ], [
             'birth_date.required' => '生年月日を入力してください。',
             'birth_date.date' => '有効な日付を入力してください。',
             'birth_date.before' => '16歳以上である必要があります。',
+            'gender_id.required' => '性別を選択してください。',
+            'gender_id.exists' => '選択された性別は無効です。',
         ]);
 
         try {
@@ -51,6 +56,7 @@ class RegisteredUserController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'birth_date' => $request->birth_date,
+                'gender_id' => $request->gender_id,
             ]);
 
             event(new Registered($user));

@@ -125,6 +125,27 @@
                             </small>
                         </div>
 
+                        <!-- Gender -->
+                        <div class="mb-3">
+                            <label for="gender_id" class="form-label fw-bold">
+                                <i class="fas fa-venus-mars me-1"></i>性別 <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('gender_id') is-invalid @enderror" 
+                                    id="gender_id" 
+                                    name="gender_id" 
+                                    required>
+                                <option value="">選択してください</option>
+                                @foreach($genders as $gender)
+                                    <option value="{{ $gender->id }}" {{ old('gender_id') == $gender->id ? 'selected' : '' }}>
+                                        {{ $gender->gender }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('gender_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="row">
                             <!-- Password -->
                             <div class="col-md-6 mb-3">

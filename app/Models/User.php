@@ -25,7 +25,7 @@ class User extends Authenticatable
         'last_name',
         'phone',
         'birth_date',
-        'gender',
+        'gender_id',
         'prefecture_id',
         'city_id',
         'address',
@@ -112,6 +112,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Shop::class, 'favorites', 'user_id', 'shop_id')
             ->withTimestamps();
+    }
+
+    /**
+     * 性別
+     */
+    public function genderMst()
+    {
+        return $this->belongsTo(GenderMst::class, 'gender_id');
     }
 }
 
