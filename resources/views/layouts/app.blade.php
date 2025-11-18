@@ -131,7 +131,7 @@
 
     <!-- Footer -->
     <footer class="cc-footer">
-        <div class="cc-footer-inner">
+        <div class="cc-footer-inner cc-container">
             <div class="cc-footer-links mb-2">
                 <a href="#">カフェコレについて</a>
                 <a href="#">掲載希望の店舗様へ</a>
