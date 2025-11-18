@@ -27,6 +27,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // はじめてガイド
 Route::view('/guide', 'pages.guide')->name('guide');
 
+// コラム記事
+Route::view('/columns/taiken-safety', 'columns.taiken_safety')->name('columns.taiken_safety');
+
 // 求人関連
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
