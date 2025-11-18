@@ -4,55 +4,64 @@
 @section('description', 'コンカフェ専門の求人・集客サイト。全国のコンカフェ・メンズコンカフェから働きたい・楽しみたいお店を検索できます。')
 
 @section('content')
-<!-- メインコンテンツカード -->
-<div class="cc-container mt-4 mb-4">
-    <div class="cc-card">
-        <h1 class="h3 mb-2">カフェコレ（CafeColle）</h1>
-        <h2 class="h5 mb-3 text-muted">コンカフェ専門の求人・集客サイト</h2>
-        <p class="mb-4">
-            全国のコンカフェ・メンズコンカフェから「働きたい」「楽しみたい」<br>
-            お店のエリアから検索できるコンカフェ専門のポータルサイトです。
-        </p>
-        
-        <!-- 統計情報（横並び） -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3 col-6">
-                <div class="text-center p-3" style="background-color: var(--cc-color-bg); border-radius: 12px; border: 1px solid var(--cc-color-border);">
-                    <div class="mb-2">
-                        <i class="fas fa-store fa-2x" style="color: var(--cc-color-accent);"></i>
+<!-- ファーストビュー（グラデーション背景） -->
+<div class="cc-hero-section">
+    <div class="cc-container position-relative" style="z-index: 1;">
+        <div class="cc-card">
+            <h1 class="h3 mb-2">カフェコレ（CafeColle）</h1>
+            <h2 class="h5 mb-3 text-muted">コンカフェ専門の求人・集客サイト</h2>
+            <p class="mb-4">
+                全国のコンカフェ・メンズコンカフェから「働きたい」「楽しみたい」<br>
+                お店のエリアから検索できるコンカフェ専門のポータルサイトです。
+            </p>
+            
+            <!-- 統計情報（白カード横並び） -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="cc-stat-card">
+                        <div class="cc-stat-card-icon">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <div class="cc-stat-card-content">
+                            <div class="cc-stat-card-number">{{ number_format($stats['total_shops']) }}</div>
+                            <div class="cc-stat-card-label">掲載店舗</div>
+                        </div>
                     </div>
-                    <div class="h4 mb-1 fw-bold" style="color: var(--cc-color-accent);">{{ number_format($stats['total_shops']) }}</div>
-                    <div class="small text-muted">掲載店舗</div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="cc-stat-card">
+                        <div class="cc-stat-card-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="cc-stat-card-content">
+                            <div class="cc-stat-card-number">{{ number_format($stats['total_casts']) }}</div>
+                            <div class="cc-stat-card-label">キャスト</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="cc-stat-card">
+                        <div class="cc-stat-card-icon">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <div class="cc-stat-card-content">
+                            <div class="cc-stat-card-number">{{ number_format($stats['total_jobs']) }}</div>
+                            <div class="cc-stat-card-label">アルバイト求人</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="cc-stat-card">
+                        <div class="cc-stat-card-icon">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div class="cc-stat-card-content">
+                            <div class="cc-stat-card-number">{{ number_format($stats['total_applications']) }}</div>
+                            <div class="cc-stat-card-label">応募数</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="text-center p-3" style="background-color: var(--cc-color-bg); border-radius: 12px; border: 1px solid var(--cc-color-border);">
-                    <div class="mb-2">
-                        <i class="fas fa-users fa-2x" style="color: var(--cc-color-accent);"></i>
-                    </div>
-                    <div class="h4 mb-1 fw-bold" style="color: var(--cc-color-accent);">{{ number_format($stats['total_casts']) }}</div>
-                    <div class="small text-muted">キャスト</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="text-center p-3" style="background-color: var(--cc-color-bg); border-radius: 12px; border: 1px solid var(--cc-color-border);">
-                    <div class="mb-2">
-                        <i class="fas fa-briefcase fa-2x" style="color: var(--cc-color-accent);"></i>
-                    </div>
-                    <div class="h4 mb-1 fw-bold" style="color: var(--cc-color-accent);">{{ number_format($stats['total_jobs']) }}</div>
-                    <div class="small text-muted">アルバイト求人</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="text-center p-3" style="background-color: var(--cc-color-bg); border-radius: 12px; border: 1px solid var(--cc-color-border);">
-                    <div class="mb-2">
-                        <i class="fas fa-file-alt fa-2x" style="color: var(--cc-color-accent);"></i>
-                    </div>
-                    <div class="h4 mb-1 fw-bold" style="color: var(--cc-color-accent);">{{ number_format($stats['total_applications']) }}</div>
-                    <div class="small text-muted">応募数</div>
-                </div>
-            </div>
-        </div>
         
         <!-- 検索フォーム -->
         <h3 class="h5 mt-4 mb-3">キーワードで店舗を検索</h3>
@@ -115,7 +124,7 @@
                 @else
                     @foreach($popular_jobs as $index => $job)
                         <div class="cc-job-card position-relative mb-3">
-                            <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2" style="z-index: 1;">No.{{ $index + 1 }}</span>
+                            <span class="cc-ranking-badge">No.{{ $index + 1 }}</span>
                             <div>
                                 @if($job->shop->image_url)
                                     <img src="{{ $job->shop->image_url }}" 
@@ -176,7 +185,7 @@
                 @else
                     @foreach($popular_shops as $index => $shop)
                         <div class="cc-job-card position-relative mb-3">
-                            <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2" style="z-index: 1;">No.{{ $index + 1 }}</span>
+                            <span class="cc-ranking-badge">No.{{ $index + 1 }}</span>
                             <div>
                                 @if($shop->image_url)
                                     <img src="{{ $shop->image_url }}" 

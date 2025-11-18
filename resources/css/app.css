@@ -110,12 +110,18 @@ body {
 .cc-job-title {
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .cc-job-meta {
   font-size: 12px;
   color: var(--cc-color-muted);
+  margin-bottom: 12px;
+}
+
+/* タグを含むdivの余白調整 */
+.cc-job-card > div:has(.cc-tag) {
+  margin-bottom: 10px;
 }
 
 /* タグ */
@@ -126,13 +132,89 @@ body {
   border-radius: 999px;
   background-color: var(--cc-color-bg);
   border: 1px solid var(--cc-color-main);
+  margin-bottom: 10px;
+}
+
+/* ランキングバッジ */
+.cc-ranking-badge {
+  background: var(--cc-color-accent);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+}
+
+/* 統計情報カード（小型） */
+.cc-stat-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--cc-color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.cc-stat-card-icon {
+  font-size: 24px;
+  color: var(--cc-color-accent);
+  flex-shrink: 0;
+}
+
+.cc-stat-card-content {
+  flex-grow: 1;
+}
+
+.cc-stat-card-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cc-color-accent);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.cc-stat-card-label {
+  font-size: 12px;
+  color: var(--cc-color-muted);
+}
+
+/* ファーストビュー */
+.cc-hero-section {
+  background: linear-gradient(135deg, rgba(248, 200, 216, 0.3) 0%, rgba(255, 143, 177, 0.15) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 40px 0;
+  margin-bottom: 32px;
+}
+
+.cc-hero-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='%23FF8FB1' fill-opacity='0.2' d='M100 0C44.8 0 0 44.8 0 100s44.8 100 100 100 100-44.8 100-100S155.2 0 100 0zm0 180c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z'/%3E%3Cpath fill='%23FF8FB1' fill-opacity='0.15' d='M100 20c-44.2 0-80 35.8-80 80s35.8 80 80 80 80-35.8 80-80-35.8-80-80-80zm0 140c-33.1 0-60-26.9-60-60s26.9-60 60-60 60 26.9 60 60-26.9 60-60 60z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center right;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 /* フッター */
 .cc-footer {
-  border-top: 2px solid var(--cc-color-main);
-  background-color: #FFFFFF;
-  margin-top: 40px;
+  border-top: 3px solid var(--cc-color-main);
+  background-color: #FFF2F6;
+  margin-top: 60px;
+  padding-top: 24px;
 }
 
 .cc-footer-inner {
