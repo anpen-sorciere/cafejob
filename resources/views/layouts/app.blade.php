@@ -22,42 +22,27 @@
 </head>
 <body data-cj-logged-in="{{ Auth::check() ? '1' : '0' }}">
     <!-- Header -->
-    <header class="cc-header">
-        <div class="cc-header-inner cc-container">
-            <div class="navbar-brand m-0">
-                <a href="{{ url('/') }}" class="fw-bold text-decoration-none" style="color: var(--cc-color-accent); font-size: 20px;">
-                    カフェコレ
-                </a>
-                <div class="small text-muted">コンカフェ専門の求人・集客サイト</div>
+    @hasSection('simple_header')
+        <header class="cc-header">
+            <div class="cc-header-inner cc-container">
+                <div class="navbar-brand m-0">
+                    <a href="{{ url('/') }}" class="fw-bold text-decoration-none" style="color: var(--cc-color-accent); font-size: 20px;">
+                        カフェコレ
+                    </a>
+                    <div class="small text-muted">@yield('simple_header')</div>
+                </div>
             </div>
-            <nav class="cc-header-nav d-none d-md-flex gap-2">
-                <a href="{{ route('jobs.index') }}">求人を探す</a>
-                <a href="{{ route('shops.index') }}">お店を探す</a>
-                @if(config('feature_flags.keep', false))
-                <a href="{{ route('favorites.index') }}">キープ</a>
-                @endif
-                @guest
-                    <a href="{{ route('login') }}">ログイン</a>
-                    <a href="{{ route('register') }}">会員登録</a>
-                @else
-                    <a href="{{ route('profile.edit') }}">マイページ</a>
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-link p-0 text-decoration-none" style="color: var(--cc-color-text); font-size: 14px; padding: 8px 10px !important; border-radius: 999px; background: none; border: none;">
-                            ログアウト
-                        </button>
-                    </form>
-                @endguest
-            </nav>
-            <!-- モバイル用メニューボタン -->
-            <button class="d-md-none btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-expanded="false" aria-controls="mobileNav" style="color: var(--cc-color-text);">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-        <!-- モバイル用ナビゲーション -->
-        <div class="collapse d-md-none" id="mobileNav">
-            <div class="cc-header-inner cc-container pb-3">
-                <nav class="cc-header-nav d-flex flex-column gap-2">
+        </header>
+    @else
+        <header class="cc-header">
+            <div class="cc-header-inner cc-container">
+                <div class="navbar-brand m-0">
+                    <a href="{{ url('/') }}" class="fw-bold text-decoration-none" style="color: var(--cc-color-accent); font-size: 20px;">
+                        カフェコレ
+                    </a>
+                    <div class="small text-muted">コンカフェ専門の求人・集客サイト</div>
+                </div>
+                <nav class="cc-header-nav d-none d-md-flex gap-2">
                     <a href="{{ route('jobs.index') }}">求人を探す</a>
                     <a href="{{ route('shops.index') }}">お店を探す</a>
                     @if(config('feature_flags.keep', false))
@@ -70,15 +55,43 @@
                         <a href="{{ route('profile.edit') }}">マイページ</a>
                         <form method="POST" action="{{ route('logout') }}" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-link p-0 text-decoration-none text-start" style="color: var(--cc-color-text); font-size: 14px; padding: 8px 10px !important; border-radius: 999px; background: none; border: none;">
+                            <button type="submit" class="btn btn-link p-0 text-decoration-none" style="color: var(--cc-color-text); font-size: 14px; padding: 8px 10px !important; border-radius: 999px; background: none; border: none;">
                                 ログアウト
                             </button>
                         </form>
                     @endguest
                 </nav>
+                <!-- モバイル用メニューボタン -->
+                <button class="d-md-none btn btn-link p-0" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-expanded="false" aria-controls="mobileNav" style="color: var(--cc-color-text);">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-        </div>
-    </header>
+            <!-- モバイル用ナビゲーション -->
+            <div class="collapse d-md-none" id="mobileNav">
+                <div class="cc-header-inner cc-container pb-3">
+                    <nav class="cc-header-nav d-flex flex-column gap-2">
+                        <a href="{{ route('jobs.index') }}">求人を探す</a>
+                        <a href="{{ route('shops.index') }}">お店を探す</a>
+                        @if(config('feature_flags.keep', false))
+                        <a href="{{ route('favorites.index') }}">キープ</a>
+                        @endif
+                        @guest
+                            <a href="{{ route('login') }}">ログイン</a>
+                            <a href="{{ route('register') }}">会員登録</a>
+                        @else
+                            <a href="{{ route('profile.edit') }}">マイページ</a>
+                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-link p-0 text-decoration-none text-start" style="color: var(--cc-color-text); font-size: 14px; padding: 8px 10px !important; border-radius: 999px; background: none; border: none;">
+                                    ログアウト
+                                </button>
+                            </form>
+                        @endguest
+                    </nav>
+                </div>
+            </div>
+        </header>
+    @endif
 
     <!-- Main Content -->
     <main class="py-4">

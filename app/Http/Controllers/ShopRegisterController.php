@@ -67,6 +67,8 @@ class ShopRegisterController extends Controller
             'corporation_number' => ['nullable', 'required_if:business_type,corporation', 'string', 'max:50'],
             
             // 利用規約・同意
+            'no_adult_services' => ['required', 'accepted'],
+            'no_illegal_operations' => ['required', 'accepted'],
             'terms' => ['required', 'accepted'],
         ], [
             'name.unique' => 'この店舗名は既に登録されています。',
@@ -82,6 +84,8 @@ class ShopRegisterController extends Controller
             'admin_last_name.regex' => '管理者姓は全角カタカナまたは漢字で入力してください。',
             'admin_first_name.regex' => '管理者名は全角カタカナまたは漢字で入力してください。',
             'website.regex' => 'ウェブサイトURLはhttp://またはhttps://で始まる必要があります。',
+            'no_adult_services.accepted' => '性風俗サービスの提供を行っていないことの確認が必要です。',
+            'no_illegal_operations.accepted' => '各種法律・条例に違反する営業・求人を行っていないことの確認が必要です。',
             'terms.accepted' => '利用規約への同意が必要です。',
         ]);
 
