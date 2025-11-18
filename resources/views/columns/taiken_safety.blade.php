@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', '体験入店って本当に必要？安全性から考えるコンカフェ選び')
+@section('title', '体験入店って本当に必要？')
 
 @section('content')
 <div class="container my-8 column-page">
     <article class="column-article card p-5">
-        <h1 class="column-title mb-3">体験入店って本当に必要？安全性から考えるコンカフェ選び</h1>
+        <h1 class="column-title mb-3">体験入店って本当に必要？</h1>
         <p class="text-muted mb-4">
             「まずは体入してみよう！」── コンカフェ業界では、よく聞くフレーズかもしれません。
             ですが最近は、あえて「体験入店（体入）を行わない」という選択をしているお店も増えています。

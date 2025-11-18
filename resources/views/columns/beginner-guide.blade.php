@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', '初めてのコンカフェバイト完全ガイド')
+@section('title', '初めてのコンカフェバイト')
 
 @section('content')
 <div class="container my-8 column-page">
     <article class="column-article card p-5">
-        <h1 class="column-title mb-3">初めてのコンカフェバイト完全ガイド</h1>
+        <h1 class="column-title mb-3">初めてのコンカフェバイト</h1>
         <p class="text-muted mb-4">
             「コンカフェってどんな仕事？」「私でもできるのかな？」<br>
             そんな"はじめてさん"向けに、基本をまとめました。

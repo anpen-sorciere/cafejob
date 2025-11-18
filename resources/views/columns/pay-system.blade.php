@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'コンカフェの給与体系を分かりやすく解説')
+@section('title', 'コンカフェの給与体系')
 
 @section('content')
 <div class="container my-8 column-page">
     <article class="column-article card p-5">
-        <h1 class="column-title mb-3">コンカフェの給与体系を分かりやすく解説</h1>
+        <h1 class="column-title mb-3">コンカフェの給与体系</h1>
         <p class="text-muted mb-4">
             コンカフェの求人を見ると、<br>
             「時給◯◯円〜」「バック 40%」「ドリンクバックあり」「罰金・ペナルティあり」<br>

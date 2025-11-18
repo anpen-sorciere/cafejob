@@ -214,6 +214,37 @@ body {
   box-shadow: 0 6px 14px rgba(255, 75, 158, 0.45);
 }
 
+/* =========================
+   店舗オーナー向けヘッダーボタン
+   ========================= */
+.header-shop-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 14px;
+}
+
+.btn-shop-owner,
+.btn-shop-login {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid #ffd1e6;
+  background: #fff7fb;
+  color: #ff4b9e;
+  text-decoration: none;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-shop-owner:hover,
+.btn-shop-login:hover {
+  background: #ffe6f3;
+  box-shadow: 0 3px 8px rgba(255, 105, 180, 0.25);
+}
+
 /* スマホ用調整 */
 @media (max-width: 768px) {
   .header-inner {
@@ -235,6 +266,11 @@ body {
 
   .logo-mark {
     font-size: 1.1rem;
+  }
+
+  /* スマホは折り返し回避のため非表示に（必要なら変更可） */
+  .header-shop-actions {
+    display: none;
   }
 }
 

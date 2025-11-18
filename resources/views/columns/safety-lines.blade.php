@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'コンカフェの危険ラインと安全ライン')
+@section('title', 'コンカフェの安全・危険ラインとは')
 
 @section('content')
 <div class="container my-8 column-page">
     <article class="column-article card p-5">
-        <h1 class="column-title mb-3">コンカフェの危険ラインと安全ライン</h1>
+        <h1 class="column-title mb-3">コンカフェの安全・危険ラインとは</h1>
         <p class="text-muted mb-4">
             「このお店、本当に大丈夫かな…？」<br>
             求人や面談だけでは分かりにくい部分を、<br>

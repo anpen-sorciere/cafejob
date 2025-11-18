@@ -445,7 +445,7 @@
         <div class="column-list">
             <a href="{{ route('columns.beginner_guide') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
                 <article class="helper-card column-card">
-                    <h3>① 初めてのコンカフェバイト完全ガイド</h3>
+                    <h3>① 初めてのコンカフェバイト</h3>
                     <p>コンカフェってどんな仕事？どんな子が向いてる？仕事内容と必要なスキル、働く前に知っておくべき注意点、初心者が失敗しないお店選びを解説します。</p>
                     <div class="helper-card-footer">
                         <span class="tag meta">
@@ -457,7 +457,7 @@
             </a>
             <a href="{{ route('columns.pay_system') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
                 <article class="helper-card column-card">
-                    <h3>② コンカフェの給与体系を分かりやすく解説</h3>
+                    <h3>② コンカフェの給与体系</h3>
                     <p>時給とインセンティブ（バック）の仕組み、よくある給与モデル例、体験入店の日給の注意点、稼ぎたい人がチェックすべきポイントを詳しく説明します。</p>
                     <div class="helper-card-footer">
                         <span class="tag meta">
@@ -493,7 +493,7 @@
             </a>
             <a href="{{ route('columns.safety_lines') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
                 <article class="helper-card column-card">
-                    <h3>⑤ コンカフェの危険ラインと安全ライン</h3>
+                    <h3>⑤ コンカフェの安全・危険ラインとは</h3>
                     <p>この店舗は避けたほうがいいサイン、安全なお店の特徴、迷ったときの判断基準、安心して働くためのセルフチェック。安全に働くための見極め方を解説します。</p>
                     <div class="helper-card-footer">
                         <span class="tag meta">
@@ -505,12 +505,9 @@
             </a>
             <a href="{{ route('columns.taiken_safety') }}" class="column-card-link" style="text-decoration: none; color: inherit;">
                 <article class="helper-card column-card">
-                    <h3>⑥ 体験入店って本当に必要？安全性から考える</h3>
+                    <h3>⑥ 体験入店って本当に必要？</h3>
                     <p>
-                        体験入店を行っていないお店も少なくありません。
-                        その日だけ来てすぐにいなくなる人が店内のすべてのエリアに立ち入ることは、
-                        個人情報保護や防犯の観点から大きなリスクになる場合があります。
-                        契約を結んでから勤務を始めるスタイルなど、「安全性を重視したお店選び」の考え方を解説します。
+                        体験入店は安全面のリスクがあるため、実施しない店舗もあります。お店選びでは体験の有無だけでなく安全性も重視しましょう。安心につながる。
                     </p>
                     <div class="helper-card-footer">
                         <span class="tag meta">

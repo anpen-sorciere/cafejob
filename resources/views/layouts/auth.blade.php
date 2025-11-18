@@ -50,6 +50,11 @@
                         <a href="{{ route('profile.edit') }}" class="btn-header-outline">マイページ</a>
                     @endguest
                 </div>
+                {{-- ★ 店舗オーナー向けボタン --}}
+                <div class="header-shop-actions">
+                    <a href="{{ route('regist.create') }}" class="btn-shop-owner">掲載申し込み</a>
+                    <a href="{{ route('shop-admin.login') }}" class="btn-shop-login">店舗ログイン</a>
+                </div>
             </nav>
         </div>
     </header>
