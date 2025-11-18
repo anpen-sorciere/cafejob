@@ -8,7 +8,10 @@
 <div class="cc-hero-section">
     <div class="cc-container position-relative" style="z-index: 1;">
         <div class="cc-card">
-            <h1 class="h3 mb-2">カフェコレ（CafeColle）</h1>
+            <h1 class="hero-brand-title mb-2">
+                カフェコレ
+                <span class="hero-brand-sub">(CafeColle)</span>
+            </h1>
             <h2 class="h5 mb-3 text-muted">コンカフェ専門の求人・集客サイト</h2>
             <p class="mb-4">
                 全国のコンカフェの中から、<br>

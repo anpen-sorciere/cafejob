@@ -82,30 +82,47 @@ body {
 .header-logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   text-decoration: none;
 }
 
+/* カフェコレ本体：ピンクのピル型ロゴにする */
 .logo-mark {
-  font-size: 1.25rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff6fb5, #ff4b9e);
+  color: #fff;
+  font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: .06em;
-  color: #ff4b9e;
+  letter-spacing: .08em;
 }
 
+/* ロゴ内の小アイコン（擬似要素でカップ） */
+.logo-mark::before {
+  content: "☕";
+  font-size: 0.9rem;
+}
+
+/* BETAバッジを小さく横に添える */
 .logo-badge {
   font-size: 0.7rem;
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 999px;
-  background: #ffe0ef;
+  background: #fff;
   color: #ff4b9e;
-  font-weight: 600;
+  font-weight: 700;
+  border: 1px solid #ffd1e6;
   text-transform: uppercase;
 }
 
+/* キャッチコピー */
 .header-tagline {
-  margin: 0;
-  font-size: 0.82rem;
+  margin: 2px 0 0;
+  font-size: 0.8rem;
   color: #777;
 }
 
@@ -409,6 +426,36 @@ body {
 .cc-stat-card-label {
   font-size: 12px;
   color: var(--cc-color-muted);
+}
+
+/* トップカード内ブランド見出し */
+.hero-brand-title {
+  position: relative;
+  display: inline-block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  padding-bottom: 6px;
+}
+
+/* 下に細いグラデーションバーを入れてブランド感を出す */
+.hero-brand-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 72%;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff6fb5, #ff4b9e);
+}
+
+/* (CafeColle) の部分は少し細め・薄めに */
+.hero-brand-sub {
+  margin-left: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #777;
 }
 
 /* ファーストビュー */
