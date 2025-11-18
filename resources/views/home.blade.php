@@ -20,7 +20,7 @@
                 <div class="col-md-3 col-6">
                     <div class="cc-stat-card">
                         <div class="cc-stat-card-icon">
-                            <i class="bi bi-shop"></i>
+                            <i class="fas fa-store"></i>
                         </div>
                         <div class="cc-stat-card-content">
                             <div class="cc-stat-card-number">{{ number_format($stats['total_shops']) }}</div>
@@ -31,7 +31,7 @@
                 <div class="col-md-3 col-6">
                     <div class="cc-stat-card">
                         <div class="cc-stat-card-icon">
-                            <i class="bi bi-people"></i>
+                            <i class="fas fa-users"></i>
                         </div>
                         <div class="cc-stat-card-content">
                             <div class="cc-stat-card-number">{{ number_format($stats['total_casts']) }}</div>
@@ -42,7 +42,7 @@
                 <div class="col-md-3 col-6">
                     <div class="cc-stat-card">
                         <div class="cc-stat-card-icon">
-                            <i class="bi bi-briefcase"></i>
+                            <i class="fas fa-briefcase"></i>
                         </div>
                         <div class="cc-stat-card-content">
                             <div class="cc-stat-card-number">{{ number_format($stats['total_jobs']) }}</div>
@@ -53,7 +53,7 @@
                 <div class="col-md-3 col-6">
                     <div class="cc-stat-card">
                         <div class="cc-stat-card-icon">
-                            <i class="bi bi-file-earmark-text"></i>
+                            <i class="fas fa-file-alt"></i>
                         </div>
                         <div class="cc-stat-card-content">
                             <div class="cc-stat-card-number">{{ number_format($stats['total_applications']) }}</div>
