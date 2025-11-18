@@ -29,6 +29,13 @@ Route::view('/guide', 'pages.guide')->name('guide');
 
 // コラム記事
 Route::view('/columns/taiken-safety', 'columns.taiken_safety')->name('columns.taiken_safety');
+Route::view('/columns/beginner-guide', 'columns.beginner-guide')->name('columns.beginner_guide');
+Route::view('/columns/pay-system', 'columns.pay-system')->name('columns.pay_system');
+Route::view('/columns/faq', 'columns.faq')->name('columns.faq');
+Route::view('/columns/interview-questions', 'columns.interview-questions')->name('columns.interview_questions');
+Route::view('/columns/safety-lines', 'columns.safety-lines')->name('columns.safety_lines');
+Route::view('/columns/sns-privacy', 'columns.sns-privacy')->name('columns.sns_privacy');
+Route::view('/columns/long-term-tips', 'columns.long-term-tips')->name('columns.long_term_tips');
 
 // 求人関連
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
