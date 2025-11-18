@@ -131,6 +131,11 @@ Route::prefix('admin')->group(function () {
 Route::get('/shop-register', [App\Http\Controllers\ShopRegisterController::class, 'create'])->name('shop-register.create');
 Route::post('/shop-register', [App\Http\Controllers\ShopRegisterController::class, 'store'])->name('shop-register.store');
 
+// 店舗情報掲載者向けLP
+Route::get('/regist/lp_customer_1', function () {
+    return view('lp.customer_1');
+})->name('lp.customer_1');
+
 // 店舗管理者ログイン
 Route::prefix('shop-admin')->group(function () {
     Route::get('/login', [ShopAdminLoginController::class, 'showLoginForm'])->name('shop-admin.login');
