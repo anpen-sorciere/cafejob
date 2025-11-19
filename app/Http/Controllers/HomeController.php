@@ -6,6 +6,7 @@ use App\Models\Job;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Support\AccessLogger;
 
 class HomeController extends Controller
 {
@@ -54,6 +55,9 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
+        // ページビューを記録
+        AccessLogger::logPageView($request);
+        
         return view('home', compact('stats', 'popular_jobs', 'popular_shops', 'latest_jobs', 'latest_shops'));
     }
 }

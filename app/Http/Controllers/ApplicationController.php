@@ -8,6 +8,7 @@ use App\Models\ChatRoom;
 use App\Models\UserApplicationBan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Support\AccessLogger;
 
 class ApplicationController extends Controller
 {
@@ -68,6 +69,9 @@ class ApplicationController extends Controller
             ]
         );
 
+        // 応募完了を記録
+        AccessLogger::logApplyComplete($request, $job->id, $job->shop_id, Auth::id());
+
         return back()->with('success', '応募が完了しました。店舗からの連絡をお待ちください。');
     }
 
@@ -110,5 +114,27 @@ class ApplicationController extends Controller
             'success' => true,
             'message' => '応募をキャンセルしました。',
         ]);
+    }
+
+    /**
+     * 応募ボタンクリックを記録
+     */
+    public function logClick(Request $request)
+    {
+        // 認証チェック（ログインしていなくても記録は可能だが、通常はログインユーザーのみ）
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        $request->validate([
+            'job_id' => ['required', 'integer', 'exists:jobs,id'],
+        ]);
+
+        $job = Job::findOrFail($request->job_id);
+
+        // 応募ボタンクリックを記録
+        AccessLogger::logApplyClick($request, $job->id, $job->shop_id);
+
+        return response()->json(['success' => true]);
     }
 }

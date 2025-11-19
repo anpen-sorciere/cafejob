@@ -548,6 +548,31 @@ function copyToClipboard() {
         alert('URLをコピーしました');
     });
 }
+
+// 応募ボタンクリックを記録
+document.addEventListener('DOMContentLoaded', function() {
+    const applyForm = document.querySelector('form[action="{{ route('applications.store') }}"]');
+    if (applyForm) {
+        const applyButton = applyForm.querySelector('button[type="submit"]');
+        if (applyButton) {
+            applyButton.addEventListener('click', function(e) {
+                // フォーム送信前にクリックを記録
+                fetch('{{ route('applications.log-click') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({
+                        job_id: {{ $job->id }}
+                    })
+                }).catch(function(error) {
+                    console.error('Failed to log apply click:', error);
+                });
+            });
+        }
+    }
+});
 </script>
 @endpush
 @endsection

@@ -44,6 +44,7 @@ Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 // 応募関連
 Route::middleware('auth')->group(function () {
     Route::get('/applications', [App\Http\Controllers\ApplicationController::class, 'index'])->name('applications.index');
+    Route::post('/applications/log-click', [App\Http\Controllers\ApplicationController::class, 'logClick'])->name('applications.log-click');
     Route::post('/applications', [App\Http\Controllers\ApplicationController::class, 'store'])->name('applications.store');
     Route::post('/applications/{id}/cancel', [App\Http\Controllers\ApplicationController::class, 'cancel'])->name('applications.cancel');
 });
@@ -137,6 +138,15 @@ Route::prefix('admin')->group(function () {
         // サンプルデータ生成
         Route::get('/sample-data', [App\Http\Controllers\Admin\AdminSampleDataController::class, 'index'])->name('admin.sample-data.index');
         Route::post('/sample-data', [App\Http\Controllers\Admin\AdminSampleDataController::class, 'store'])->name('admin.sample-data.store');
+        
+        // メトリクスAPI
+        Route::prefix('api/metrics')->group(function () {
+            Route::get('/pv-uu-applications', [App\Http\Controllers\Admin\MetricsController::class, 'pvUuApplications'])->name('admin.api.metrics.pv-uu-applications');
+            Route::get('/new-users', [App\Http\Controllers\Admin\MetricsController::class, 'newUsers'])->name('admin.api.metrics.new-users');
+            Route::get('/new-shops', [App\Http\Controllers\Admin\MetricsController::class, 'newShops'])->name('admin.api.metrics.new-shops');
+            Route::get('/average-applications-per-shop', [App\Http\Controllers\Admin\MetricsController::class, 'averageApplicationsPerShop'])->name('admin.api.metrics.average-applications-per-shop');
+            Route::get('/job-application-ranking', [App\Http\Controllers\Admin\MetricsController::class, 'jobApplicationRanking'])->name('admin.api.metrics.job-application-ranking');
+        });
     });
 });
 
@@ -186,5 +196,14 @@ Route::prefix('shop-admin')->group(function () {
         Route::post('/cast-management', [App\Http\Controllers\ShopAdmin\CastManagementController::class, 'store'])->name('shop-admin.cast-management.store');
         Route::put('/cast-management/{id}', [App\Http\Controllers\ShopAdmin\CastManagementController::class, 'update'])->name('shop-admin.cast-management.update');
         Route::delete('/cast-management/{id}', [App\Http\Controllers\ShopAdmin\CastManagementController::class, 'destroy'])->name('shop-admin.cast-management.destroy');
+        
+        // メトリクスAPI
+        Route::prefix('api/metrics')->group(function () {
+            Route::get('/monthly-applications', [App\Http\Controllers\ShopAdmin\MetricsController::class, 'monthlyApplications'])->name('shop-admin.api.metrics.monthly-applications');
+            Route::get('/monthly-page-views', [App\Http\Controllers\ShopAdmin\MetricsController::class, 'monthlyPageViews'])->name('shop-admin.api.metrics.monthly-page-views');
+            Route::get('/job-applications', [App\Http\Controllers\ShopAdmin\MetricsController::class, 'jobApplications'])->name('shop-admin.api.metrics.job-applications');
+            Route::get('/job-page-views', [App\Http\Controllers\ShopAdmin\MetricsController::class, 'jobPageViews'])->name('shop-admin.api.metrics.job-page-views');
+            Route::get('/job-application-rate', [App\Http\Controllers\ShopAdmin\MetricsController::class, 'jobApplicationRate'])->name('shop-admin.api.metrics.job-application-rate');
+        });
     });
 });

@@ -7,6 +7,7 @@ use App\Models\Shop;
 use App\Models\Prefecture;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Support\AccessLogger;
 
 class JobController extends Controller
 {
@@ -90,6 +91,9 @@ class JobController extends Controller
                 ->toArray();
         }
 
+        // ページビューを記録
+        AccessLogger::logPageView($request);
+
         return view('jobs.index', compact('jobs', 'prefectures', 'keptJobIds'));
     }
 
@@ -126,6 +130,9 @@ class JobController extends Controller
                 ->where('job_id', $id)
                 ->exists();
         }
+
+        // 求人詳細ページビューを記録
+        AccessLogger::logJobView(request(), $job->id, $job->shop_id);
 
         return view('jobs.show', compact('job', 'relatedJobs', 'casts', 'isKept'));
     }

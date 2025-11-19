@@ -16,6 +16,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        
+        // 毎日03:30（JST）に日次メトリクスを集計
+        $schedule->command('metrics:aggregate-daily')
+            ->dailyAt('03:30')
+            ->timezone('Asia/Tokyo');
     }
 
     /**

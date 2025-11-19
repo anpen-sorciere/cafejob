@@ -125,6 +125,103 @@
         </div>
     </div>
 
+    <!-- グラフセクション -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h4 mb-3">メトリクス分析</h2>
+        </div>
+        
+        <!-- 1. PV/UU/応募数（直近30日折れ線＋棒） -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">PV/UU/応募数（直近30日）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-loading text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">読み込み中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">データを読み込み中...</p>
+                    </div>
+                    <canvas id="chartPvUuApplications" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2. 新規求職者登録数（直近30日） -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">新規求職者登録数（直近30日）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-loading text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">読み込み中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">データを読み込み中...</p>
+                    </div>
+                    <canvas id="chartNewUsers" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3. 新規掲載店舗数（直近30日） -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">新規掲載店舗数（直近30日）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-loading text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">読み込み中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">データを読み込み中...</p>
+                    </div>
+                    <canvas id="chartNewShops" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 4. 1店舗あたり平均応募数（折れ線） -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">1店舗あたり平均応募数（直近30日）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-loading text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">読み込み中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">データを読み込み中...</p>
+                    </div>
+                    <canvas id="chartAverageApplications" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. 求人別応募数ランキング（棒） -->
+        <div class="col-lg-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">求人別応募数ランキング（直近30日）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-loading text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">読み込み中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">データを読み込み中...</p>
+                    </div>
+                    <canvas id="chartJobRanking" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 最新情報 -->
     <div class="row">
         <div class="col-md-4">
@@ -186,4 +283,259 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const charts = {};
+    
+    // Chart.jsのデフォルト設定
+    Chart.defaults.color = '#666';
+    Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+    Chart.defaults.font.size = 12;
+    
+    // 1. PV/UU/応募数（折れ線＋棒）
+    function loadPvUuApplications() {
+        const loadingEl = document.querySelector('#chartPvUuApplications').previousElementSibling;
+        const canvasEl = document.getElementById('chartPvUuApplications');
+        
+        fetch('{{ route('admin.api.metrics.pv-uu-applications') }}')
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.style.display = 'none';
+                canvasEl.style.display = 'block';
+                
+                charts.pvUuApplications = new Chart(canvasEl, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: 'PV',
+                                data: data.pageViews,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                yAxisID: 'y',
+                                tension: 0.4
+                            },
+                            {
+                                label: 'UU',
+                                data: data.uniqueUsers,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                yAxisID: 'y',
+                                tension: 0.4
+                            },
+                            {
+                                label: '応募数',
+                                data: data.applications,
+                                type: 'bar',
+                                backgroundColor: '#f59e0b',
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                grid: {
+                                    drawOnChartArea: false,
+                                },
+                            },
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading PV/UU/Applications data:', error);
+                loadingEl.innerHTML = '<p class="text-danger">データの読み込みに失敗しました</p>';
+            });
+    }
+    
+    // 2. 新規求職者登録数
+    function loadNewUsers() {
+        const loadingEl = document.querySelector('#chartNewUsers').previousElementSibling;
+        const canvasEl = document.getElementById('chartNewUsers');
+        
+        fetch('{{ route('admin.api.metrics.new-users') }}')
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.style.display = 'none';
+                canvasEl.style.display = 'block';
+                
+                charts.newUsers = new Chart(canvasEl, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: '新規求職者登録数',
+                            data: data.newUsers,
+                            backgroundColor: '#8b5cf6',
+                            borderColor: '#7c3aed',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading new users data:', error);
+                loadingEl.innerHTML = '<p class="text-danger">データの読み込みに失敗しました</p>';
+            });
+    }
+    
+    // 3. 新規掲載店舗数
+    function loadNewShops() {
+        const loadingEl = document.querySelector('#chartNewShops').previousElementSibling;
+        const canvasEl = document.getElementById('chartNewShops');
+        
+        fetch('{{ route('admin.api.metrics.new-shops') }}')
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.style.display = 'none';
+                canvasEl.style.display = 'block';
+                
+                charts.newShops = new Chart(canvasEl, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: '新規掲載店舗数',
+                            data: data.newShops,
+                            backgroundColor: '#ec4899',
+                            borderColor: '#db2777',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading new shops data:', error);
+                loadingEl.innerHTML = '<p class="text-danger">データの読み込みに失敗しました</p>';
+            });
+    }
+    
+    // 4. 1店舗あたり平均応募数
+    function loadAverageApplications() {
+        const loadingEl = document.querySelector('#chartAverageApplications').previousElementSibling;
+        const canvasEl = document.getElementById('chartAverageApplications');
+        
+        fetch('{{ route('admin.api.metrics.average-applications-per-shop') }}')
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.style.display = 'none';
+                canvasEl.style.display = 'block';
+                
+                charts.averageApplications = new Chart(canvasEl, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: '1店舗あたり平均応募数',
+                            data: data.averageApplications,
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading average applications data:', error);
+                loadingEl.innerHTML = '<p class="text-danger">データの読み込みに失敗しました</p>';
+            });
+    }
+    
+    // 5. 求人別応募数ランキング
+    function loadJobRanking() {
+        const loadingEl = document.querySelector('#chartJobRanking').previousElementSibling;
+        const canvasEl = document.getElementById('chartJobRanking');
+        
+        fetch('{{ route('admin.api.metrics.job-application-ranking') }}')
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.style.display = 'none';
+                canvasEl.style.display = 'block';
+                
+                charts.jobRanking = new Chart(canvasEl, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: '応募数',
+                            data: data.applications,
+                            backgroundColor: '#f97316',
+                            borderColor: '#ea580c',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading job ranking data:', error);
+                loadingEl.innerHTML = '<p class="text-danger">データの読み込みに失敗しました</p>';
+            });
+    }
+    
+    // すべてのグラフを読み込み
+    loadPvUuApplications();
+    loadNewUsers();
+    loadNewShops();
+    loadAverageApplications();
+    loadJobRanking();
+});
+</script>
+@endpush
 @endsection
